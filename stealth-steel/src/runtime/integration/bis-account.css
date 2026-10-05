@@ -10,4 +10,13 @@
 /* BIS supplies the semantic status icon; the bolt is not part of game toast messaging. */
 .game-account-host .bis-toast-lightning { display: none; }
 
+/* Keep the supporting BIS release label centered and inside the strip's corner inset. */
+.game-account-host .bis-network-anchor { display: block; }
+.game-account-host .bis-version-label {
+  right: 0;
+  left: auto;
+  margin-left: 0;
+  transform: translateY(-50%);
+}
+
 /* The game-owned Account menu action uses the shared menu button theme. */
