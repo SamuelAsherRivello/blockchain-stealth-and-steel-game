@@ -40,7 +40,7 @@ including current-release announcements or example release tags, unless the
 user explicitly requests it. Do not restore query-parameter advice,
 preloader-to-Start-menu explanation, or build-argument/GitHub Actions build
 commentary in this Demo section unless the user explicitly requests it. -->
-- [https://samuelasherrivello.github.io/stealth-and-steel-game/](https://samuelasherrivello.github.io/stealth-and-steel-game/)
+- [https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/)
 
 WebGPU not working? See [Troubleshooting](#troubleshooting).
 
@@ -85,8 +85,8 @@ links, screenshot, relative-path, and release-metadata checks.
    [`SamuelAsherRivello/stealth-and-steel-game`](https://github.com/SamuelAsherRivello/stealth-and-steel-game).
    The `Deploy live demo` workflow runs all tests, validates publishing contracts,
    builds `dist`, and deploys it using GitHub Actions. No release tag is needed to publish.
-3. Wait for the [deployment workflow](https://github.com/SamuelAsherRivello/stealth-and-steel-game/actions/workflows/deploy-pages.yml)
-   to succeed, then verify the [live game](https://samuelasherrivello.github.io/stealth-and-steel-game/).
+3. Wait for the [deployment workflow](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/deploy-pages.yml)
+   to succeed, then verify the [live game](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/).
 
 <!-- AI: Keep this release section brief; do not add detailed versioning, Pages,
 rename, or recovery guidance here. -->
