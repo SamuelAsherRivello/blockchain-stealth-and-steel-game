@@ -119,7 +119,7 @@ import { createBisHostGame } from "./integration/bis-host-game.js";
 import { createPayToContinue } from "./integration/pay-to-continue.js";
 import { createLevelReward } from "./integration/level-reward.js";
 import { createLevelProgress } from "./gameplay/level-progress.js";
-import { createGameRunCoordinator } from "./gameplay/game-run-lifecycle.js";
+import { createGameRunController } from "./gameplay/game-run-controller.js";
 import { revivePaidPlayer } from "./gameplay/paid-revival.js";
 import "./integration/bis-account.css";
 import { createSettingsUi } from "./ui/settings-ui.js";
@@ -249,11 +249,10 @@ viewportResizeObserver.observe(gameFrame);
 window.addEventListener("resize", refreshGameViewportDiagnostics);
 window.addEventListener("resize", fullscreenTransition.resize);
 
-let gameRunCoordinator = null;
-let restartTransition = null;
+let gameRunController = null;
 
 window.addEventListener("pagehide", () => {
-  gameRunCoordinator?.dispose();
+  gameRunController?.dispose();
   viewportSafeArea.dispose();
   viewportResizeObserver.disconnect();
   promptBodyResizeObserver.disconnect();
@@ -263,14 +262,18 @@ window.addEventListener("pagehide", () => {
   fullscreenTransition.dispose();
 }, { once: true });
 
+function getGameRunController(options) {
+  if (!gameRunController) {
+    gameRunController = createGameRunController({
+      createRun: (run) => createGameRun({ ...options, initialRun: run }),
+      transition: fullscreenTransition,
+    });
+  }
+  return gameRunController;
+}
+
 function restartWithFullscreenTransition(run, pauseController) {
-  if (restartTransition) return restartTransition;
-  pauseController.pause("restart-transition");
-  restartTransition = fullscreenTransition.cover()
-    .then(() => gameRunCoordinator?.restart(run))
-    .then(() => fullscreenTransition.reveal())
-    .finally(() => { restartTransition = null; });
-  return restartTransition;
+  return gameRunController?.restart(run, pauseController) ?? Promise.resolve(null);
 }
 
 
@@ -298,12 +301,7 @@ function makeDirection(from, to) {
 }
 
 export async function start(options = {}) {
-  if (!gameRunCoordinator) {
-    gameRunCoordinator = createGameRunCoordinator({
-      createRun: ({ run }) => createGameRun({ ...options, initialRun: run }),
-    });
-  }
-  return gameRunCoordinator.start(options.initialRun);
+  return getGameRunController(options).start(options.initialRun);
 }
 
 async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
