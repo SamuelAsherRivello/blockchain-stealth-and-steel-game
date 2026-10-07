@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../../../../${path}`, import.meta.url), "utf8");
-const demoUrl = "https://samuelasherrivello.github.io/stealth-and-steel-game/";
+const demoUrl = "https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/";
 
 test("README screenshot opens the image and demo links to the renamed live game", async () => {
   const readme = await read("README.md");

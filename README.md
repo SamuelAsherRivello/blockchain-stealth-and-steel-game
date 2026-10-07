@@ -32,7 +32,7 @@ The Stealth and Steel game uses the Blockchain Integration Service (BIS); a Bloc
 
 <a href="stealth-steel/documentation/images/stealth-and-steel-bis-hud.png"><img src="stealth-steel/documentation/images/stealth-and-steel-bis-hud.png" width="400" alt="Stealth and Steel BIS account HUD" /></a>
 
-## Demo
+## Live Demo
 
 <!-- AI: Verify the public demo URL against deployment configuration or the deployed site before changing it. -->
 <!-- AI: Do not mention release version numbers anywhere in this README,
@@ -40,7 +40,7 @@ including current-release announcements or example release tags, unless the
 user explicitly requests it. Do not restore query-parameter advice,
 preloader-to-Start-menu explanation, or build-argument/GitHub Actions build
 commentary in this Demo section unless the user explicitly requests it. -->
-- [https://samuelasherrivello.github.io/stealth-and-steel-game/](https://samuelasherrivello.github.io/stealth-and-steel-game/)
+- [https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/)
 
 WebGPU not working? See [Troubleshooting](#troubleshooting).
 
