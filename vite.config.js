@@ -5,7 +5,7 @@ import { catalogFromFiles } from "./stealth-steel/src/runtime/gameplay/level-pro
 export default defineConfig({
   define: { __GAME_LEVELS__: JSON.stringify(catalogFromFiles(readdirSync(new URL('./stealth-steel/public/assets/levels/tiled/maps/', import.meta.url)))) },
   root: "stealth-steel",
-  base: "/stealth-and-steel-game/",
+  base: "/blockchain-stealth-and-steel-game/",
   build: { outDir: "../dist", emptyOutDir: true },
   server: { watch: { ignored: [/\.tmj\.[^\\/]+$/] } },
   // BIS development exports contain TSX using the automatic React runtime.

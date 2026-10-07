@@ -25,7 +25,7 @@ test("root commands target the contained application and preserve Pages output",
   const { default: config } = await import("../../../../vite.config.js");
   assert.equal(resolve(root, config.root), app);
   assert.equal(resolve(app, config.build.outDir), join(root, "dist"));
-  assert.equal(config.base, "/stealth-and-steel-game/");
+  assert.equal(config.base, "/blockchain-stealth-and-steel-game/");
   assert.ok(config.server.watch.ignored.some(pattern => (
     pattern instanceof RegExp && pattern.test("Level01.tmj.XuvJSi")
   )));

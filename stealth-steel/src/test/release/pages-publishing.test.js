@@ -17,7 +17,7 @@ test("README screenshot opens the image and demo links to the renamed live game"
 
 test("the app uses its GitHub Pages repository path as the deployment URL base", async () => {
   const { default: config } = await import("../../../../vite.config.js");
-  assert.equal(config.base, "/stealth-and-steel-game/");
+  assert.equal(config.base, "/blockchain-stealth-and-steel-game/");
 });
 
 test("Pages publishing checks deployment contracts before building", async () => {

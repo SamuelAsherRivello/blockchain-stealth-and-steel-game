@@ -86,7 +86,7 @@ links, screenshot, relative-path, and release-metadata checks.
    The `Deploy live demo` workflow runs all tests, validates publishing contracts,
    builds `dist`, and deploys it using GitHub Actions. No release tag is needed to publish.
 3. Wait for the [deployment workflow](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/deploy-pages.yml)
-   to succeed, then verify the [live game](https://samuelasherrivello.github.io/stealth-and-steel-game/).
+   to succeed, then verify the [live game](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/).
 
 <!-- AI: Keep this release section brief; do not add detailed versioning, Pages,
 rename, or recovery guidance here. -->
