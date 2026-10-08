@@ -4,7 +4,7 @@ import { bindToGameFrame } from "../ui/game-frame-bounds.js";
 const loadPackage = () => Promise.all([import('@bis/integration'), import('@bis/integration/style.css')]).then(([api]) => api);
 
 export function createBisAccount({host, pauseController, restartGame, documentRef = globalThis.document,
-  load = loadPackage, timeoutMs = 15000, onClose = () => {}, getGameHost = () => undefined,
+  load = loadPackage, timeoutMs = 15000, onClose = () => {}, getBisGame = () => undefined,
   frameElement = null}) {
   const overlay = documentRef.createElement('div');
   overlay.className = 'game-account-host'; overlay.hidden = true; overlay.tabIndex = -1;
@@ -74,8 +74,8 @@ export function createBisAccount({host, pauseController, restartGame, documentRe
     initialization = (async () => {
       const api = await load(); if (disposed) return;
       const current = {api};
-      if (api.BisGameServices) {
-        current.services = new api.BisGameServices({getGameHost});
+      if (api.BisService) {
+        current.services = new api.BisService({getBisGame});
         current.context = current.services.context;
         current.gameWallet = current.services.gameWallet;
         current.lto = current.services.lto;

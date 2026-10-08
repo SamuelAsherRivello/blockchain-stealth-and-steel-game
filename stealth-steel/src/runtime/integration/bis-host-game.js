@@ -1,24 +1,24 @@
-/** @typedef {import('@bis/integration').BisHostGame} BisHostGame */
-/** @typedef {import('@bis/integration').BisHostGameSessionReference} BisHostGameSessionReference */
-/** @typedef {import('@bis/integration').BisHostGameContinuationTarget} BisHostGameContinuationTarget */
-/** @typedef {import('@bis/integration').BisHostGameConfirmedContinuation} BisHostGameConfirmedContinuation */
-/** @typedef {import('@bis/integration').BisHostGameConfirmedPlayerReward} BisHostGameConfirmedPlayerReward */
-/** @typedef {import('@bis/integration').BisHostGameEffectReceipt} BisHostGameEffectReceipt */
+/** @typedef {import('@bis/integration').IBisGame} IBisGame */
+/** @typedef {import('@bis/integration').BisGameSession} BisGameSession */
+/** @typedef {import('@bis/integration').BisGameContinuationTarget} BisGameContinuationTarget */
+/** @typedef {import('@bis/integration').BisGameConfirmedContinuation} BisGameConfirmedContinuation */
+/** @typedef {import('@bis/integration').BisGameConfirmedPlayerReward} BisGameConfirmedPlayerReward */
+/** @typedef {import('@bis/integration').BisGameEffectReceipt} BisGameEffectReceipt */
 
 const receipt = status => Object.freeze({ status });
 const sameSession = (left, right) => left?.gameId === right?.gameId && left?.gameSessionId === right?.gameSessionId;
 
 /**
- * Creates the one game-owned implementation of BIS's public host contract.
+ * Creates the one game-owned implementation of BIS's public game contract.
  * The callbacks deliberately speak in game decisions, not wallet concepts.
  *
  * @param {{gameId: string, getActiveGameSessionId: () => string | undefined,
  *   canCaptureContinuation?: () => boolean,
  *   applyContinuation: () => boolean | Promise<boolean>,
- *   presentPlayerReward?: (reward: BisHostGameConfirmedPlayerReward) => boolean | Promise<boolean>}} options
- * @returns {BisHostGame}
+ *   presentPlayerReward?: (reward: BisGameConfirmedPlayerReward) => boolean | Promise<boolean>}} options
+ * @returns {IBisGame}
  */
-export function createBisHostGame(options) {
+export function createBisGame(options) {
   /** @type {Map<string, Set<string>>} */
   const deliveredOperationIdsBySession = new Map();
   const active = () => {
@@ -27,7 +27,7 @@ export function createBisHostGame(options) {
   };
   const delivery = async (input, apply) => {
     const current = active();
-    if (!sameSession(current, input.gameSessionReference)) return receipt('not-applicable');
+    if (!sameSession(current, input.gameSession)) return receipt('not-applicable');
     const delivered = deliveredOperationIdsBySession.get(current.gameSessionId) ?? new Set();
     if (delivered.has(input.operationId)) return receipt('already-applied');
     if (!await apply()) return receipt('not-applicable');
@@ -36,17 +36,17 @@ export function createBisHostGame(options) {
     return receipt('applied');
   };
   return Object.freeze({
-    getActiveGameSessionReference() { return active(); },
-    captureContinuationTarget({ gameSessionReference }) {
-      if (!sameSession(active(), gameSessionReference) || !options.canCaptureContinuation?.()) return undefined;
-      return Object.freeze({ continuationTargetId: `continue:${gameSessionReference.gameSessionId}` });
+    getActiveGameSession() { return active(); },
+    captureContinuationTarget({ gameSession }) {
+      if (!sameSession(active(), gameSession) || !options.canCaptureContinuation?.()) return undefined;
+      return Object.freeze({ continuationTargetId: `continue:${gameSession.gameSessionId}` });
     },
-    /** @param {BisHostGameConfirmedContinuation} input @returns {Promise<BisHostGameEffectReceipt>} */
+    /** @param {BisGameConfirmedContinuation} input @returns {Promise<BisGameEffectReceipt>} */
     applyConfirmedContinuation(input) {
-      if (input.continuationTarget.continuationTargetId !== `continue:${input.gameSessionReference.gameSessionId}`) return Promise.resolve(receipt('not-applicable'));
+      if (input.continuationTarget.continuationTargetId !== `continue:${input.gameSession.gameSessionId}`) return Promise.resolve(receipt('not-applicable'));
       return delivery(input, options.applyContinuation);
     },
-    /** @param {BisHostGameConfirmedPlayerReward} input @returns {Promise<BisHostGameEffectReceipt>} */
+    /** @param {BisGameConfirmedPlayerReward} input @returns {Promise<BisGameEffectReceipt>} */
     presentConfirmedPlayerReward(input) {
       return delivery(input, () => options.presentPlayerReward?.(input) ?? false);
     },

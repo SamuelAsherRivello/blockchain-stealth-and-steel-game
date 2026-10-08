@@ -115,7 +115,7 @@ import { createItemsUi } from "./ui/items-ui.js";
 import { loadStatusBadgeArt } from "./ui/status-badge.js";
 import { createCharacterOverhead, drawCharacterOverheads } from "./ui/character-overhead.js";
 import { createBisAccount } from "./integration/bis-account.js";
-import { createBisHostGame } from "./integration/bis-host-game.js";
+import { createBisGame } from "./integration/bis-host-game.js";
 import { createPayToContinue } from "./integration/pay-to-continue.js";
 import { createLevelReward } from "./integration/level-reward.js";
 import { createLevelProgress } from "./gameplay/level-progress.js";
@@ -939,13 +939,13 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
       previousTime = performance.now();
     },
   });
-  let bisHostGame;
+  let bisGame;
   const accountHost = createBisAccount({
     host: domScreen, pauseController,
     frameElement: gameFrame,
     restartGame: () => progress.restart(),
     onClose: () => settingsUi?.returnFromAccount(),
-    getGameHost: () => bisHostGame,
+    getBisGame: () => bisGame,
   });
   let equipmentSnapshot = EMPTY_EQUIPMENT_SNAPSHOT;
   let unsubscribeEquipment = () => {};
@@ -1255,7 +1255,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   const paidContinue = createPayToContinue({accountHost,ui:levelLostUi,restart:()=>progress.restart(),
   });
   const bisGameSessionId = crypto.randomUUID();
-  bisHostGame = createBisHostGame({
+  bisGame = createBisGame({
     gameId: 'stealth-and-steel',
     getActiveGameSessionId: () => [GameState.LEVEL_PLAYING, GameState.LEVEL_LOST, GameState.LEVEL_COMPLETE].includes(gameStateMachine.state) ? bisGameSessionId : undefined,
     canCaptureContinuation: () => gameStateMachine.state === GameState.LEVEL_LOST,

@@ -1,12 +1,12 @@
-# Current BIS release package snapshot (2026-10-05)
+# Current BIS release package snapshot (2026-10-06)
 
-Current artifact: bis-integration-0.0.11.tgz. SHA-256: 3bdf8c1336f3ca7405948feeb58b1ae7d9a6188060d3e9ed174ca518a935208a. Source commit: e79c42d26ed801a586f878d167995b5da324aad2. The 126-file inventory is recorded in [bis-package-inventory.json](bis-package-inventory.json). Package metadata, public dist/src contents, archive hash, the BIS release check, its 665-test suite, production build, and game verification are completed for this snapshot. The package was exported from a dirty BIS worktree as recorded in its accompanying handoff manifest; the tarball hash above is the immutable game input.
+Current artifact: bis-integration-0.0.11.tgz. SHA-256: 089e20fb20013e0af84ec117ac5e6b06540350f745c1bc2426a90c0ddd2b41fb. Source commit: 24c732a3b05992e5aef97525cb6109a0305304f3. The 126-file inventory is recorded in [bis-package-inventory.json](bis-package-inventory.json). The archive was packed locally from the explicit `@bis/integration` workspace. Archive verification, the BIS contract typecheck, focused account/host tests, and the production build passed; this is the immutable game input.
 
 ### Game-consumable public API changes
 
-- The public `BisGameServices` host-game API and package `./style.css` export remain available; its internal implementation moved to BIS's integration layer without changing the game import path.
-- `BisGameServices.isBisVisible()`, `showLoading()`, and `hideLoading()` are now available for host UI coordination. They manage or inspect the BIS overlay only and do not initiate wallet operations.
-- Existing read-only capability checks—`hasItemSupport()`, `hasAssetMintingSupport()`, and `hasContractSupport()`—remain part of the host-game API. The game remains playable without an account.
+- `BisService` replaces the prior `BisGameServices` facade. It accepts `getBisGame()`, composes context, Game Wallet, LTO, and UI, and preserves the package `./style.css` export.
+- `IBisGame` replaces `BisHostGame`. Its `BisGameSession` and confirmed-delivery inputs use `gameSession` rather than `gameSessionReference`; stale or replayed game effects remain game-owned and idempotent.
+- `BisService.isBisVisible()`, `showLoading()`, `hideLoading()`, and the read-only capability checks remain available for host UI coordination. They do not initiate wallet operations, and the game remains playable without an account.
 
 This archive is a verified local BIS export for deterministic game builds. It is not a published GitHub package or release and does not authorize wallet operations. See [play and setup instructions](../documentation/treasure-lto.md).
 

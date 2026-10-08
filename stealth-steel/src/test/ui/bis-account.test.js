@@ -8,7 +8,7 @@ class Element extends EventTarget {
   setAttribute(){} focus(){} querySelectorAll(){return [];} contains(el){return el===this||this.children.some(c=>c.contains(el));}
   remove(){if(this.parent)this.parent.children=this.parent.children.filter(c=>c!==this);}
 }
-function fixture({load,ready=Promise.resolve(),timeoutMs=100}={}) {
+function fixture({load,ready=Promise.resolve(),timeoutMs=100,getBisGame}={}) {
   const documentRef=new EventTarget();documentRef.createElement=()=>new Element();
   const host=new Element(),other=new Element();host.append(other);let closes=0,restarts=0,creates=0,mounts=0,disposals=0;
   let state={view:'empty',phase:'active'};const listeners=new Set(),events=new Set();
@@ -17,7 +17,7 @@ function fixture({load,ready=Promise.resolve(),timeoutMs=100}={}) {
   const context={getState:()=>state,ready:()=>ready,subscribe:l=>{listeners.add(l);return()=>listeners.delete(l);},onEvent:l=>{events.add(l);return()=>events.delete(l);},openAccountDialog:()=>publish('account'),dispose:()=>{disposals++;}};
   const api={createBisContext:()=>{creates++;return context;},createBisUi:()=>({mount:()=>mounts++,unmount:()=>mounts--})};
   const pause=createPauseController();pause.pause('settings');
-  const adapter=createBisAccount({host,pauseController:pause,documentRef,load:load??(()=>Promise.resolve(api)),timeoutMs,onClose:()=>closes++,restartGame:()=>restarts++});
+  const adapter=createBisAccount({host,pauseController:pause,documentRef,load:load??(()=>Promise.resolve(api)),timeoutMs,onClose:()=>closes++,restartGame:()=>restarts++,getBisGame});
   const overlay=host.children[1],back=overlay.children[0].children[1];
   return {adapter,api,publish,setProfile,emit:e=>{for(const listener of events)listener(e);},back,overlay,pause,other,counts:()=>({closes,restarts,creates,mounts,disposals,listeners:listeners.size,events:events.size})};
 }
@@ -82,6 +82,20 @@ test('new wallet-backed capabilities default to false when the adapter has no BI
  assert.equal(f.adapter.hasAssetMintingSupport(), false);
  assert.equal(f.adapter.hasContractSupport(), false);
  f.adapter.dispose();
+});
+test('uses the current BisService facade with the game-owned IBisGame getter', async () => {
+ const game={getActiveGameSession:()=>undefined};let captured,mounts=0,disposals=0;
+ const context={getState:()=>({view:'empty'}),ready:()=>Promise.resolve(),subscribe:()=>()=>{},onEvent:()=>()=>{},openAccountDialog:()=>{},dispose:()=>{}};
+ class BisService {
+   constructor(options){captured=options;this.context=context;this.gameWallet={};this.lto={};}
+   ready(){return context.ready();} mount(){mounts++;} dispose(){disposals++;}
+ }
+ const f=fixture({getBisGame:()=>game,load:()=>Promise.resolve({BisService})});
+ await f.adapter.open();
+ assert.equal(captured.getBisGame(),game);
+ assert.equal(mounts,1);
+ f.adapter.dispose();
+ assert.equal(disposals,1);
 });
 test('reports treasure readiness only when player and game wallet setup are usable', async () => {
  const f = fixture();
