@@ -1,12 +1,16 @@
-# Current BIS release package snapshot (2026-10-06)
+# Current BIS release package snapshot (2026-10-08)
 
-Current artifact: bis-integration-0.0.11.tgz. SHA-256: 089e20fb20013e0af84ec117ac5e6b06540350f745c1bc2426a90c0ddd2b41fb. Source commit: 24c732a3b05992e5aef97525cb6109a0305304f3. The 126-file inventory is recorded in [bis-package-inventory.json](bis-package-inventory.json). The archive was packed locally from the explicit `@bis/integration` workspace. Archive verification, the BIS contract typecheck, focused account/host tests, and the production build passed; this is the immutable game input.
+- Package: `@bis/integration` 0.0.16.
+- Current artifact: `bis-integration-0.0.16.tgz`.
+- SHA-256: `0c5a4d551f443e78a8e52e5aa32df258e9ea6eb41f3838f51a755536217ce041`.
+- Source commit: `a2ae498ab88d73d6255b8f2db79afc853f343c97`.
+- Inventory: 126 packed files in [bis-package-inventory.json](bis-package-inventory.json).
+- Verification: archive and all 126 installed files verified; BIS contract typecheck, 16 focused tests, publishing checks, and production build passed. The full suite passed 1,095/1,096 tests; its OpenSpec adapter test failed because the installed CLI is 1.14.0 while the adapter pins 1.13.1. A muted local Chrome run started without an account; Settings → Account displayed BIS v0.0.16, with no console or failed-network errors and no wallet action initiated. Tested URL: http://127.0.0.1:5173/blockchain-stealth-and-steel-game/?muteMusic=true&muteSFX=true.
 
 ### Game-consumable public API changes
 
-- `BisService` replaces the prior `BisGameServices` facade. It accepts `getBisGame()`, composes context, Game Wallet, LTO, and UI, and preserves the package `./style.css` export.
-- `IBisGame` replaces `BisHostGame`. Its `BisGameSession` and confirmed-delivery inputs use `gameSession` rather than `gameSessionReference`; stale or replayed game effects remain game-owned and idempotent.
-- `BisService.isBisVisible()`, `showLoading()`, `hideLoading()`, and the read-only capability checks remain available for host UI coordination. They do not initiate wallet operations, and the game remains playable without an account.
+- No public API changes in the packed source compared with the prior 0.0.11 snapshot. The `BisService`, `IBisGame`, and `./style.css` exports remain available.
+- The game can continue using the existing account and host integration without a contract adaptation.
 
 This archive is a verified local BIS export for deterministic game builds. It is not a published GitHub package or release and does not authorize wallet operations. See [play and setup instructions](../documentation/treasure-lto.md).
 
