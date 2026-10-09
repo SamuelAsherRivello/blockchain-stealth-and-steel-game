@@ -26,7 +26,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     env:
       GH_TOKEN: ${{ github.token }}
-      RELEASE_WORK: ${{ runner.temp }}/stealth-steel-release
+      RELEASE_WORK: ${{ github.workspace }}/.release-work
       RETRY_TAG: ${{ inputs.retry_tag }}
     steps:
       - name: Check out authoritative main
@@ -90,7 +90,7 @@ jobs:
         env:
           RELEASE_TAG: ${{ steps.plan.outputs.tag }}
           RELEASE_ASSET: ${{ steps.bundle.outputs.asset }}
-          RELEASE_WORK: ${{ runner.temp }}/stealth-steel-release
+          RELEASE_WORK: ${{ github.workspace }}/.release-work
         run: |
           set -euo pipefail
           if gh release view "$RELEASE_TAG" --json tagName >/dev/null 2>&1; then
@@ -129,7 +129,7 @@ jobs:
       - name: Record completed Pages publication
         env:
           RELEASE_TAG: ${{ steps.plan.outputs.tag }}
-          RELEASE_WORK: ${{ runner.temp }}/stealth-steel-release
+          RELEASE_WORK: ${{ github.workspace }}/.release-work
         run: |
           set -euo pipefail
           gh release view "$RELEASE_TAG" --json body --jq '.body' > "$RELEASE_WORK/release-notes.md"
