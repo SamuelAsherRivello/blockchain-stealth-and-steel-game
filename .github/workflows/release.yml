@@ -78,7 +78,9 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add package.json package-lock.json stealth-steel/public/environment.json
-            git commit -m "chore(release): game $RELEASE_TAG"
+            if ! git diff --cached --quiet; then
+              git commit -m "chore(release): game $RELEASE_TAG"
+            fi
             git tag "$RELEASE_TAG"
             git fetch origin main --tags
             test "$(git rev-parse refs/remotes/origin/main)" = "$SOURCE_SHA"
