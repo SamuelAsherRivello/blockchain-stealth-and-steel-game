@@ -7,7 +7,10 @@
 - [Successful BIS release Pages run](https://github.com/SamuelAsherRivello/blockchain-integration-service/actions/runs/37901274392).
 - Archive: `bis-integration-0.0.18.tgz`, SHA-256 `bb9066ff8f82b9a85da0e3bd43255e21ba17a9a788b16145801630fdf8afe118`, 127 files.
 - Later BIS same-version presentation/loading updates at `89e0b4beb5228c0ac275a3eb25ab456090e631e0` also deployed successfully. The imported immutable archive remains the verified source above, not those later UI edits.
-- Game Pages commit/run: pending publication; no tag or GitHub Release required.
+- Game runtime release commit: `0d1987ca47abb4705eb6086b38a15251847600fc`; [successful push-triggered Pages run](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/runs/37907941884). No tag or GitHub Release required.
+- Final paired live check: both BIS demo routes HTTP 200/version 0.0.18; stable game route HTTP 200/game `v0.0.18`/embedded `BIS: v0.0.18`, guest Account open/Back/Settings resume, zero page/console/network errors. Catalog and immutable shoes/trophy artwork routes HTTP 200. Raw evidence: `output/playwright/paired-live-check.json`.
+- Linux CI: 1,122 tests pass, zero fail, one existing optional installed-OpenSpec test skipped because the runner does not install that CLI. That same compatibility test passes locally with the reviewed 1.14.0 CLI. CI package/typecheck/publishing/build/deployment gates all pass.
+- Published metadata records the exact CI build total: **18,493,720 bytes**. This differs from the Windows checkout build below; each completed build independently measures its own output. Live metadata matches the successful CI log, not an assumed cross-platform byte count.
 
 ## Final local gates
 

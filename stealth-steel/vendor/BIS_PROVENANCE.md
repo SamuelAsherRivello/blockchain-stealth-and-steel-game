@@ -18,6 +18,8 @@
 
 BIS releases first; the game imports this immutable package and publishes the same full version, 0.0.18, independently through Pages. No wallet actions are authorized by import verification.
 
+Game runtime release `0d1987ca47abb4705eb6086b38a15251847600fc` deployed through the successful [push Pages run](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/runs/37907941884). Fresh live guest checks confirm game v0.0.18 and embedded BIS v0.0.18 with no browser/network errors. Published build metadata is 18,493,720 bytes (Linux CI); local Windows output is independently measured at 18,504,951 bytes. See [paired verification](../../openspec/changes/formalize-bis-game-contracts/verification.md) for coverage and explicit financial/device limits.
+
 ## Historical 0.0.16 snapshot (2026-10-08)
 
 - Package: `@bis/integration` 0.0.16.
