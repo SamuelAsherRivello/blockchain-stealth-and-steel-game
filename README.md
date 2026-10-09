@@ -82,17 +82,15 @@ links, screenshot, relative-path, and release-metadata checks.
 ### 🛠 Release Version
 
 <!-- AI: Describe the checked-in release workflow accurately. Distinguish builds, tags, releases, and deployment; documentation edits do not authorize publishing or changing Git history. -->
-1. Commit and push the intended game changes to `main` in
-   [`SamuelAsherRivello/blockchain-stealth-and-steel-game`](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game).
-2. Manually run [Release game](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/release.yml)
-   on `main`. It increments the patch version in `package.json` and the lockfile,
-   runs the publishing checks, full tests, BIS typecheck, and build, then pushes
-   a matching tag and publishes an immutable browser ZIP and versioned Pages build.
-3. Wait for the workflow to succeed and verify its tag, GitHub Release asset,
-   [live game](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/),
-   and `latest` link. Ordinary `main` pushes do not replace the live release.
-   If publication failed after the tag was pushed, rerun the same workflow on
-   `main` with its `retry_tag` input set to that incomplete tag.
+1. Release BIS first and verify its Admin and Marketplace Pages deployment.
+2. Import that exact verified BIS archive, and set the game to the same complete
+   version in `package.json`, the lockfile and release metadata. Run the package
+   verifier, real BIS contract checker, full tests, publishing checks and build.
+3. Commit and push the intended game changes to `main`. The independent
+   [Deploy game Pages](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/deploy-pages.yml)
+   workflow publishes the single stable game route listed under Live Demo.
+   Verify the exact commit's successful deployment and both online version
+   identities. No tag, GitHub Release or manual dispatch is required.
 
 <!-- AI: Keep this release section brief and consistent with the checked-in workflow. -->
 

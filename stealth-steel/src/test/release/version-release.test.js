@@ -53,7 +53,7 @@ test('version update keeps npm manifest and lockfile root aligned', () => {
   assert.equal(manifest.version, '0.1.15');
 });
 
-test('Vite uses the repository base normally and the immutable version base for release builds', () => {
+test('Vite always uses the stable repository base, ignoring obsolete tag routing', () => {
   const root = fileURLToPath(new URL('../../../../', import.meta.url));
   const inspect = tag => {
     const env = { ...process.env };
@@ -68,8 +68,8 @@ test('Vite uses the repository base normally and the immutable version base for 
   assert.equal(local.stdout, '/blockchain-stealth-and-steel-game/');
   const release = inspect('v0.1.16');
   assert.equal(release.status, 0, release.stderr);
-  assert.equal(release.stdout, '/blockchain-stealth-and-steel-game/releases/v0.1.16/');
+  assert.equal(release.stdout, '/blockchain-stealth-and-steel-game/');
   const invalid = inspect('v0.1.16-beta');
-  assert.notEqual(invalid.status, 0);
-  assert.match(invalid.stderr, /Invalid release tag/);
+  assert.equal(invalid.status, 0, invalid.stderr);
+  assert.equal(invalid.stdout, '/blockchain-stealth-and-steel-game/');
 });

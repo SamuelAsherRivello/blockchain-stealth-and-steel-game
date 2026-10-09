@@ -16,6 +16,9 @@ for (const [path, expected] of Object.entries(inventory.files)) {
   assert.equal(await hash(new URL(path, installed)), expected, `Installed package differs: ${path}`);
 }
 const pkg = await json(new URL('package.json', installed));
+assert.equal(pkg.name, '@bis/integration');
+assert.equal(inventory.artifact, `bis-integration-${pkg.version}.tgz`);
+assert.ok(inventory.files[pkg.exports['.'].types.replace(/^\.\//, '')], 'Missing actual public types export');
 for (const entry of ['.', './style.css']) {
   for (const condition of ['development', 'default']) {
     const path = pkg.exports[entry][condition].replace(/^\.\//, '');

@@ -126,6 +126,7 @@ import { createSettingsUi } from "./ui/settings-ui.js";
 import { createRunPresentation } from "./ui/run-presentation.js";
 import { createFullscreenTransition } from "./ui/fullscreen-transition.js";
 import { createEquipmentSnapshot, EMPTY_EQUIPMENT_SNAPSHOT } from "./gameplay/equipment-effects.js";
+import { createBisGameRewardFeedback } from "./integration/bis-game-reward-feedback.js";
 import { createLevelCompleteUi, createLevelLostUi } from "./ui/level-complete-ui.js";
 import {createTreasureRuntime} from './integration/treasure-runtime.js';
 import {createTreasureUi} from './ui/treasure-ui.js';
@@ -305,15 +306,15 @@ export async function start(options = {}) {
 }
 
 async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
-  let disposed = false;
+  let disposed = false, bisSessionActive=true;
   const progress = createLevelProgress(
     __GAME_LEVELS__,
     {getItem:key=>window.sessionStorage.getItem(key),setItem:(key,value)=>window.sessionStorage.setItem(key,value)},
-    () => window.location.reload(),
+    () => { bisSessionActive=false;window.location.reload(); },
     () => runtimeSettingsStore.get(MAP_ORDER_SETTING_KEY),
     { initialRun,
-      onAdvance: run => { if (!disposed) restartWithFullscreenTransition(run, pauseController); },
-      onRestart: run => { if (!disposed) restartWithFullscreenTransition(run, pauseController); } },
+      onAdvance: run => { if (!disposed) {bisSessionActive=false;restartWithFullscreenTransition(run, pauseController);} },
+      onRestart: run => { if (!disposed) {bisSessionActive=false;restartWithFullscreenTransition(run, pauseController);} } },
   );
   if (!navigator.gpu) {
     throw new Error("This Babylon Lite demo requires a browser with WebGPU enabled.");
@@ -949,8 +950,8 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   });
   let equipmentSnapshot = EMPTY_EQUIPMENT_SNAPSHOT;
   let unsubscribeEquipment = () => {};
-  const equipmentControllerPromise = accountHost.createEquipment();
-  const initialEquipmentState = equipmentControllerPromise.then(controller => controller.refresh());
+  const bisPromise = accountHost.ready();
+  const initialEquipmentState = bisPromise.then(bis => bis?.refreshEquipment());
   equipmentSnapshot = createEquipmentSnapshot(await Promise.race([
     initialEquipmentState.catch(() => ({ status: "unavailable" })),
     new Promise(resolve => setTimeout(() => resolve({ status: "unavailable" }), 1500)),
@@ -1160,7 +1161,8 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   settingsUi = createSettingsUi({
     host: gameUi, modalHost: domBody, screenLayer: domScreen, frameElement: gameFrame, pauseController,
     catalog: __GAME_LEVELS__, openAccount: () => accountHost.open(),
-    getBisServices: () => accountHost.getBisServices?.(),
+    getBis: () => accountHost.getBis(),
+    onBisReset: () => { bisSessionActive=false; },
     showMapLevelSelectorInSettings,
     isStartMenuVisible: () => startGamePrompt !== null,
   });
@@ -1174,7 +1176,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     equipmentSnapshot = createEquipmentSnapshot(state);
     itemsHud?.render(equipmentSnapshot);
     // Equipment refreshes can briefly omit its profile while account assets settle.
-    // The BIS context is the authoritative login state for opening Items.
+    // The public capability is authoritative, independent of a Game Wallet.
     itemsEnabled = accountHost.hasItemSupport();
     startGamePrompt?.setItemsSupported(itemsEnabled);
     startGamePrompt?.setItemsEnabled(itemsEnabled);
@@ -1186,15 +1188,15 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
       screenLayer: domScreen,
       frameElement: gameFrame,
       opener: startGamePrompt?.itemsButton,
-      equipmentProvider: () => equipmentControllerPromise,
+      equipmentProvider: () => bisPromise,
       onState: applyEquipmentState,
       onClose: () => { itemsWindow = null; startGamePrompt?.itemsButton?.focus(); },
     });
   };
-  void equipmentControllerPromise.then(controller => {
+  void bisPromise.then(bis => {
     if (disposed) return;
-    unsubscribeEquipment = controller.subscribe(applyEquipmentState);
-    applyEquipmentState(controller.getState());
+    unsubscribeEquipment = accountHost.subscribe(snapshot=>applyEquipmentState(snapshot.equipment));
+    if(bis)applyEquipmentState(bis.getSnapshot().equipment);
   }).catch(() => {});
   void initialEquipmentState.then(applyEquipmentState).catch(() => {});
   const goal = createGoal({ host: world.mode === "follow-player" ? gameFrame : gameUi, position: { x: (level.goals[0].gameCell.x + 0.5) * TILE_SIZE, y: (level.goals[0].gameCell.y + 0.5) * TILE_SIZE }, screenWidth: SCREEN_WIDTH, screenHeight: SCREEN_HEIGHT });
@@ -1217,7 +1219,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
         const sprite=addSprite2D(layer,{positionPx:[position.x,SCREEN_HEIGHT-position.y],sizePx:[64,64],frame:0,alpha:0,scaleX:0,scaleY:0});
         addSpriteRendererLayer(renderer,camera.attachLayer(layer));treasureLayers.push(layer);
         treasureReveals.push(createTreasureReveal({sprite,api:{updateSprite2D}}));
-        return createTreasureChest({position,sensor:authored.sensor,canEnter:()=>accountHost.isTreasureReady(),onEnter:()=>void treasureUi.open()});
+        return createTreasureChest({position,sensor:authored.sensor,canEnter:()=>accountHost.hasContractSupport(),onEnter:()=>void treasureUi.open()});
       }});spawner.initialize();treasureSpawners.push(spawner);
     }
   };
@@ -1247,7 +1249,8 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
       state: gameStateMachine.state,
     }),
   });
-  const showTrophyActions = () => accountHost.hasAssetMintingSupport();
+  // The individual reward state owns collection availability, not contract/Game-Wallet readiness.
+  const showTrophyActions = () => true;
   const levelCompleteUi = createLevelCompleteUi({host:domBody,frameElement:gameFrame,showTrophyActions,onContinue:()=>levelReward.next(),onRestart:()=>levelReward.restart(),onCollect:()=>levelReward.collect(),onCheck:()=>levelReward.check(),onAcknowledge:()=>levelReward.acknowledge()});
   const levelReward = createLevelReward({accountHost,ui:levelCompleteUi,progress,gold:goldCounter,showTrophyActions});
   const gameStateMachine = createGameStateMachine();
@@ -1255,13 +1258,16 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   const paidContinue = createPayToContinue({accountHost,ui:levelLostUi,restart:()=>progress.restart(),
   });
   const bisGameSessionId = crypto.randomUUID();
+  const rewardFeedback=createBisGameRewardFeedback({host:gameUi});
   bisGame = createBisGame({
     gameId: 'stealth-and-steel',
-    getActiveGameSessionId: () => [GameState.LEVEL_PLAYING, GameState.LEVEL_LOST, GameState.LEVEL_COMPLETE].includes(gameStateMachine.state) ? bisGameSessionId : undefined,
+    isActive: () => !disposed,
+    onBisEvent: event => accountHost.onBisEvent(event),
+    getActiveGameSessionId: () => !disposed && bisSessionActive && [GameState.LEVEL_PLAYING, GameState.LEVEL_LOST, GameState.LEVEL_COMPLETE].includes(gameStateMachine.state) ? bisGameSessionId : undefined,
     canCaptureContinuation: () => gameStateMachine.state === GameState.LEVEL_LOST,
     applyContinuation: () => revivePaidPlayer({machine:gameStateMachine,player:getRecordsByType(SpawnerType.PLAYER)[0],spawners,
       enemyType:SpawnerType.ENEMY,tileSize:TILE_SIZE,spawnPlayer,resume:()=>pauseController.resume('player-loss')}),
-    presentPlayerReward: () => gameStateMachine.state === GameState.LEVEL_COMPLETE,
+    presentPlayerReward: reward => rewardFeedback.present(reward),
   });
   startGamePrompt = shouldShowStartGamePrompt({ showStartPrompt: showStartPrompt && !initialRun })
     ? createStartGamePrompt({
@@ -1847,6 +1853,8 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     dispose() {
       if (disposed) return;
       disposed = true;
+      bisSessionActive=false;
+      rewardFeedback.dispose();
       setGameplayMusicActive(false);
       cancelAnimationFrame(animationFrameId);
     runPresentation.dispose();

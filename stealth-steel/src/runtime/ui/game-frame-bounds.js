@@ -1,3 +1,4 @@
+/** @param {{overlay?: HTMLElement, frameElement?: HTMLElement | null, windowRef?: Window, ResizeObserverRef?: typeof ResizeObserver}} [options] */
 export function bindToGameFrame({
   overlay,
   frameElement,

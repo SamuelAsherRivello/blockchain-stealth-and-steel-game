@@ -1,5 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {pagesReleaseVersion,pagesMetadataPlugin} from '../../../tools/release/pages-metadata.mjs';
+import {totalBytes} from '../../../tools/release/release-core.mjs';
 import {
   formatDownloadSize,
   loadEditorConfig,
@@ -66,4 +71,23 @@ test("release metadata failures fall back without blocking startup", async () =>
       downloadSize: "",
     });
   }
+});
+
+test('Pages release label requires valid package version and exact imported BIS version',()=>{
+  const manifest={version:'0.0.18',dependencies:{'@bis/integration':'file:stealth-steel/vendor/bis-integration-0.0.18.tgz'}};
+  assert.equal(pagesReleaseVersion(manifest),'v0.0.18');
+  for(const version of ['0.0','v0.0.18','0.0.18-beta',null,'01.0.18'])assert.throws(()=>pagesReleaseVersion({...manifest,version}),/Invalid/);
+  assert.throws(()=>pagesReleaseVersion({...manifest,version:'0.1.18'}),/must match completely/);
+});
+
+test('actual Pages build hook writes final fixed-width exact uncompressed size without a tag',async()=>{
+  const directory=await mkdtemp(join(tmpdir(),'bis-game-pages-metadata-'));
+  try{
+    const manifestPath=join(directory,'package.json');
+    await writeFile(manifestPath,JSON.stringify({version:'0.0.18',dependencies:{'@bis/integration':'file:stealth-steel/vendor/bis-integration-0.0.18.tgz'}}));
+    await writeFile(join(directory,'index.html'),'<html>game</html>');
+    const plugin=pagesMetadataPlugin({manifestPath,distPath:directory});await plugin.closeBundle();
+    const metadata=JSON.parse(await readFile(join(directory,'environment.json'),'utf8'));
+    assert.equal(metadata.releaseVersion,'v0.0.18');assert.match(metadata.downloadSize,/^\d{12}$/);assert.equal(Number(metadata.downloadSize),await totalBytes(directory));
+  }finally{await rm(directory,{recursive:true,force:true});}
 });

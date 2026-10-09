@@ -85,7 +85,8 @@ export function createItemsUi({ host, screenLayer, frameElement = null, opener, 
       button.append(art, details, stats);
       button.addEventListener("click", async () => {
         try {
-          const next = selected ? await equipment.clear(item.family) : await equipment.select(item.assetId);
+          const next = selected ? await equipment.clearEquipment(item.family) : await equipment.selectEquipment(item.assetId);
+          if(disposed)return;
           if (!selected) play("activate");
           onState(next);
           render(next);
@@ -100,7 +101,9 @@ export function createItemsUi({ host, screenLayer, frameElement = null, opener, 
   void (async () => {
     try {
       equipment = await equipmentProvider();
-      const state = await equipment.refresh();
+      if(disposed)return;
+      const state = await equipment.refreshEquipment();
+      if(disposed)return;
       onState(state);
       render(state);
     } catch {

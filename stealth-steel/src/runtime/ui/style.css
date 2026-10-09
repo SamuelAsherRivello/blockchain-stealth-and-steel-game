@@ -836,3 +836,17 @@ body {
 .fullscreen-transition[hidden] {
   display: none;
 }
+/* Confirmed BIS delivery, presented by the game without opening a financial UI. */
+.bis-game-confirmed-reward {
+  position: absolute;
+  left: 16px;
+  bottom: 48px;
+  max-width: 360px;
+  padding: 8px 12px;
+  color: #fff;
+  background: #16352f;
+  border: 2px solid #dfb965;
+  border-radius: 6px;
+  z-index: 30;
+  pointer-events: none;
+}

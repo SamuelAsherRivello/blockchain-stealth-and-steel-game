@@ -48,9 +48,9 @@ test("Items renders a non-scrolling square nine-card grid with the required inst
   let state = { status: "ready", profileId: "player", ownedItems, effective: { Shoes: ownedItems[0] } };
   const changes = [];
   const equipment = {
-    async refresh() { return state; },
-    async select(assetId) { const selected = ownedItems.find(candidate => candidate.assetId === assetId); state = { ...state, effective: { ...state.effective, [selected.family]: selected } }; return state; },
-    async clear(family) { const effective = { ...state.effective }; delete effective[family]; state = { ...state, effective }; return state; },
+    async refreshEquipment() { return state; },
+    async selectEquipment(assetId) { const selected = ownedItems.find(candidate => candidate.assetId === assetId); state = { ...state, effective: { ...state.effective, [selected.family]: selected } }; return state; },
+    async clearEquipment(family) { const effective = { ...state.effective }; delete effective[family]; state = { ...state, effective }; return state; },
   };
   const documentRef = { createElement: () => new Element() };
   const ui = createItemsUi({ host: new Element(), opener: new Element(), equipmentProvider: async () => equipment,
@@ -90,7 +90,7 @@ test("Items gives a two-item inventory two large portrait cards instead of reser
     item("shield-3", "Shield", "Shield III", 3200, 30),
   ];
   const state = { status: "ready", profileId: "player", ownedItems, effective: {} };
-  const equipment = { refresh: async () => state };
+  const equipment = { refreshEquipment: async () => state };
   const documentRef = { createElement: () => new Element() };
   const ui = createItemsUi({ host: new Element(), opener: new Element(), equipmentProvider: async () => equipment,
     documentRef });
@@ -112,9 +112,9 @@ test("Items plays the activation sound for every successful selection but remain
   let state = { status: "ready", profileId: "player", ownedItems, effective: {} };
   const plays = [];
   const equipment = {
-    async refresh() { return state; },
-    async select(assetId) { state = { ...state, effective: { Dagger: ownedItems.find(item => item.assetId === assetId) } }; return state; },
-    async clear() { state = { ...state, effective: {} }; return state; },
+    async refreshEquipment() { return state; },
+    async selectEquipment(assetId) { state = { ...state, effective: { Dagger: ownedItems.find(item => item.assetId === assetId) } }; return state; },
+    async clearEquipment() { state = { ...state, effective: {} }; return state; },
   };
   const documentRef = { createElement: () => new Element() };
   const ui = createItemsUi({ host: new Element(), opener: new Element(), equipmentProvider: async () => equipment,

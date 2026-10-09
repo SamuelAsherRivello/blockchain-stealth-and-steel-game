@@ -15,7 +15,7 @@ const runOpenSpecContext = () => spawnSync(process.execPath, [join(root, "opensp
 });
 const openSpecContextResult = runOpenSpecContext();
 const openSpecMissing = openSpecContextResult.status !== 0
-  && /Install OpenSpec 1\.13\.1/.test(openSpecContextResult.stderr || openSpecContextResult.stdout);
+  && /Install OpenSpec 1\.14\.0/.test(openSpecContextResult.stderr || openSpecContextResult.stdout);
 const walk = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
   const file = join(directory, entry.name);
   return entry.isDirectory() ? walk(file) : [file];
@@ -49,7 +49,7 @@ test("root commands target the contained application and preserve Pages output",
 });
 
 test("the repository OpenSpec adapter supports the pinned latest CLI in openspec", {
-  skip: openSpecMissing ? "OpenSpec 1.13.1 is not installed in this environment." : false,
+  skip: openSpecMissing ? "OpenSpec 1.14.0 is not installed in this environment." : false,
 }, () => {
   assert.equal(openSpecContextResult.status, 0, openSpecContextResult.stderr || openSpecContextResult.stdout);
   const context = JSON.parse(openSpecContextResult.stdout);

@@ -1,4 +1,24 @@
-# Current BIS release package snapshot (2026-10-08)
+# Current BIS release package snapshot (2026-10-09)
+
+- Package: `@bis/integration` 0.0.18.
+- Current artifact: `bis-integration-0.0.18.tgz`.
+- SHA-256: `bb9066ff8f82b9a85da0e3bd43255e21ba17a9a788b16145801630fdf8afe118`.
+- Source commit: `64b090f869656057823d023b5e31e202c28930b3`.
+- Successful BIS Pages run: https://github.com/SamuelAsherRivello/blockchain-integration-service/actions/runs/37901274392
+- Inventory: 127 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM.
+- Verification: exact isolated released build packed; archive and all 127 installed files verified after lockfile installation. Provider full suite/builds/routes/browser acceptance and isolated public-type consumer pass. Game migration passes all 1,123 automated tests, actual-package typechecking, publishing checks and production build. Fresh muted development/production Edge contexts verify guest play, Account, focus/fullscreen/native narrow layout, movement/pause, safe reset, unavailable capabilities and load failure/timeout recovery. Existing development-only gameplay QA verifies guest continuation/trophy states and replacement runtime; it does not simulate financial success. Online game publication is recorded separately after its deployment succeeds.
+- Remote recheck: BIS `main` also contains later same-version presentation/loading changes at `89e0b4beb5228c0ac275a3eb25ab456090e631e0`, with successful [Pages run](https://github.com/SamuelAsherRivello/blockchain-integration-service/actions/runs/37905524560). This immutable game archive is deliberately the fully verified 0.0.18 release snapshot at `64b090f`, not a claim that those subsequent UI edits are packed here. Both versions remain 0.0.18.
+- Toolchain: React/React DOM and their types 19.3.0; TypeScript 7.0.2 matches the verified provider compiler. No forced peer overrides, source-folder dependencies or source symlinks.
+
+### Game-consumable public API changes
+
+- `BisService implements IBis`; context, wallets, UI and controllers are private. Named continuation, reward, equipment, contract, reset and lifecycle commands replace raw composition.
+- `IBisGame` requires `onBisEvent`. Notifications carry safe snapshots and operation references. Confirmed asset/sats effects are bound to their originating gameplay run and return independent application receipts.
+- `BisSnapshot`, `BisCapabilities`, `BisGame…State/Request`, `BisContract…`, and `BisResetResult` are the shared vocabulary. Reset reports completion/failure and never promises remote cancellation.
+
+BIS releases first; the game imports this immutable package and publishes the same full version, 0.0.18, independently through Pages. No wallet actions are authorized by import verification.
+
+## Historical 0.0.16 snapshot (2026-10-08)
 
 - Package: `@bis/integration` 0.0.16.
 - Current artifact: `bis-integration-0.0.16.tgz`.

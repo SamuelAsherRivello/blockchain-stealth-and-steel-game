@@ -1,3 +1,4 @@
+import {mutedGameUrl,browserOptions} from './bis-smoke-options.mjs';
 import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const captureDirectory = new URL('../../../../output/playwright/', import.meta.url);
@@ -5,10 +6,10 @@ mkdirSync(captureDirectory, { recursive: true });
 const capturePath = name => fileURLToPath(new URL(name, captureDirectory));
 // Fresh browser profiles only; this script never creates a live account or handles recovery words.
 const {chromium} = await import(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
-const browser=await chromium.launch({headless:true,executablePath:process.env.SMOKE_CHROMIUM_EXECUTABLE,args:process.platform === 'linux' ? ['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--enable-unsafe-webgpu','--enable-features=Vulkan','--use-vulkan=swiftshader','--disable-vulkan-surface'] : ['--enable-unsafe-webgpu']});
+const browser=await chromium.launch(browserOptions);
 const page=await browser.newPage({viewport:{width:1000,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
 try {
- await page.goto(process.argv[2]??'http://127.0.0.1:5175/');
+ await page.goto(mutedGameUrl(process.argv[2]??'http://127.0.0.1:5175/'));
  await page.getByRole('button',{name:'Open settings',exact:true}).waitFor({timeout:60000});
  await page.getByRole('button',{name:'Start',exact:true}).click();
  await page.getByRole('button',{name:'Open settings',exact:true}).click();
@@ -27,6 +28,8 @@ try {
  await page.getByText('FullScreen',{exact:true}).locator('..').locator('input').check();
  if (!await page.evaluate(()=>!!document.fullscreenElement)) throw Error('Fullscreen did not activate');
  await page.getByRole('button',{name:'⚡ Account',exact:true}).click();
+ await page.getByRole('button',{name:'Network',exact:true}).click();
+ await page.getByRole('menuitemradio',{name:'Signet',exact:true}).click();
  await page.getByRole('button',{name:'⚡ Restore Account',exact:true}).click();
  await page.getByRole('button',{name:'Back',exact:true}).click();
  await page.getByRole('button',{name:'⚡ Create Account',exact:true}).waitFor();
@@ -36,7 +39,7 @@ try {
  await page.screenshot({path:capturePath("bis-game-account-narrow.png")});
  await page.setViewportSize({width:360,height:400});
  await page.getByRole('button',{name:'Back',exact:true}).click();
- await page.getByRole('button',{name:'Close settings',exact:true}).last().click();
+ await page.getByRole('button',{name:'Close settings',exact:true}).first().click();
  console.log('closed Settings; page errors:',JSON.stringify(errors));
  if(errors.length)process.exitCode=1;
 } catch(e){console.log('FAIL:',e.message);console.log('page errors:',JSON.stringify(errors));await page.screenshot({path:capturePath("bis-game-failure.png")});process.exitCode=1;}

@@ -16,7 +16,8 @@ export function createTreasureUi({host,screenLayer,frameElement=null,pauseContro
     countdown.style.display=countdown.textContent?'':'none';
   };
   const unsubscribe=session.subscribe(render);
-  const timer=setInterval(()=>{render();if(window)void session.inspect();},500);
+  // Countdown is presentation only; BIS events drive financial progress even closed.
+  const timer=setInterval(render,500);
   async function act(kind){
     if(busy)return;const origin=window;busy=true;render();
     let result;

@@ -25,6 +25,8 @@ export function createFeatureUi({ host, controller }) {
 
 The controller owns business state; the UI owns DOM nodes, focus, and event listeners. A dismissed UI must not cancel a submitted operation. Error copy must be safe and actionable.
 
+Here “controller” means a game-owned view model, never a BIS workflow handle. BIS views use public `IBis` commands and copied workflow state delivered through the game's private `IBisGame.onBisEvent` dispatcher. Do not infer Account/wallet state from BIS DOM/CSS or create a context subscription. A timer may render a countdown, not drive financial recovery. Respect pending/acknowledgement navigation guards, and inspect safe reset failure before reporting completion. See the [actual gateway/workflows](../deep-dive.md).
+
 ## Verification
 
 Use the project’s lightweight DOM fixture pattern and run its matching `node --test` file.

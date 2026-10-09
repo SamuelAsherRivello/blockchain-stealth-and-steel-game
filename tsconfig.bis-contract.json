@@ -7,8 +7,20 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": { "@bis/integration": ["stealth-steel/src/runtime/integration/bis-contract.d.ts"] }
+    "strict": true,
+    "noImplicitAny": false,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"]
   },
-  "files": ["stealth-steel/src/runtime/integration/bis-host-game.js"]
+  "files": [
+    "stealth-steel/src/runtime/integration/bis-host-game.js",
+    "stealth-steel/src/runtime/integration/bis-account.js",
+    "stealth-steel/src/runtime/integration/pay-to-continue.js",
+    "stealth-steel/src/runtime/integration/level-reward.js",
+    "stealth-steel/src/runtime/integration/treasure-runtime.js",
+    "stealth-steel/src/runtime/integration/bis-game-reward-feedback.js",
+    "stealth-steel/src/test/integration/fixtures/bis-contract-types.ts"
+  ]
 }

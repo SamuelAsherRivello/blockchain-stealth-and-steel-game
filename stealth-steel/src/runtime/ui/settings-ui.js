@@ -58,7 +58,8 @@ export function createSettingsUi({
   frameElement = null,
   pauseController,
   openAccount,
-  getBisServices = () => undefined,
+  getBis = () => undefined,
+  onBisReset = () => {},
   catalog = [],
   showMapLevelSelectorInSettings = true,
   store = runtimeSettingsStore,
@@ -152,14 +153,25 @@ export function createSettingsUi({
     renderMapOrder();
     developerContent.append(debugHeading, ...debugControls.map(control => control.row));
     if (showMapLevelSelectorInSettings && catalog.length) developerContent.append(mapHeading, mapButtons);
+    const resetStatus=documentRef.createElement('p');resetStatus.setAttribute('role','status');
+    developerContent.append(resetStatus);
     resetButton.addEventListener("click", async () => {
+      if(resetButton.disabled)return;
+      resetButton.disabled=true;resetStatus.textContent='Clearing local settings…';
+      try {
+      onBisReset();
       store.reset();
       renderMapOrder();
       musicSlider.value = String(store.get(RUNTIME_AUDIO_SETTING_KEYS.music));
       sfxSlider.value = String(store.get(RUNTIME_AUDIO_SETTING_KEYS.sfx));
       for (const control of debugControls) control.checkbox.checked = store.get(control.key);
-      const bisServices = getBisServices();
-      if (bisServices) await bisServices.resetForGame();
+        const bis=getBis();
+        const result=bis?await bis.resetForGame():undefined;
+        resetStatus.textContent=result?.status==='failed'
+          ? 'Game settings cleared, but BIS cleanup failed. Try Clear Local Storage again.'
+          : 'Local settings cleared. Remote transactions are not cancelled.';
+      } catch {resetStatus.textContent='Local cleanup failed. Try Clear Local Storage again.';}
+      finally {resetButton.disabled=false;}
     });
 
     const openDeveloperSettings = () => {
