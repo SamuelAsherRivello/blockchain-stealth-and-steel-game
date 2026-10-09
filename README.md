@@ -82,17 +82,19 @@ links, screenshot, relative-path, and release-metadata checks.
 ### 🛠 Release Version
 
 <!-- AI: Describe the checked-in release workflow accurately. Distinguish builds, tags, releases, and deployment; documentation edits do not authorize publishing or changing Git history. -->
-1. Run `npm ci`, `npm test`, `npm run test:publish`, and `npm run build`.
-   Both the full test suite and focused publishing checks must pass before deployment.
-2. Commit and push to `main` in
-   [`SamuelAsherRivello/stealth-and-steel-game`](https://github.com/SamuelAsherRivello/stealth-and-steel-game).
-   The `Deploy live demo` workflow runs all tests, validates publishing contracts,
-   builds `dist`, and deploys it using GitHub Actions. No release tag is needed to publish.
-3. Wait for the [deployment workflow](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/deploy-pages.yml)
-   to succeed, then verify the [live game](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/).
+1. Commit and push the intended game changes to `main` in
+   [`SamuelAsherRivello/blockchain-stealth-and-steel-game`](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game).
+2. Manually run [Release game](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/release.yml)
+   on `main`. It increments the patch version in `package.json` and the lockfile,
+   runs the publishing checks, full tests, BIS typecheck, and build, then pushes
+   a matching tag and publishes an immutable browser ZIP and versioned Pages build.
+3. Wait for the workflow to succeed and verify its tag, GitHub Release asset,
+   [live game](https://samuelasherrivello.github.io/blockchain-stealth-and-steel-game/),
+   and `latest` link. Ordinary `main` pushes do not replace the live release.
+   If publication failed after the tag was pushed, rerun the same workflow on
+   `main` with its `retry_tag` input set to that incomplete tag.
 
-<!-- AI: Keep this release section brief; do not add detailed versioning, Pages,
-rename, or recovery guidance here. -->
+<!-- AI: Keep this release section brief and consistent with the checked-in workflow. -->
 
 ## Project Overview
 

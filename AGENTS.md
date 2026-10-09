@@ -4,6 +4,15 @@
 
 - Prefer hardcoded UI values for sizing and spacing. Use CSS `calc()` only when the user explicitly requests it.
 
+## Lockstep release versions
+
+- The game and `@bis/integration` are released separately, but their complete
+  version numbers must match for a coordinated game release. For example, game
+  `v0.0.16` uses BIS `0.0.16`. Do not match only the patch number.
+- Verify the vendored BIS version and the game's checked-in version, release
+  tag, and Pages metadata before saying that the versions match online. A BIS
+  import or ordinary Pages deployment does not itself create a game release.
+
 ## Audio for spawned game windows
 
 - The normal game URL intentionally defaults to the player's stored Music and
