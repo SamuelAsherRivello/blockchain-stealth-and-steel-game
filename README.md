@@ -239,6 +239,7 @@ Start with the [Stealth and Steel Deep Dive](stealth-steel/documentation/deep-di
 - [Babylon.js Documentation](https://doc.babylonjs.com/) - Engine guides and reference.
 - [Babylon.js Playground](https://playground.babylonjs.com/) - Browser-based experiments and examples.
 - [Babylon.js Inspector](https://doc.babylonjs.com/toolsAndResources/inspector) - Runtime inspection tools.
+- [Blockchain Presentations](https://github.com/SamuelAsherRivello/blockchain-presentations) - Slidev decks about BIS, Bitcoin, and games.
 - [Vite Documentation](https://vite.dev/guide/) - Development and build tooling.
 
 ## Credits
