@@ -950,8 +950,8 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   });
   let equipmentSnapshot = EMPTY_EQUIPMENT_SNAPSHOT;
   let unsubscribeEquipment = () => {};
-  const bisPromise = accountHost.ready();
-  const initialEquipmentState = bisPromise.then(bis => bis?.refreshEquipment());
+  const bisPromise = accountHost.readyAsync();
+  const initialEquipmentState = bisPromise.then(bis => bis?.refreshEquipmentAsync());
   equipmentSnapshot = createEquipmentSnapshot(await Promise.race([
     initialEquipmentState.catch(() => ({ status: "unavailable" })),
     new Promise(resolve => setTimeout(() => resolve({ status: "unavailable" }), 1500)),
@@ -1193,6 +1193,28 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
       onClose: () => { itemsWindow = null; startGamePrompt?.itemsButton?.focus(); },
     });
   };
+  if (import.meta.env.DEV) {
+    window.__codexPrepareItemsBisLoading = async () => {
+      const bis = await accountHost.readyAsync();
+      let release;
+      let releaseAction;
+      const qaItem = { assetId: "qa-dagger", family: "Dagger", name: "Dagger I", priceSats: 1100,
+        attributeDeltas: [{ bisAttribute: "playerDamage", bisAttributeDelta: 10 }],
+        iconUrl: `${import.meta.env.BASE_URL}assets/images/ui/items/dagger.png` };
+      bis.refreshEquipmentAsync = () => new Promise(resolve => {
+        release = () => resolve({ status: "ready", profileId: "qa", ownedItems: [qaItem], effective: {} });
+      });
+      bis.selectEquipmentAsync = () => new Promise(resolve => {
+        releaseAction = () => resolve({ status: "ready", profileId: "qa", ownedItems: [qaItem], effective: { Dagger: qaItem } });
+      });
+      itemsEnabled = true;
+      startGamePrompt?.setItemsSupported(true);
+      startGamePrompt?.setItemsEnabled(true);
+      openItems();
+      window.__codexReleaseItemsBisLoading = () => release?.();
+      window.__codexReleaseItemsBisActionLoading = () => releaseAction?.();
+    };
+  }
   void bisPromise.then(bis => {
     if (disposed) return;
     unsubscribeEquipment = accountHost.subscribe(snapshot=>applyEquipmentState(snapshot.equipment));

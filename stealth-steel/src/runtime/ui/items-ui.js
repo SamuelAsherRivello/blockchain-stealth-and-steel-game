@@ -1,12 +1,16 @@
 import { GameWindow } from "./game-window.js";
 import { playSfx } from "../audio/sfx.js";
 
-const BODY_TEXT = "Select 1 of each item type to activate it for gameplay";
-const STAT_VALUES = (item) => [
-  ["Speed", item.family === "Shoes" ? `+${item.effectPercent}%` : "0"],
-  ["Offense", item.family === "Dagger" ? `+${item.effectPercent}%` : "0"],
-  ["Defense", item.family === "Shield" ? `+${item.effectPercent}%` : "0"],
-];
+const BODY_TEXT = "Click item to toggle activation.";
+const EMPTY_BODY_TEXT = "You have no items.";
+const afterPaint = () => typeof globalThis.requestAnimationFrame === "function"
+  ? new Promise(resolve => requestAnimationFrame(resolve))
+  : Promise.resolve();
+const STAT_VALUES = (item) => {
+  const values = new Map((item.attributeDeltas ?? []).map(change => [change.bisAttribute, change.bisAttributeDelta]));
+  const value = attribute => `${values.get(attribute) > 0 ? "+" : ""}${values.get(attribute) ?? 0}%`;
+  return [["Speed", value("movementSpeed")], ["Offense", value("playerDamage")], ["Defense", value("damageTaken")]];
+};
 
 function getInventoryLayout(itemCount) {
   if (itemCount <= 1) return "1x1";
@@ -16,7 +20,8 @@ function getInventoryLayout(itemCount) {
 }
 
 export function createItemsUi({ host, screenLayer, frameElement = null, opener, equipmentProvider,
-  onClose = () => {}, onState = () => {}, play = playSfx, documentRef = globalThis.document }) {
+  onClose = () => {}, onState = () => {},
+  play = playSfx, documentRef = globalThis.document }) {
   const content = documentRef.createElement("div");
   content.className = "items-menu";
   const status = documentRef.createElement("p");
@@ -28,6 +33,7 @@ export function createItemsUi({ host, screenLayer, frameElement = null, opener, 
 
   let disposed = false;
   let equipment;
+  let actionBusy = false;
   const window = new GameWindow({
     host,
     title: "Items",
@@ -42,12 +48,15 @@ export function createItemsUi({ host, screenLayer, frameElement = null, opener, 
       onClose();
     },
   });
+  window.setVisible(false);
 
   function render(state) {
     if (disposed) return;
     grid.textContent = "";
-    status.textContent = BODY_TEXT;
     const itemCount = state?.ownedItems?.length ?? 0;
+    status.textContent = state?.status === "ready"
+      ? (itemCount === 0 ? EMPTY_BODY_TEXT : BODY_TEXT)
+      : "";
     grid.dataset.layout = getInventoryLayout(itemCount);
     if (state?.status !== "ready" || !state.profileId) return;
     for (const item of state.ownedItems) {
@@ -84,30 +93,50 @@ export function createItemsUi({ host, screenLayer, frameElement = null, opener, 
       }
       button.append(art, details, stats);
       button.addEventListener("click", async () => {
+        if (actionBusy || !equipment) return;
+        actionBusy = true;
         try {
-          const next = selected ? await equipment.clearEquipment(item.family) : await equipment.selectEquipment(item.assetId);
+          const skipOwnershipCheck = { skipOwnershipCheck: true };
+          const next = selected
+            ? await equipment.clearEquipmentAsync(item.family, skipOwnershipCheck)
+            : await equipment.selectEquipmentAsync(item.assetId, skipOwnershipCheck);
           if(disposed)return;
           if (!selected) play("activate");
           onState(next);
           render(next);
         } catch {
           render(state);
+        } finally {
+          actionBusy = false;
         }
       });
       grid.append(button);
     }
   }
 
+  render({ status: "loading" });
+
   void (async () => {
     try {
       equipment = await equipmentProvider();
       if(disposed)return;
-      const state = await equipment.refreshEquipment();
+      await afterPaint();
+      if(disposed)return;
+      equipment.showLoadingUI?.();
+      let state;
+      try {
+        state = await equipment.refreshEquipmentAsync();
+      } finally {
+        equipment.hideLoadingUI?.();
+      }
       if(disposed)return;
       onState(state);
       render(state);
+      window.setVisible(true);
     } catch {
+      if (disposed) return;
       render({ status: "unavailable" });
+      window.setVisible(true);
     }
   })();
 
