@@ -2,7 +2,7 @@
 <!-- AI: Preserve the creator banner unless a replacement is requested. Update its relative path if assets move and verify the file exists with matching filename capitalization. -->
 <p>
 <img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/samuel-asher-rivello-banner.png?v=20261010" alt="Samuel Asher Rivello" width="600" /><br /><br />
-<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/bis-marketing.png" alt="Blockchain Integration Service marketing image" width="600" />
+<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/bis-marketing.png?v=20261010-marketing" alt="Blockchain Integration Service marketing image" width="600" />
 </p>
 
 # Stealth and Steel
