@@ -1,6 +1,9 @@
 <!-- AI: Customize this README from the repository's actual files, configuration, and user instructions. Preserve the section order, heading styles, and concise format unless asked to change them. Replace placeholders only with verified information; do not invent features, commands, URLs, contributors, or deployment behavior. Use TypeScript terminology for BIS's public integration boundary and distinguish the game's JavaScript runtime. Keep these instructions hidden as HTML comments. -->
 <!-- AI: Preserve the creator banner unless a replacement is requested. Update its relative path if assets move and verify the file exists with matching filename capitalization. -->
-![Samuel Asher Rivello](stealth-steel/documentation/images/samuel-asher-rivello-banner.png)
+<p>
+<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/samuel-asher-rivello-banner.png" alt="Samuel Asher Rivello" width="600" /><br /><br />
+<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/bis-marketing.png" alt="Blockchain Integration Service marketing image" width="600" />
+</p>
 
 # Stealth and Steel
 
