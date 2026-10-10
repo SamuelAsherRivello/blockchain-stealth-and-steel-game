@@ -42,6 +42,12 @@
   display: flex;
   align-items: center;
 }
+.ui-layer .items-counter-slot {
+  width: 1.15em;
+  height: 1.15em;
+  justify-content: center;
+  background: rgb(255 245 217 / 18%);
+}
 .ui-layer .items-counter[hidden] { display: none; }
 .ui-layer .coordinates-ui {
   top: calc(var(--hud-header-offset) + (var(--hud-gold-height) + 4px) * 3);

@@ -17,7 +17,7 @@ test('reordered completion counts maps played and retains trophy identity', asyn
     ui: {setCompletion: value => snapshot = value, show() {}, setState() {}},
     progress: {current: 3, completed: 0, total: 3, hasNext: true},
     gold: {collected: 0, total: 10},
-    accountHost: {ready: async () => ({beginReward: value => { asset = value.asset; throw new Error('guest'); }})},
+    accountHost: {readyAsync: async () => ({beginReward: value => { asset = value.asset; throw new Error('guest'); }})},
   });
   flow.show();
   await Promise.resolve();
@@ -41,13 +41,13 @@ test('completion snapshot renders exact level/final bodies and action gating',()
 test('flow snapshots HUD and late initialization cannot attach to a disposed screen',async()=>{
   let resolve,begins=0,snapshot,shows=0;
   const ui={setCompletion:v=>snapshot=v,show:()=>shows++,setState:()=>{throw Error('late UI write');}};
-  const flow=createLevelReward({ui,progress:{current:2,total:2,hasNext:false},gold:{collected:42,total:99},accountHost:{ready:()=>new Promise(r=>resolve=r)}});
+  const flow=createLevelReward({ui,progress:{current:2,total:2,hasNext:false},gold:{collected:42,total:99},accountHost:{readyAsync:()=>new Promise(r=>resolve=r)}});
   flow.show();flow.show();flow.dispose();resolve({beginReward:()=>begins++});await new Promise(r=>setTimeout(r,0));
   assert.equal(shows,1);assert.equal(snapshot.collected,42);assert.equal(snapshot.total,99);assert.equal(begins,0);
 });
 test('unconfigured trophy never initializes wallet and navigation remains available',()=>{
   assert.equal(trophyForLevel(4),null);let next=0;const states=[];
-  const flow=createLevelReward({ui:{show(){},setCompletion(){},setState:s=>states.push(s)},progress:{current:4,total:5,hasNext:true,advance:()=>next++},gold:{collected:0,total:0},accountHost:{ready:()=>{throw Error('wallet called');}}});
+  const flow=createLevelReward({ui:{show(){},setCompletion(){},setState:s=>states.push(s)},progress:{current:4,total:5,hasNext:true,advance:()=>next++},gold:{collected:0,total:0},accountHost:{readyAsync:()=>{throw Error('wallet called');}}});
   flow.show();flow.next();assert.equal(next,1);assert.equal(states[0].canCollect,false);flow.dispose();
 });
 
@@ -55,8 +55,8 @@ test('all three trophy requests retain metadata and use individual reward state 
   for(const level of [1,2,3]){
     let request,state={workflowId:'reward',status:'available',canCollect:true,busy:false,needsAcknowledgment:false},nexts=0,restarts=0;const listeners=new Set(),calls=[],states=[];
     const publish=value=>{state={...state,...value};listeners.forEach(fn=>fn({rewards:[state]}));};
-    const bis={beginReward:value=>{request=value;return state;},refreshReward:async id=>calls.push(['refresh',id]),collectReward:async id=>{calls.push(['collect',id]);publish({status:'pending',busy:true});},checkReward:async id=>calls.push(['check',id]),acknowledgeReward:async id=>{calls.push(['ack',id]);publish({needsAcknowledgment:false});},endReward:id=>calls.push(['end',id])};
-    const flow=createLevelReward({accountHost:{ready:async()=>bis,hasAssetMintingSupport:()=>false,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}},
+    const bis={beginReward:value=>{request=value;return state;},refreshRewardAsync:async id=>calls.push(['refresh',id]),collectRewardAsync:async id=>{calls.push(['collect',id]);publish({status:'pending',busy:true});},checkRewardAsync:async id=>calls.push(['check',id]),acknowledgeRewardAsync:async id=>{calls.push(['ack',id]);publish({needsAcknowledgment:false});},endReward:id=>calls.push(['end',id])};
+    const flow=createLevelReward({accountHost:{readyAsync:async()=>bis,hasAssetMintingSupport:()=>false,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}},
       ui:{show(){},setCompletion(){},setState:value=>states.push(value)},progress:{current:level,total:3,advance:()=>nexts++,restart:()=>restarts++},gold:{collected:0,total:1}});
     flow.show();await Promise.resolve();await Promise.resolve();assert.deepEqual(request.asset,trophyForLevel(level));assert.equal(request.asset.amount,'1');assert.equal(states.at(-1).canCollect,true);
     await flow.collect();flow.next();flow.restart();assert.equal(nexts+restarts,0);

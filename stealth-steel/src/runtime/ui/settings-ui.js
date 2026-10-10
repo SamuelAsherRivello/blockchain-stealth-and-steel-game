@@ -166,7 +166,7 @@ export function createSettingsUi({
       sfxSlider.value = String(store.get(RUNTIME_AUDIO_SETTING_KEYS.sfx));
       for (const control of debugControls) control.checkbox.checked = store.get(control.key);
         const bis=getBis();
-        const result=bis?await bis.resetForGame():undefined;
+        const result=bis?await bis.resetForGameAsync():undefined;
         resetStatus.textContent=result?.status==='failed'
           ? 'Game settings cleared, but BIS cleanup failed. Try Clear Local Storage again.'
           : 'Local settings cleared. Remote transactions are not cancelled.';

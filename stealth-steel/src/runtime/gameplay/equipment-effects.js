@@ -5,10 +5,14 @@ export const EMPTY_EQUIPMENT_SNAPSHOT = Object.freeze({
   incomingDamageMultiplier: 1,
 });
 
-function multiplier(item, direction) {
-  const percent = Number(item?.effectPercent);
-  if (![10, 20, 30].includes(percent)) return 1;
-  return direction === "down" ? 1 - percent / 100 : 1 + percent / 100;
+function attributeDelta(item, attribute) {
+  const change = item?.attributeDeltas?.find(entry => entry?.bisAttribute === attribute);
+  const delta = Number(change?.bisAttributeDelta ?? 0);
+  return Number.isSafeInteger(delta) && delta >= -100 && delta <= 100 ? delta : 0;
+}
+
+function multiplier(item, attribute) {
+  return 1 + attributeDelta(item, attribute) / 100;
 }
 
 export function createEquipmentSnapshot(state) {
@@ -20,9 +24,9 @@ export function createEquipmentSnapshot(state) {
   });
   return Object.freeze({
     slots,
-    movementMultiplier: multiplier(slots.Shoes, "up"),
-    outgoingDamageMultiplier: multiplier(slots.Dagger, "up"),
-    incomingDamageMultiplier: multiplier(slots.Shield, "down"),
+    movementMultiplier: multiplier(slots.Shoes, "movementSpeed"),
+    outgoingDamageMultiplier: multiplier(slots.Dagger, "playerDamage"),
+    incomingDamageMultiplier: multiplier(slots.Shield, "damageTaken"),
   });
 }
 

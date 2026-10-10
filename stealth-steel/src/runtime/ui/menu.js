@@ -147,7 +147,7 @@ export function createMenu({
       : createMenuButton({ ...options, documentRef })
   ));
   const actions = documentRef.createElement("div");
-  actions.className = "menu-actions";
+  actions.className = "menu-button-container menu-actions";
   actions.append(...actionButtons);
   const footerContainer = documentRef.createElement("div");
   footerContainer.className = "footer-container";

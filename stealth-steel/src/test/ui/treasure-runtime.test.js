@@ -6,20 +6,20 @@ function setup(saved){
   const values=new Map(saved?[['stealth-steel-treasure-session-v1',JSON.stringify(saved)]]:[]),calls=[],listeners=new Set();
   const storage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};
   let snapshot={account:{playerWallet:{profileId:'player',network:'signet'},gameWallet:{profileId:'game',network:'signet'}},capabilities:{contracts:{available:true}},contracts:{status:'ready',contracts:[]}};
-  const bis={getSnapshot:()=>snapshot,startContract:async request=>{calls.push(['start',request]);return {status:'unavailable'};},checkContracts:async()=>snapshot.contracts,endContractSession:async id=>calls.push(['end',id]),claimContract:async id=>{calls.push(['claim',id]);return {status:'pending'};},rejectContract:async id=>{calls.push(['reject',id]);return {status:'pending'};}};
-  const host={getBis:()=>bis,ready:async()=>bis,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}};
+  const bis={getSnapshot:()=>snapshot,startContractAsync:async request=>{calls.push(['start',request]);return {status:'unavailable'};},checkContractsAsync:async()=>snapshot.contracts,endContractSessionAsync:async id=>calls.push(['end',id]),claimContractAsync:async id=>{calls.push(['claim',id]);return {status:'pending'};},rejectContractAsync:async id=>{calls.push(['reject',id]);return {status:'pending'};}};
+  const host={getBis:()=>bis,readyAsync:async()=>bis,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}};
   return {bis,host,storage,calls,publish(value){snapshot={...snapshot,...value};listeners.forEach(fn=>fn(snapshot));}};
 }
 test('Start before BIS readiness stays skipped rather than retroactively funding',async()=>{
   const s=setup();let current,resolve;const ready=new Promise(done=>resolve=done);
-  const runtime=createTreasureRuntime({accountHost:{...s.host,getBis:()=>current,ready:()=>ready},storage:s.storage});runtime.start();current=s.bis;resolve(current);await tick();assert.equal(s.calls.filter(call=>call[0]==='start').length,0);assert.equal(runtime.getState().status,'missing-player');runtime.dispose();await tick();
+  const runtime=createTreasureRuntime({accountHost:{...s.host,getBis:()=>current,readyAsync:()=>ready},storage:s.storage});runtime.start();current=s.bis;resolve(current);await tick();assert.equal(s.calls.filter(call=>call[0]==='start').length,0);assert.equal(runtime.getState().status,'missing-player');runtime.dispose();await tick();
 });
-test('progression preserves offer lifetime; menu entry explicitly ends it',async t=>{
+test('progression preserves offer lifetime; menu entry does not reconcile it on load',async t=>{
   const now=Date.now(),saved={id:'run',reference:'treasure:run',playerId:'player',gameId:'game',expiresAt:now+90000,status:'active',offered:true,contractId:'offer'},s=setup(saved);
   t.mock.method(Date,'now',()=>now+30000);
   const resumed=createTreasureRuntime({accountHost:s.host,storage:s.storage,resumeRun:true});resumed.start();await tick();assert.equal(resumed.getState().remainingSeconds,60);assert.equal(resumed.getState().sessionId,'run');assert.equal(s.calls.filter(call=>call[0]==='start').length,0);
   resumed.dispose({preserveSession:true});assert.equal(s.calls.filter(call=>call[0]==='end').length,0);
-  const menu=createTreasureRuntime({accountHost:s.host,storage:s.storage});await tick();assert.deepEqual(s.calls.filter(call=>call[0]==='end'),[['end','run']]);menu.dispose();
+  const menu=createTreasureRuntime({accountHost:s.host,storage:s.storage});await tick();assert.deepEqual(s.calls.filter(call=>call[0]==='end'),[]);menu.dispose();
 });
 test('repeated Starts end prior offer, retain amount/duration and use explicit offer identity',async()=>{
   const s=setup(),runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage});runtime.start();await tick();const first=runtime.getState().sessionId;runtime.start();await tick();assert.notEqual(runtime.getState().sessionId,first);assert.deepEqual(s.calls.filter(call=>call[0]==='end'),[['end',first]]);

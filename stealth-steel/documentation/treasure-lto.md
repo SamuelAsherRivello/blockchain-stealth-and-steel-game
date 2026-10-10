@@ -1,6 +1,6 @@
 # LTO treasure integration
 
-Current contract migration: BIS/game 0.0.18. The exact archive, hash, released source and history are in [provenance](../vendor/BIS_PROVENANCE.md). Read the [deep dive](deep-dive.md) for the complete two-interface boundary.
+Current contract migration: BIS/game 0.0.18. The exact archive, hash, released source and history are in [provenance](../vendor/BIS_PROVENANCE.md). Read [Deep Dive Overview](deep-dive-overview.md) for the three-part boundary and [Deep Dive Details](deep-dive-details.md) for the complete workflow reference.
 
 ## Setup and availability
 
@@ -10,11 +10,15 @@ The game consumes `IBis.hasContractSupport()` rather than reconstructing readine
 
 ## Commands and scope
 
-[`treasure-runtime.js`](../src/runtime/integration/treasure-runtime.js) calls `startContract`, `checkContracts`, `claimContract`, `rejectContract` and `endContractSession` on `IBis`. Safe `BisSnapshot.contracts` updates arrive through `IBisGame.onBisEvent` and the game-owned Account dispatcher. There is no `.lto`, `getSession()` or direct wallet/controller access.
+[`treasure-runtime.js`](../src/runtime/integration/treasure-runtime.js) calls `startContractAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync` and `endContractSessionAsync` on `IBis`. Safe `BisSnapshot.contracts` updates arrive through `IBisGame.onBisEvent` and the game-owned Account dispatcher. There is no `.lto`, `getSession()` or direct wallet/controller access.
 
 Explicit Start requests one 1,000-sat offer with a 90-second wall-clock lifetime, `purpose: 'treasureLTO'`, `exclusivityKey: 'treasure'` and a stable host reference. `BisContractRequest.offerSessionId` is financial eligibility identity, not application ID or gameplay run ID. For compatibility, query `sessionId` means offer session and query/contract `gameId` means Game wallet profile. The game matches offer, purpose, reference and both wallet identities; stored bindings include networks.
 
-Pause, hidden tabs, funding latency, paid continuation and level transitions never extend the original deadline. Supported progression preserves the offer lifetime; menu/new Start or normal disposal ends it. Old browser snapshots without a network binding are interpreted as Signet rather than rebound across networks. Submitted remote transactions are never cancelled by a UI close, reset or local eligibility end.
+Pause, hidden tabs, funding latency, paid continuation and level transitions never extend the original deadline. Supported progression preserves the offer lifetime; an explicit new Start or active-runtime disposal ends it. Reopening the game or recreating its runtime does not end or reconcile the saved offer. Old browser snapshots without a network binding are interpreted as Signet rather than rebound across networks. Submitted remote transactions are never cancelled by a UI close, reset or local eligibility end.
+
+## Trigger and feedback policy
+
+The level-start boundary is the funding trigger. Starting a level requests one level-scoped offer; gameplay remains nonblocking while BIS prepares or recovers it. Opening the treasure chest performs the exact-session inspection needed for chest eligibility, rather than relying on a controller-load reconciliation. Loading the game, restoring the saved session, or refreshing a screen produces no funding toast. Claim and Reject are explicit actions and may present their own result; unchanged pending funding is represented in the game state and is not repeatedly announced.
 
 ## Gameplay and closed-window updates
 

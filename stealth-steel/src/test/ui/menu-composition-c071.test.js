@@ -73,13 +73,12 @@ test("C071 applies compact shared section, form, and action rhythm without chang
     "utf8",
   );
 
-  assert.match(styles, /--menu-action-gap:\s*3\.6px;/);
-  assert.match(styles, /--menu-action-visual-overlap:\s*10px;/);
+  assert.match(styles, /--menu-action-gap:\s*4\.8px;/);
   assert.match(styles, /--menu-section-following-gap:\s*2\.4px;/);
   assert.match(styles, /--menu-form-item-gap:\s*3\.6px;/);
   assert.match(styles, /--menu-final-action-bottom:\s*8px;/);
-  assert.match(styles, /\.ui-layer \.menu-actions\s*\{[^}]*gap:\s*var\(--menu-action-gap\);/s);
-  assert.match(styles, /\.ui-layer \.menu-actions > \.tiny-swords-button \+ \.tiny-swords-button\s*\{[^}]*margin-top:\s*calc\(var\(--menu-action-visual-overlap\) \* -1\);/s);
+  assert.match(styles, /\.ui-layer \.menu-button-container\s*\{[^}]*gap:\s*var\(--menu-action-gap\);/s);
+  assert.doesNotMatch(styles, /menu-action-visual-overlap/);
   assert.match(styles, /\.ui-layer \.menu-content-stack\s*\{[^}]*overflow:\s*clip;[^}]*padding-bottom:\s*var\(--menu-final-action-bottom\);/s);
   assert.match(styles, /\.ui-layer \.game-window \.settings-controls\s*\{[^}]*gap:\s*var\(--menu-form-item-gap\);/s);
   assert.match(styles, /\.ui-layer \.debug-visualizations-heading\s*\{[^}]*margin:\s*0 0 var\(--menu-section-following-gap\);/s);

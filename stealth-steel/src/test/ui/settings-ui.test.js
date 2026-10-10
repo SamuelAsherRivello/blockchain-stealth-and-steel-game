@@ -384,7 +384,7 @@ test("developer settings opens both related GitHub projects above local storage 
 test("developer action grid keeps the two top buttons at equal row geometry", async () => {
   const styles = await readFile(new URL("../../runtime/ui/tiny-swords-menu.css", import.meta.url), "utf8");
   assert.match(styles, /\.developer-settings-actions\s*\{[^}]*padding-top:\s*30px;/s);
-  assert.match(styles, /\.developer-settings-actions\s*>\s*\.tiny-swords-button \+ \.tiny-swords-button\s*\{[^}]*margin-top:\s*0;/s);
+  assert.match(styles, /\.developer-settings-actions\s*\{[^}]*row-gap:\s*var\(--menu-action-gap\);/s);
   assert.match(styles, /\.developer-settings-actions\s*>\s*\.settings-reset\s*\{[^}]*grid-column:\s*1 \/ -1;/s);
 });
 
@@ -474,7 +474,7 @@ test("Enemy Tasks control writes independently and Clear All Settings clears the
 
 test('BIS reset is awaited, blocks duplicate clicks, reports failure and permits retry',async()=>{
   const documentRef=createDocument(),store=createSettingsStore(null);let calls=0,invalidate=0,finish;
-  const ui=createSettingsUi({host:new FakeElement(),documentRef,store,pauseController:{pause(){},resume(){}},onBisReset:()=>invalidate++,getBis:()=>({resetForGame:()=>{calls++;return new Promise(resolve=>finish=resolve);}})});
+  const ui=createSettingsUi({host:new FakeElement(),documentRef,store,pauseController:{pause(){},resume(){}},onBisReset:()=>invalidate++,getBis:()=>({resetForGameAsync:()=>{calls++;return new Promise(resolve=>finish=resolve);}})});
   ui.open();click(elementByClass(ui.activeWindow.panel,'developer-settings-button'));const button=elementByClass(ui.developerWindow.actions,'settings-reset');
   click(button);click(button);assert.equal(calls,1);assert.equal(button.disabled,true);assert.equal(invalidate,1);
   finish({status:'failed',error:{code:'cleanup-failed'}});await new Promise(resolve=>setImmediate(resolve));assert.equal(button.disabled,false);assert.match(ui.developerWindow.panel.textContent,/BIS cleanup failed/);

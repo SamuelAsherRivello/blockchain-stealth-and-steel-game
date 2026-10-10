@@ -35,6 +35,7 @@ test("menus accept independent content, unique accessible labels, and no logo by
   assert.equal(first.actions.children[0], first.buttons[0]);
   assert.ok(first.bodyArea.className.split(" ").includes("menu-body"));
   assert.ok(first.body.className.split(" ").includes("tiny-swords-body-text"));
+  assert.ok(first.actions.className.split(" ").includes("menu-button-container"));
   assert.ok(first.actions.className.split(" ").includes("menu-actions"));
   assert.equal(first.logo, null);
   assert.equal(first.composition.children.length, 1);

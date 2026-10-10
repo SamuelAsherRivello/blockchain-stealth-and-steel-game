@@ -30,6 +30,15 @@ test('paid loss has BIS-priced Pay first, Restart second and guards disabled act
  ui.dispose();assert.equal(host.children.length,0);
 });
 
+test('paid loss hides Pay when BIS payment support is unavailable', () => {
+  const host = new FakeElement();
+  const ui = createLevelLostUi({ host, documentRef, onPay: () => {}, onRestart: () => {} });
+  ui.setState({ sats: 1000, canPay: false, paymentSupported: false, status: 'idle', message: 'Wallets unavailable' });
+  assert.equal(ui.payButton.hidden, true);
+  assert.equal(ui.restartButton.hidden, false);
+  ui.dispose();
+});
+
 test('loss prompt has restart copy and cannot be dismissed by backdrop', () => {
   const host = new FakeElement();
   const ui = createLevelLostUi({host, onPay:()=>{}, onRestart:()=>{}, documentRef});

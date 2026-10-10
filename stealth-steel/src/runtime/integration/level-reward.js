@@ -21,18 +21,18 @@ export function createLevelReward({accountHost,ui,progress,gold,showTrophyAction
     if(!asset){ui.setState({status:'blocked',canCollect:false,canCheck:false,busy:false,message:'No trophy is configured for this level.'});return;}
     initializing=true;
     try{
-      const current=await accountHost.ready();
+      const current=await accountHost.readyAsync();
       if(disposed||!current)return;
       bis=current;state=bis.beginReward({asset,successMessage:`Level ${progress.current} Trophy collected!`});workflowId=state.workflowId;
-      unsubscribe=accountHost.subscribe(update);ui.setState(state);await bis.refreshReward(workflowId);
+      unsubscribe=accountHost.subscribe(update);ui.setState(state);await bis.refreshRewardAsync(workflowId);
     }catch{if(!disposed)ui.setState({status:'error',canCollect:false,canCheck:true,busy:false,message:'Trophies are unavailable. Check again or continue.'});}
     finally{initializing=false;}
   }
   return {
     show(){if(visible||disposed)return;visible=true;const trophyVisible=Boolean(showTrophyActions?.());ui.setCompletion({levelNumber:progress.current,levelsCompleted:progress.completed+1,totalLevels:progress.total,hasNext:progress.hasNext,collected:gold.collected,total:gold.total});ui.show();if(trophyVisible)void initialize();},
-    collect:()=>workflowId?bis.collectReward(workflowId):undefined,
-    check:()=>workflowId?bis.checkReward(workflowId):initialize(),
-    acknowledge(){if(workflowId)return bis.acknowledgeReward(workflowId);ui.setState({needsAcknowledgment:false,message:''});},
+    collect:()=>workflowId?bis.collectRewardAsync(workflowId):undefined,
+    check:()=>workflowId?bis.checkRewardAsync(workflowId):initialize(),
+    acknowledge(){if(workflowId)return bis.acknowledgeRewardAsync(workflowId);ui.setState({needsAcknowledgment:false,message:''});},
     next:()=>navigation(()=>progress.advance()),restart:()=>navigation(()=>progress.restart()),
     dispose(){disposed=true;unsubscribe?.();if(workflowId)bis.endReward(workflowId);workflowId=undefined;},
   };

@@ -110,7 +110,7 @@ test('combo damage upgrades only targets confirmed by the preceding impact', () 
 });
 
 test('the spawned player snapshot applies the selected Dagger bonus to committed knife damage', () => {
-  const hero = { ...player(), equipment: createEquipmentSnapshot({ status: 'ready', effective: { Dagger: { effectPercent: 30 } } }) };
+  const hero = { ...player(), equipment: createEquipmentSnapshot({ status: 'ready', effective: { Dagger: { attributeDeltas: [{ bisAttribute: 'playerDamage', bisAttributeDelta: 30 }] } } }) };
   const enemy = record('goblin', 40);
   resolvePlayerKnifeImpact(hero, [enemy]);
   assert.equal(enemy.combat.health, 67.5);

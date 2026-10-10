@@ -13,18 +13,19 @@ function fixture({load,ready=Promise.resolve(),timeoutMs=100}={}) {
   const documentRef=new EventTarget();documentRef.createElement=()=>new Element();
   const host=new Element(),other=new Element();host.append(other);
   let closes=0,restarts=0,creates=0,mounts=0,disposals=0,options,adapter;
-  let snapshot={account:{visible:false,hasProfile:false,phase:'idle'},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false}},equipment:{status:'unavailable'},continuations:[],rewards:[],contracts:{status:'unavailable',contracts:[]}};
+  let snapshot={account:{visible:false,hasProfile:false,phase:'idle'},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false},payments:{available:false}},equipment:{status:'unavailable'},continuations:[],rewards:[],contracts:{status:'unavailable',contracts:[]}};
   const game={onBisEvent:event=>adapter.onBisEvent(event)};
   class BisService {
     mounted=false;
     constructor(value){creates++;options=value;}
-    ready(){return ready;}
+    readyAsync(){return ready;}
     mount(){mounts++;this.mounted=true;}
     getSnapshot(){return snapshot;}
     openAccountDialog(){snapshot={...snapshot,account:{...snapshot.account,visible:true}};}
     hasItemSupport(){return snapshot.capabilities.items.available;}
     hasAssetMintingSupport(){return snapshot.capabilities.assetMinting.available;}
     hasContractSupport(){return snapshot.capabilities.contracts.available;}
+    hasPaymentSupport(){return snapshot.capabilities.payments.available;}
     dispose(){disposals++;if(this.mounted){mounts--;this.mounted=false;}}
   }
   const api={BisService},pause=createPauseController();pause.pause('settings');
@@ -76,15 +77,15 @@ test('Account close followed by stable logout restart neither returns to Setting
 });
 
 test('uses one typed facade and forwards the original complete host getter',async()=>{
-  const f=fixture();const first=await f.adapter.ready(),second=await f.adapter.ready();assert.equal(first,second);assert.equal(f.options().getBisGame(),f.game);
+  const f=fixture();const first=await f.adapter.readyAsync(),second=await f.adapter.readyAsync();assert.equal(first,second);assert.equal(f.options().getBisGame(),f.game);
   assert.equal(f.adapter.getBis(),first);assert.equal(f.counts().creates,1);assert.equal(f.counts().mounts,1);f.adapter.dispose({preserveContracts:true});assert.equal(f.counts().disposals,1);
 });
 
 test('snapshot capabilities preserve Player-only Items and game-local subscriptions',async()=>{
-  const f=fixture();await f.adapter.ready();const seen=[];const unsub=f.adapter.subscribe(value=>seen.push(value));
-  f.publish({account:{playerWallet:{profileId:'player'},phase:'active'},capabilities:{items:{available:true},assetMinting:{available:true},contracts:{available:false}}});
+  const f=fixture();await f.adapter.readyAsync();const seen=[];const unsub=f.adapter.subscribe(value=>seen.push(value));
+  f.publish({account:{playerWallet:{profileId:'player'},phase:'active'},capabilities:{items:{available:true},assetMinting:{available:true},contracts:{available:false},payments:{available:true}}});
   assert.equal(f.adapter.getPlayerProfileId(),'player');assert.equal(f.adapter.hasItemSupport(),true);assert.equal(f.adapter.hasAssetMintingSupport(),true);assert.equal(f.adapter.hasContractSupport(),false);assert.equal(seen.length,1);
-  unsub();f.publish({account:{},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false}}});assert.equal(seen.length,1);assert.equal(f.adapter.hasItemSupport(),false);f.adapter.dispose();
+  unsub();f.publish({account:{},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false},payments:{available:false}}});assert.equal(seen.length,1);assert.equal(f.adapter.hasItemSupport(),false);assert.equal(f.adapter.hasPaymentSupport(),false);f.adapter.dispose();
 });
 
 test('stale events cannot restart a disposed adapter or write its views',async()=>{

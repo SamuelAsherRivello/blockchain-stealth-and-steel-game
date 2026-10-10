@@ -93,7 +93,7 @@ export function createBisAccount({host, pauseController, restartGame, documentRe
       if (!api.BisService) throw Error('BIS contract is unavailable.');
       const current = new api.BisService({getBisGame});
       bis = current;
-      await current.ready(); if (disposed) return;
+      await current.readyAsync(); if (disposed) return;
       current.mount(mount);
       if (!active) passive();
       return current;
@@ -123,7 +123,8 @@ export function createBisAccount({host, pauseController, restartGame, documentRe
     hasItemSupport:()=>bis?.hasItemSupport() ?? false,
     hasAssetMintingSupport:()=>bis?.hasAssetMintingSupport() ?? false,
     hasContractSupport:()=>bis?.hasContractSupport() ?? false,
-    async ready() {
+    hasPaymentSupport:()=>bis?.hasPaymentSupport() ?? false,
+    async readyAsync() {
       let timer;
       try { return await Promise.race([initialize(), new Promise((_, reject) => { timer=setTimeout(()=>reject(Error('BIS unavailable')),timeoutMs); })]); }
       finally { clearTimeout(timer); }

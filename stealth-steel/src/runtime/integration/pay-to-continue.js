@@ -11,27 +11,27 @@ export function createPayToContinue({ accountHost, ui, restart }) {
     if(!next)return;
     state=next;
     if(next.effectReceipt?.status==='applied'){generation++;ui.hide();clear();}
-    else ui.setState(next);
+    else ui.setState({...next,paymentSupported:bis.hasPaymentSupport?.() ?? true});
   }
   const clear = () => { unsubscribe?.(); unsubscribe = undefined; const id=workflowId; workflowId=undefined; if(id)bis?.endContinuation(id); };
   return {
     async show() {
       if (disposed) return;
       const current = ++generation; clear();
-      ui.setState({sats:null,canPay:false,status:'idle',message:'Loading payment service…'}); ui.show();
+      ui.setState({sats:null,canPay:false,status:'idle',paymentSupported:false,message:'Loading payment service…'}); ui.show();
       try {
-        const next = await accountHost.ready();
+        const next = await accountHost.readyAsync();
         if (disposed || current !== generation || !next) return;
         bis=next;
         state=bis.beginContinuation();workflowId=state.workflowId;
         unsubscribe=accountHost.subscribe(update);
-        ui.setState(state);update(bis.getSnapshot());
+        ui.setState({...state,paymentSupported:bis.hasPaymentSupport?.() ?? true});update(bis.getSnapshot());
       } catch {
-        if (!disposed && current === generation) ui.setState({sats:null,canPay:false,status:'failed',message:'Payment service is unavailable. You can restart for free.'});
+        if (!disposed && current === generation) ui.setState({sats:null,canPay:false,status:'failed',paymentSupported:false,message:'Payment service is unavailable. You can restart for free.'});
       }
     },
-    pay() { return workflowId ? bis.payContinuation(workflowId) : undefined; },
-    check() { return workflowId ? bis.checkContinuation(workflowId) : undefined; },
+    pay() { return workflowId ? bis.payContinuationAsync(workflowId) : undefined; },
+    check() { return workflowId ? bis.checkContinuationAsync(workflowId) : undefined; },
     restart() {
       if (disposed || state?.status === 'pending') return;
       generation++; clear(); restart();

@@ -40,3 +40,11 @@ test("startup applies the completed equipment refresh to the HUD", async () => {
   const main = await readFile(new URL("../../runtime/main.js", import.meta.url), "utf8");
   assert.match(main, /void initialEquipmentState\.then\(applyEquipmentState\)\.catch\(\(\) => \{\}\);/);
 });
+
+test("HUD item slots use icon-sized, low-opacity item-label yellow squares", async () => {
+  const styles = await readFile(new URL("../../runtime/ui/tiny-swords-hud.css", import.meta.url), "utf8");
+  const slotRules = styles.match(/\.ui-layer \.items-counter-slot\s*\{([^}]*)\}/s)?.[1] ?? "";
+  assert.match(slotRules, /width:\s*1\.15em/);
+  assert.match(slotRules, /height:\s*1\.15em/);
+  assert.match(slotRules, /background:\s*rgb\(255\s+245\s+217\s+\/\s*18%\)/);
+});

@@ -26,8 +26,8 @@ test("primitive menu layout owns shared body and action spacing", async () => {
 
   assert.match(styles, /\.ui-layer \.menu-body\s*\{[^}]*gap:\s*12px;/s);
   assert.match(styles, /\.ui-layer \.tiny-swords-body-text\s*\{[^}]*font:\s*22px\/1\.6 Georgia, serif;/s);
-  assert.match(styles, /\.ui-layer \.menu-actions\s*\{[^}]*gap:\s*var\(--menu-action-gap\);/s);
-  assert.match(styles, /\.ui-layer \.menu-actions > \.tiny-swords-button\s*\{[^}]*width:\s*100%;/s);
+  assert.match(styles, /\.ui-layer \.menu-button-container\s*\{[^}]*gap:\s*var\(--menu-action-gap\);/s);
+  assert.match(styles, /\.ui-layer \.menu-button-container > \.tiny-swords-button\s*\{[^}]*width:\s*100%;/s);
   assert.doesNotMatch(styles, /\.treasure-content\s*\{[^}]*gap:/s);
   assert.doesNotMatch(styles, /\.tiny-swords-panel > \.tiny-swords-button \+ \.tiny-swords-button/);
 });

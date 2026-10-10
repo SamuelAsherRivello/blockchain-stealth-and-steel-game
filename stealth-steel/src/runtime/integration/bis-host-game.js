@@ -57,12 +57,12 @@ export function createBisGame(options) {
       return Object.freeze({ continuationTargetId: `continue:${gameSession.gameSessionId}` });
     },
     /** @param {BisGameConfirmedContinuation} input @returns {Promise<BisGameEffectReceipt>} */
-    applyConfirmedContinuation(input) {
+    applyConfirmedContinuationAsync(input) {
       if (input.continuationTarget.continuationTargetId !== `continue:${input.gameSession.gameSessionId}`) return Promise.resolve(receipt('not-applicable'));
       return delivery(input, () => options.canCaptureContinuation?.() === true && options.applyContinuation());
     },
     /** @param {BisGameConfirmedPlayerReward} input @returns {Promise<BisGameEffectReceipt>} */
-    presentConfirmedPlayerReward(input) {
+    presentConfirmedPlayerRewardAsync(input) {
       return delivery(input, () => options.presentPlayerReward?.(input) ?? false);
     },
   });

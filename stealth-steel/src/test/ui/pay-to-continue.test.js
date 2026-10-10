@@ -6,8 +6,8 @@ function fixture() {
   const listeners=new Set(),states=[];
   const publish=value=>{state={...state,...value};listeners.forEach(fn=>fn(bis.getSnapshot()));};
   const bis={beginContinuation:()=>state,getSnapshot:()=>({continuations:[state]}),endContinuation:()=>ended++,
-    payContinuation:async id=>{assert.equal(id,state.workflowId);pays++;publish({status:'pending',canPay:false});return state;},checkContinuation:async()=>state};
-  const flow=createPayToContinue({accountHost:{ready:async()=>bis,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}},
+    payContinuationAsync:async id=>{assert.equal(id,state.workflowId);pays++;publish({status:'pending',canPay:false});return state;},checkContinuationAsync:async()=>state};
+  const flow=createPayToContinue({accountHost:{readyAsync:async()=>bis,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}},
     ui:{setState:s=>states.push(s),show:()=>visible=true,hide:()=>visible=false},restart:()=>restarts++});
   return {flow,states,publish,stats:()=>({pays,restarts,visible,ended,listeners:listeners.size})};
 }
@@ -20,9 +20,9 @@ test('disposal or free restart ends only its workflow and drops late snapshots',
   for(const end of ['dispose','restart']){const f=fixture();await f.flow.show();f.flow[end]();f.publish({effectReceipt:{status:'applied'}});assert.equal(f.stats().visible,true);assert.equal(f.stats().ended,1);}
 });
 test('late BIS readiness cannot begin a workflow for a disposed loss screen',async()=>{
-  let release,begins=0;const flow=createPayToContinue({accountHost:{ready:()=>new Promise(resolve=>release=resolve)},ui:{show(){},setState(){},hide(){}},restart(){}});
+  let release,begins=0;const flow=createPayToContinue({accountHost:{readyAsync:()=>new Promise(resolve=>release=resolve)},ui:{show(){},setState(){},hide(){}},restart(){}});
   const work=flow.show();flow.dispose();release({beginContinuation(){begins++;}});await work;assert.equal(begins,0);
 });
 test('unavailable BIS leaves ordinary free restart available',async()=>{
-  let restart=0,state;const flow=createPayToContinue({accountHost:{ready:async()=>{throw Error('offline');}},ui:{show(){},setState:value=>state=value},restart:()=>restart++});await flow.show();assert.equal(state.canPay,false);flow.restart();assert.equal(restart,1);
+  let restart=0,state;const flow=createPayToContinue({accountHost:{readyAsync:async()=>{throw Error('offline');}},ui:{show(){},setState:value=>state=value},restart:()=>restart++});await flow.show();assert.equal(state.canPay,false);flow.restart();assert.equal(restart,1);
 });

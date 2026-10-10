@@ -24,7 +24,7 @@ test('player routing excludes own and unowned arrows and stops damage after deat
 test('the spawned player snapshot applies the selected Shield reduction to each damage source', () => {
   const collider={x:10,y:10,width:20,height:20};
   const player={combat:createCombatActorState({label:'player',getCombatCollider:()=>collider,setVisualTransform:()=>{}}),
-    equipment:createEquipmentSnapshot({status:'ready',effective:{Shield:{effectPercent:20}}})};
+    equipment:createEquipmentSnapshot({status:'ready',effective:{Shield:{attributeDeltas:[{bisAttribute:'damageTaken',bisAttributeDelta:-20}]}}})};
   assert.equal(damagePlayer(player,'goblin',{x:1,y:0}),true);
   assert.equal(player.combat.health,80);
   assert.equal(resolveEnemyArrowPlayerHit({ownerId:'archer',collider,direction:{x:1,y:0}},player),true);

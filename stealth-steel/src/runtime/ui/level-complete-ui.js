@@ -22,8 +22,9 @@ export function createLevelLostUi({ host, onPay, onRestart, frameElement = null,
   backdrop.addEventListener('keydown',containKey); backdrop.addEventListener('keyup',containKey);
   payButton.addEventListener('click',pay); restartButton.addEventListener('click',restart); host.append(backdrop);
   return {backdrop,panel,actions,payButton,restartButton,
-    setState({sats,canPay,status,message}) {
+    setState({sats,canPay,status,message,paymentSupported = true}) {
       payButton.menuLabel.textContent = `Pay ${sats ?? '…'} Sats To Continue`;
+      payButton.hidden = !paymentSupported;
       payButton.disabled = !canPay;
       restartButton.disabled = status === 'pending';
       body.textContent = message || 'Try again!';

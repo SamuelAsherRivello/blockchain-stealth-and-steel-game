@@ -9,10 +9,10 @@ test('host applies matching continuation once and rejects replayed or stale deli
   const gameSession = host.getActiveGameSession();
   const target = host.captureContinuationTarget({gameSession});
   const command = {operationId:'continue-1',gameSession,continuationTarget:target};
-  assert.deepEqual(await host.applyConfirmedContinuation(command),{status:'applied'});
-  assert.deepEqual(await host.applyConfirmedContinuation(command),{status:'already-applied'});
+  assert.deepEqual(await host.applyConfirmedContinuationAsync(command),{status:'applied'});
+  assert.deepEqual(await host.applyConfirmedContinuationAsync(command),{status:'already-applied'});
   session = 'run-two';
-  assert.deepEqual(await host.applyConfirmedContinuation(command),{status:'not-applicable'});
+  assert.deepEqual(await host.applyConfirmedContinuationAsync(command),{status:'not-applicable'});
   assert.equal(revives,1);
 });
 
@@ -21,10 +21,10 @@ test('host keeps reward presentation game-owned and session-scoped', async () =>
   const host = createBisGame({gameId:'stealth-and-steel',getActiveGameSessionId:()=>session,applyContinuation:()=>false,presentPlayerReward:()=>{presentations++;return true;}});
   const gameSession = host.getActiveGameSession();
   const reward = {kind:'sats',amountSats:1000,operationId:'reward-1',gameSession,rewardId:'treasure',rewardDisplayName:'Treasure'};
-  assert.deepEqual(await host.presentConfirmedPlayerReward(reward),{status:'applied'});
-  assert.deepEqual(await host.presentConfirmedPlayerReward(reward),{status:'already-applied'});
+  assert.deepEqual(await host.presentConfirmedPlayerRewardAsync(reward),{status:'applied'});
+  assert.deepEqual(await host.presentConfirmedPlayerRewardAsync(reward),{status:'already-applied'});
   session = undefined;
-  assert.deepEqual(await host.presentConfirmedPlayerReward({...reward,operationId:'reward-2'}),{status:'not-applicable'});
+  assert.deepEqual(await host.presentConfirmedPlayerRewardAsync({...reward,operationId:'reward-2'}),{status:'not-applicable'});
   assert.equal(presentations,1);
 });
 
@@ -35,7 +35,7 @@ test('concurrent continuation/reward delivery reserves before yielding and commi
       prepareEffect:()=>new Promise(resolve=>release=resolve),applyContinuation:()=>{commits++;return true;},presentPlayerReward:()=>{commits++;return true;}});
     const gameSession=host.getActiveGameSession();
     const input={operationId:'o',gameSession,continuationTarget:host.captureContinuationTarget({gameSession}),kind:'sats',amountSats:1000,rewardId:'r',rewardDisplayName:'Treasure'};
-    const deliver=value=>kind==='continuation'?host.applyConfirmedContinuation(value):host.presentConfirmedPlayerReward(value);
+    const deliver=value=>kind==='continuation'?host.applyConfirmedContinuationAsync(value):host.presentConfirmedPlayerRewardAsync(value);
     const first=deliver(input),duplicate=deliver(input);await Promise.resolve();release();
     assert.deepEqual(await first,{status:'applied'});assert.deepEqual(await duplicate,{status:'already-applied'});assert.equal(commits,1);
   }
@@ -46,7 +46,7 @@ test('preparation revalidates session and target immediately before synchronous 
     let session='s',active=true,target=true,release,commits=0;
     const host=createBisGame({gameId:'g',isActive:()=>active,getActiveGameSessionId:()=>session,canCaptureContinuation:()=>target,
       prepareEffect:()=>new Promise(resolve=>release=resolve),applyContinuation:()=>{commits++;return true;}});
-    const gameSession=host.getActiveGameSession();const work=host.applyConfirmedContinuation({operationId:'o',gameSession,continuationTarget:host.captureContinuationTarget({gameSession})});
+    const gameSession=host.getActiveGameSession();const work=host.applyConfirmedContinuationAsync({operationId:'o',gameSession,continuationTarget:host.captureContinuationTarget({gameSession})});
     await Promise.resolve();if(change==='replace')session='new';if(change==='dispose')active=false;if(change==='target')target=false;release();
     assert.deepEqual(await work,{status:'not-applicable'});assert.equal(commits,0);
   }
@@ -57,8 +57,8 @@ test('failed preparation/commit releases its ledger without claiming financial r
   const host=createBisGame({gameId:'g',getActiveGameSessionId:()=> 's',canCaptureContinuation:()=>true,
     prepareEffect:async()=>{if(fail)throw Error('preparation');},applyContinuation:()=>{commits++;return true;}});
   const gameSession=host.getActiveGameSession(),input={operationId:'o',gameSession,continuationTarget:host.captureContinuationTarget({gameSession})};
-  assert.deepEqual(await host.applyConfirmedContinuation(input),{status:'not-applicable'});assert.equal(commits,0);fail=false;
-  assert.deepEqual(await host.applyConfirmedContinuation(input),{status:'applied'});assert.equal(commits,1);
+  assert.deepEqual(await host.applyConfirmedContinuationAsync(input),{status:'not-applicable'});assert.equal(commits,0);fail=false;
+  assert.deepEqual(await host.applyConfirmedContinuationAsync(input),{status:'applied'});assert.equal(commits,1);
 });
 
 test('notifications work outside gameplay, but disposed runtime receives neither events nor sessions',()=>{
@@ -72,10 +72,10 @@ test('confirmed asset/sats feedback is visible, game-owned and deduplicated by s
   const host=createBisGame({gameId:'g',getActiveGameSessionId:()=>session,applyContinuation:()=>false,presentPlayerReward:reward=>{presentations++;return feedback.present(reward);}});
   const base={gameSession:host.getActiveGameSession(),rewardId:'r',rewardDisplayName:'Level 1 Trophy'};
   const asset={...base,operationId:'mint',kind:'asset',asset:{quantity:'3'}};
-  assert.equal((await host.presentConfirmedPlayerReward(asset)).status,'applied');assert.equal(nodes[0].hidden,false);assert.match(nodes[0].textContent,/3 × Level 1 Trophy/);
-  assert.equal((await host.presentConfirmedPlayerReward(asset)).status,'already-applied');assert.equal(presentations,1);
-  const sats={...base,operationId:'claim',kind:'sats',amountSats:1250};assert.equal((await host.presentConfirmedPlayerReward(sats)).status,'applied');assert.match(nodes[0].textContent,/1,250 sats/);
-  session='replacement';assert.equal((await host.presentConfirmedPlayerReward({...asset,operationId:'late'})).status,'not-applicable');assert.equal(presentations,2);feedback.dispose();
+  assert.equal((await host.presentConfirmedPlayerRewardAsync(asset)).status,'applied');assert.equal(nodes[0].hidden,false);assert.match(nodes[0].textContent,/3 × Level 1 Trophy/);
+  assert.equal((await host.presentConfirmedPlayerRewardAsync(asset)).status,'already-applied');assert.equal(presentations,1);
+  const sats={...base,operationId:'claim',kind:'sats',amountSats:1250};assert.equal((await host.presentConfirmedPlayerRewardAsync(sats)).status,'applied');assert.match(nodes[0].textContent,/1,250 sats/);
+  session='replacement';assert.equal((await host.presentConfirmedPlayerRewardAsync({...asset,operationId:'late'})).status,'not-applicable');assert.equal(presentations,2);feedback.dispose();
 });
 
 test('a fresh host session rejects continuation and reward commands captured by the discarded run', async () => {
@@ -97,8 +97,8 @@ test('a fresh host session rejects continuation and reward commands captured by 
     presentPlayerReward:()=>{presentations++;return true;},
   });
 
-  assert.deepEqual(await freshHost.applyConfirmedContinuation(continuation),{status:'not-applicable'});
-  assert.deepEqual(await freshHost.presentConfirmedPlayerReward(reward),{status:'not-applicable'});
+  assert.deepEqual(await freshHost.applyConfirmedContinuationAsync(continuation),{status:'not-applicable'});
+  assert.deepEqual(await freshHost.presentConfirmedPlayerRewardAsync(reward),{status:'not-applicable'});
   assert.equal(revives,0);
   assert.equal(presentations,0);
 });

@@ -65,7 +65,7 @@ The game already has a substantial public agreement with BIS. It uses the packag
 | Equipment catalog and loadout manager | Classifies game assets, defines nine items, validates ownership and saves one selection per family. | Items window/HUD, movement/combat application and actor snapshots. | `BisEquipmentDefinition`, `BisEquipmentFamily`, `BisEquipmentTier`, `BisEquipmentItem`, `BisEquipmentSlots`, `BisEquipmentState`; factory-inferred controller. | `IBis` for refresh/select/clear, `IBisGame` for state notifications; `BisGameEquipmentDefinition`, `BisGameEquipmentFamily`, `BisGameEquipmentTier`, `BisGameEquipmentItem`, `BisGameEquipmentSlots`, `BisGameEquipmentState`, `BisCapabilities`, `BisEvent`. |
 | Limited-time contract service | Funds, claims, rejects/refunds and reconciles offers; separates financial state from eligibility and preserves recovery. | Treasure amount/window/purpose, offer-session binding, chest reveal and interaction. | `BisLtoRequest`, `BisContractFilter`, `BisContractsResult`, `BisContractActionResult`, `BisContract`, `BisGameWalletState`; factory-inferred LTO API currently reached through `.lto`. | `IBis` for offer/query/action/end-session/status, `IBisGame` for notifications and applicable confirmed payouts; `BisContractRequest`, `BisContractFilter`, `BisContractState`, `BisWalletReference`, `BisGameOperationReference`, `BisEvent`, `BisGameConfirmedPlayerReward`, `BisGameEffectReceipt`. |
 | Notification/presentation service | Account screens, operation feedback, queued toasts and receiving-payment notifications. | Window geometry, pause/input/focus and gameplay-specific feedback. | `BisState`, `BisEvent`, `BisToastOptions`, UI factory-inferred methods; internal CSS selectors also form an implicit dependency. | `IBis` for mounting/Account actions, `IBisGame` for notifications/effects; `BisOptions`, `BisSnapshot`, `BisEvent`, `BisGameConfirmedPlayerReward`, `BisGameEffectReceipt`. Supported styling hooks must be explicitly documented alongside the interfaces. |
-| Reset/logout coordinator | Confirmed logout cleanup/restart request; `resetForGame()` clears BIS-owned local state. | Restarting, clearing game settings and reporting completion/failure. | `BisEvent`, `BisServiceResetResult`, `BisServiceResetError`, `BisServiceResetErrorCode`; host currently lacks complete result/error handling. | `IBis` for reset/disposal, `IBisGame` for restart/state notification; `BisResetResult`, `BisError`, `BisEvent`, `BisDisposeOptions`. |
+| Reset/logout coordinator | Confirmed logout cleanup/restart request; `resetForGameAsync()` clears BIS-owned local state. | Restarting, clearing game settings and reporting completion/failure. | `BisEvent`, `BisServiceResetResult`, `BisServiceResetError`, `BisServiceResetErrorCode`; host currently lacks complete result/error handling. | `IBis` for reset/disposal, `IBisGame` for restart/state notification; `BisResetResult`, `BisError`, `BisEvent`, `BisDisposeOptions`. |
 | Admin and Marketplace support | Public admin helpers, checkout/trading and reusable React components. | Separate consumer experiences; no production game gameplay dependency. | Admin factory-inferred API, `BisMarketplaceCheckoutRequest`, `BisMarketplaceCheckoutRecord`, `BisMarketplaceTradingAvailability`, component props; exported but not directly consumed by the game. | No additional game interface: shared game-facing operations use `IBis`/`IBisGame` and their payloads. Admin-only commands and Marketplace-specific presentation/checkout types remain separate consumer scope. |
 
 The proposed columns describe the complete intended host boundary for each responsibility. Existing semantics can be reused, with BIS-published names brought under the system/game prefixes in Section 1. The Current Contracts column preserves actual existing names, including those that need migration. An interface/type entry describes a contract, while `BisService` is identified explicitly as a class and factory return types as inferred object contracts. No naming change is proposed for unrelated game-project code.
@@ -118,7 +118,7 @@ Provider/network communication is performed inside BIS's wallet adapter layer. N
 
 `main.js` creates `accountHost` with a lazy `getBisGame()` callback. It immediately requests equipment, which initializes BIS even before the player opens Account. BIS package hydration is therefore not exclusively initiated by the Account button. Initial equipment readiness is bounded by a 1.5-second race; missing equipment produces baseline gameplay.
 
-`createBisAccount.initialize()` prefers `new BisService({getBisGame})`, then takes references to `services.context`, `services.gameWallet` and `services.lto`. It subscribes to state/events before mounting the production UI. It calls `context.ready()` directly, then `services.mount(mount)`.
+`createBisAccount.initialize()` prefers `new BisService({getBisGame})`, then takes references to `services.context`, `services.gameWallet` and `services.lto`. It subscribes to state/events before mounting the production UI. It calls `context.readyAsync()` directly, then `services.mount(mount)`.
 
 Opening Account pauses with the `bis-account` reason, blocks siblings with `inert`, traps focus and calls `context.openAccountDialog()`. The first-loading backdrop has no temporary loading message. A 15-second timeout/import failure offers “Back to Settings.” Closing Account leaves the BIS mount alive in a passive overlay so toasts can still render.
 
@@ -130,7 +130,7 @@ After a loss, `createPayToContinue.show()` asks `accountHost.createContinue({onE
 
 The controller exposes `getState`, `subscribe`, `pay`, `check` and `dispose`. BIS owns price, payer/recipient validation, stable operation ID, pending recovery and approximately three-second status polling. The game displays this state and blocks free restart while payment is pending.
 
-After financial success, BIS calls `applyConfirmedContinuation()`. The game revives only from the applicable loss state. The loss UI closes only after an `applied` receipt; its generation guard drops old callbacks. Disposal abandons delivery but does not cancel a submitted payment. [G3], [G6], [S2], [S7]
+After financial success, BIS calls `applyConfirmedContinuationAsync()`. The game revives only from the applicable loss state. The loss UI closes only after an `applied` receipt; its generation guard drops old callbacks. Disposal abandons delivery but does not cancel a submitted payment. [G3], [G6], [S2], [S7]
 
 ### 5.3 Level trophies
 
@@ -159,7 +159,7 @@ The catalog is already embedded in BIS: `stealth-and-steel`, Shoes/Dagger/Shield
 `treasure-runtime.js` accesses `accountHost.getSession().lto` directly. It calls:
 
 - `start(request)`.
-- `checkContracts(filter)`.
+- `checkContractsAsync(filter)`.
 - `claim(contractId)` / `reject(contractId)`.
 - `endSession(sessionId)`.
 - `reconcile()` after initialization.
@@ -172,11 +172,11 @@ The game stores its own treasure snapshot in `sessionStorage`. Progression and p
 
 Observation is less complete than persistence: the runtime bridge supplies `getState()` wrappers but does not forward the Game Wallet subscription supported by `createTreasureSession()`. It also has no contract-change subscription. The Treasure UI's half-second timer only inspects contracts while its window is open; initial readiness and offer-start completion trigger individual inspections. If funding remains pending through those inspections and confirms later, the closed-window path has no continuing read to observe it, even though chest reveal requires `active`. This needs targeted acceptance/coverage because BIS reconciliation alone does not publish the game's treasure projection.
 
-This workflow uses a supported exported BIS service, but it bypasses the narrow confirmed-effect callback interface. A treasure claim does **not** flow through `presentConfirmedPlayerReward()`. There is a separate contract-result language. [G5], [G8], [S10]
+This workflow uses a supported exported BIS service, but it bypasses the narrow confirmed-effect callback interface. A treasure claim does **not** flow through `presentConfirmedPlayerRewardAsync()`. There is a separate contract-result language. [G5], [G8], [S10]
 
 ### 5.6 Reset and teardown
 
-The game Developer button labeled “Clear Local Storage” resets its own settings, then calls `getBisServices()?.resetForGame()` when a facade is available. BIS resets the Game Wallet, contract storage and player context and returns `{status:'completed', resetId}` or throws `BisServiceResetError`.
+The game Developer button labeled “Clear Local Storage” resets its own settings, then calls `getBisServices()?.resetForGameAsync()` when a facade is available. BIS resets the Game Wallet, contract storage and player context and returns `{status:'completed', resetId}` or throws `BisServiceResetError`.
 
 The host ignores the successful result and has no local `try/catch` or reset status UI. If BIS has not initialized, the facade lookup returns nothing and BIS cleanup is skipped. If BIS reset fails, game settings have already been cleared. The cross-component action is therefore not an atomic “everything cleared” transaction.
 
@@ -188,8 +188,8 @@ During game disposal, workflow controllers and subscriptions are disposed before
 | --- | --- | --- | --- |
 | `getActiveGameSession()` | `{gameId, gameSessionId}` or `undefined`. | Returns one UUID for the current level runtime when playing/lost/complete. | Official `IBisGame`; used by continuation and trophy delivery. |
 | `captureContinuationTarget({gameSession})` | `{continuationTargetId}` or `undefined`. | Only captures while lost; target is `continue:<gameSessionId>`. | Official `IBisGame`; used before creating a continuation controller. |
-| `applyConfirmedContinuation(input)` | Operation ID, bound game session, continuation target → receipt. | Revives the player, removes adjacent enemies, transitions state and resumes the loss pause. | Official `IBisGame`; used. |
-| `presentConfirmedPlayerReward(input)` | Operation ID, game session, reward ID/display name → receipt. | Currently only tests whether the game is `LEVEL_COMPLETE`; no reward-specific presentation is performed here. | Official `IBisGame`; invoked for trophy collection, partly implemented behavior. |
+| `applyConfirmedContinuationAsync(input)` | Operation ID, bound game session, continuation target → receipt. | Revives the player, removes adjacent enemies, transitions state and resumes the loss pause. | Official `IBisGame`; used. |
+| `presentConfirmedPlayerRewardAsync(input)` | Operation ID, game session, reward ID/display name → receipt. | Currently only tests whether the game is `LEVEL_COMPLETE`; no reward-specific presentation is performed here. | Official `IBisGame`; invoked for trophy collection, partly implemented behavior. |
 | `restartRequested` event | `{type, reason:'logout', logoutId}`. | Deduplicates IDs, retains pause and invokes game restart. | Official `BisEvent`, outside `IBisGame`; used. |
 | `accountConnected` / `accountDisconnected` events | `{type, profileId}`. | Account-host event handler ignores these types. Equipment/capability changes are observed through state instead. | Official, exported, not directly handled by the game. |
 | Context subscription | Change notification, followed by `getState()`. | Detects Account dismissal; other helpers read identity/phase. | Official; used, including implicit UI sequencing. |
@@ -211,15 +211,15 @@ There is no BIS callback that directly spawns a chest, changes a level, alters c
 | Constructor with `BisServiceOptions.getBisGame` | Used. |
 | `context`, `gameWallet`, `lto` | Used directly, despite being composed by the facade. These are public fields, not private-module imports. |
 | `ui` | Facade uses it internally; host does not directly use this field in the normal facade path. |
-| `ready()` | Not called directly by the game facade path; game calls `context.ready()`. |
+| `readyAsync()` | Not called directly by the game facade path; game calls `context.readyAsync()`. |
 | `mount()` | Used. |
 | `openAccountDialog()` | Not called through facade; game calls `context.openAccountDialog()`. |
-| `isBisVisible()` | Exported, unused by game; host tracks its own `active` flag and context view. |
-| `showLoading()` / `hideLoading()` | Exported, unused; host owns startup backdrop/error state. |
+| `isLoadingUIVisible()` | Exported, unused by game; host tracks its own `active` flag and context view. |
+| `showLoadingUI()` / `hideLoadingUI()` | Exported, unused; host owns startup backdrop/error state. |
 | `hasItemSupport()` | Used. |
 | `hasAssetMintingSupport()` | Used for trophy visibility. |
 | `hasContractSupport()` | Wrapped by Account host but no production call site to that wrapper found. Treasure instead duplicates a narrower readiness check. |
-| `resetForGame()` | Used from Developer settings. Result/error structures are not handled explicitly there. |
+| `resetForGameAsync()` | Used from Developer settings. Result/error structures are not handled explicitly there. |
 | `createEquipment()` / `createAssetCollection()` / `createContinue()` | Used. |
 | `dispose({preserveContracts})` | Used. |
 
@@ -282,7 +282,7 @@ Public state/event payloads contain public identifiers and operation facts rathe
 | Session can change during an awaited effect. | Session identity is checked only before `await apply()`. A second probe changed the session while an async reward callback awaited: it still executed and returned `applied`. | Reproduced adapter lifecycle gap for async effects. Actual current callbacks are synchronous; a future async presentation must define cancellation/revalidation. [G6] |
 | Reward receipt reports presentation without presentation work. | `main.js` supplies `presentPlayerReward: () => state === LEVEL_COMPLETE`; it ignores reward metadata. The visible success feedback comes from BIS's own toast. | Current implementation falls short of the game specification's game-owned feedback scenario. The callback is wired but behaves as an acknowledgment. [G2], [G6], [D1] |
 | Reward session is captured at completion time. | `createAssetCollection()` obtains `getBisGame()` and the active session inside `onCollected`, after mint success. It does not bind the initiating game session when the workflow begins, unlike continuation. | BIS-side contract weakness. Normal controller disposal/generation guards reduce exposure, but the facade alone does not preserve originating-session identity. [S2] |
-| Reward effect receipt is dropped. | BIS calls `presentConfirmedPlayerReward(...).catch(() => {})` without observing the resolved receipt or exposing an `onEffectReceipt` like continuation. | Delivery observability gap; financial truth remains unchanged. [S2] |
+| Reward effect receipt is dropped. | BIS calls `presentConfirmedPlayerRewardAsync(...).catch(() => {})` without observing the resolved receipt or exposing an `onEffectReceipt` like continuation. | Delivery observability gap; financial truth remains unchanged. [S2] |
 | Trophy capability checks the wrong source wallet for this flow. | Visibility requires a funded Game Wallet; the collection controller mints from the Player context. | Verified capability/workflow mismatch. [G4], [S5], [S8] |
 | Treasure duplicates readiness policy. | `isTreasureReady()` checks active player, ready Game Wallet and distinct IDs, but omits the official capability's `hasProfile`, `playerConnected` and same-network conditions. | Host policy drift. BIS still independently checks wallets/networks before operations. [G1], [S5], [S10] |
 | Treasure lacks observation while its window is closed. | Bridge drops wallet subscription; no contract subscription is forwarded; UI timer calls `inspect()` only for an open window. Chest reveal waits for the game projection to reach `active`. | Static integration gap: funding confirmed after the initial inspections can remain unobserved until another inspection is triggered. No live stuck-treasure claim is made here. [G2], [G5], [G8] |

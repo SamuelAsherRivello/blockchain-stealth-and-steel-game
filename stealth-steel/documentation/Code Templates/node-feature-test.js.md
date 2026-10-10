@@ -14,7 +14,7 @@ test('stale delivery does not affect the active run', async () => {
   const fixture = createFixture();
   const oldCommand = fixture.command();
   fixture.startNewRun();
-  assert.deepEqual(await fixture.host.applyConfirmedContinuation(oldCommand), {status:'not-applicable'});
+  assert.deepEqual(await fixture.host.applyConfirmedContinuationAsync(oldCommand), {status:'not-applicable'});
 });
 ```
 
