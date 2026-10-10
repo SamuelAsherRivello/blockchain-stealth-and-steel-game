@@ -1,7 +1,7 @@
 {
   "name": "babylon-lite-stealth-grid",
   "private": true,
-  "version": "0.0.19",
+  "version": "0.0.20",
   "type": "module",
   "scripts": {
     "openspec": "node openspec/cli.mjs",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@babylonjs/lite": "^1.25.0",
-    "@bis/integration": "file:stealth-steel/vendor/bis-integration-0.0.19.tgz",
+    "@bis/integration": "file:stealth-steel/vendor/bis-integration-0.0.20.tgz",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   }

@@ -1,5 +1,27 @@
 # Current BIS release package snapshot (2026-10-10)
 
+- Package: `@bis/integration` 0.0.20.
+- Current artifact: `bis-integration-0.0.20.tgz`.
+- SHA-256: `4cbf7550b049c6ed222c90a50d6093f6b66281704ec3d011def406307edded87`.
+- Source commit: `fe201ae0f19bbdd0833c79801b6a6cbabc227ebb`.
+- Inventory: 132 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM.
+- Export: all packed source files match committed Git bytes; the package excludes unrelated worktree edits. BIS validation passed 816 tests, typecheck and production build. Both public BIS routes display 0.0.20 after [successful Pages deployment](https://github.com/SamuelAsherRivello/blockchain-integration-service/actions/runs/38080634269).
+- Consumer verification: archive hash and all 132 installed files pass; real BIS contract typecheck, 19 focused integration tests, all 1,130 tests, 10 publishing checks and production build pass. Only the current tarball is retained.
+- Browser: muted Edge guest gameplay starts; Settings → Account displays `BIS: v0.0.20`; Back returns to Settings. No JavaScript or failed-network errors. The only warning concerns Chromium WebGPU powerPreference on Windows. Tested URL: http://127.0.0.1:5173/blockchain-stealth-and-steel-game/?muteMusic=true&muteSFX=true. No account or wallet action was initiated.
+- Toolchain: React/React DOM and their types remain 19.3.0; TypeScript remains 7.0.2. No peer overrides or source symlinks.
+
+### Game-consumable public API changes
+
+- Added `createSharedArkadeWalletService`, `normalizeSharedWalletFailure` and shared wallet state, scope, operation and storage types.
+- Added `assetDiagnostic`, `assetDiagnosticCode`, `diagnoseAssetFailure`, diagnostic types and `BisPendingDiagnostic` for safe actionable asset feedback.
+- Added `inspectBisEquipmentAsset` and `BisEquipmentClassificationStatus`. Equipment now requires on-chain description and structured attribute metadata; legacy holdings remain generic until migrated.
+- Player and Game Wallet readiness follows account/network/session changes and rejects stale results. Continue availability requires verified unreserved funds; payment capability remains separate from balance.
+- The game's existing public `IBis`/`IBisGame` host integration consumes these internal readiness improvements without a new composition API.
+
+BIS and this game use the same complete version, 0.0.20. The game publishes independently through its existing stable Pages route. This import performs no wallet operations.
+
+# Historical 0.0.19 snapshot (2026-10-10)
+
 - Package: `@bis/integration` 0.0.19.
 - Current artifact: `bis-integration-0.0.19.tgz`.
 - SHA-256: `8835f2895c1de6e5f74b0cf62c06ada347c35fcdc80ed84623d8fe84ea900961`.
