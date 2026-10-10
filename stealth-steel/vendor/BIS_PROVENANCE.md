@@ -1,24 +1,24 @@
-# Current BIS release package snapshot (2026-10-09)
+# Current BIS release package snapshot (2026-10-10)
 
-- Package: `@bis/integration` 0.0.18.
-- Current artifact: `bis-integration-0.0.18.tgz`.
-- SHA-256: `bb9066ff8f82b9a85da0e3bd43255e21ba17a9a788b16145801630fdf8afe118`.
-- Source commit: `64b090f869656057823d023b5e31e202c28930b3`.
-- Successful BIS Pages run: https://github.com/SamuelAsherRivello/blockchain-integration-service/actions/runs/37901274392
-- Inventory: 127 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM.
-- Verification: exact isolated released build packed; archive and all 127 installed files verified after lockfile installation. Provider full suite/builds/routes/browser acceptance and isolated public-type consumer pass. Game migration passes all 1,123 automated tests, actual-package typechecking, publishing checks and production build. Fresh muted development/production Edge contexts verify guest play, Account, focus/fullscreen/native narrow layout, movement/pause, safe reset, unavailable capabilities and load failure/timeout recovery. Existing development-only gameplay QA verifies guest continuation/trophy states and replacement runtime; it does not simulate financial success. Online game publication is recorded separately after its deployment succeeds.
-- Remote recheck: BIS `main` also contains later same-version presentation/loading changes at `89e0b4beb5228c0ac275a3eb25ab456090e631e0`, with successful [Pages run](https://github.com/SamuelAsherRivello/blockchain-integration-service/actions/runs/37905524560). This immutable game archive is deliberately the fully verified 0.0.18 release snapshot at `64b090f`, not a claim that those subsequent UI edits are packed here. Both versions remain 0.0.18.
+- Package: `@bis/integration` 0.0.19.
+- Current artifact: `bis-integration-0.0.19.tgz`.
+- SHA-256: `8835f2895c1de6e5f74b0cf62c06ada347c35fcdc80ed84623d8fe84ea900961`.
+- Source commit: `324d903ad2d02bcfee3b8b56b9fec34c9a67741a`.
+- Inventory: 131 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM.
+- Verification: package typecheck and production build pass; the lifecycle regression passes and verifies account events stay on the game channel without browser reload. The full BIS suite still has unrelated pre-existing failures in this dirty checkout. Game import verification and build are pending completion below.
 - Toolchain: React/React DOM and their types 19.3.0; TypeScript 7.0.2 matches the verified provider compiler. No forced peer overrides, source-folder dependencies or source symlinks.
 
 ### Game-consumable public API changes
 
+- Account login/logout lifecycle notifications remain `IBisGame.onBisEvent` events; BIS does not reload the browser. The game owns start-menu reconstruction and non-menu refresh behavior.
+- Added `IBis.hasPaymentSupport()` and `BisSnapshot.capabilities.payments`, which report Player Wallet/Game Wallet readiness without requiring payment balance. Continuation `canPay` separately reflects verified available funds.
 - `BisService implements IBis`; context, wallets, UI and controllers are private. Named continuation, reward, equipment, contract, reset and lifecycle commands replace raw composition.
 - `IBisGame` requires `onBisEvent`. Notifications carry safe snapshots and operation references. Confirmed asset/sats effects are bound to their originating gameplay run and return independent application receipts.
 - `BisSnapshot`, `BisCapabilities`, `BisGame…State/Request`, `BisContract…`, and `BisResetResult` are the shared vocabulary. Reset reports completion/failure and never promises remote cancellation.
 
-BIS releases first; the game imports this immutable package and publishes the same full version, 0.0.18, independently through Pages. No wallet actions are authorized by import verification.
+BIS releases first; the game imports this immutable package and publishes the same full version, 0.0.19, independently through Pages. No wallet actions are authorized by import verification.
 
-Game runtime release `0d1987ca47abb4705eb6086b38a15251847600fc` deployed through the successful [push Pages run](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/runs/37907941884). Fresh live guest checks confirm game v0.0.18 and embedded BIS v0.0.18 with no browser/network errors. Published build metadata is 18,493,720 bytes (Linux CI); local Windows output is independently measured at 18,504,951 bytes. See [paired verification](../../openspec/changes/formalize-bis-game-contracts/verification.md) for coverage and explicit financial/device limits.
+The `0.0.19` game release is being prepared from the imported archive; browser and Pages deployment evidence will be recorded after the release workflow completes. See [paired verification](../../openspec/changes/formalize-bis-game-contracts/verification.md) for prior coverage and explicit financial/device limits.
 
 ## Historical 0.0.16 snapshot (2026-10-08)
 

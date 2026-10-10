@@ -59,23 +59,23 @@ Current Contracts describe the installed/as-built boundary, not the historical b
 
 ### Game → BIS
 
-`ready`, `mount`, `openAccountDialog`, `isBisVisible`, `showLoading`, `hideLoading`, `getSnapshot`, `hasItemSupport`, `hasAssetMintingSupport`, `hasContractSupport`; named workflow groups:
+`readyAsync`, `mount`, `openAccountDialog`, `isLoadingUIVisible`, `showLoadingUI`, `hideLoadingUI`, `getSnapshot`, `hasItemSupport`, `hasAssetMintingSupport`, `hasContractSupport`; named workflow groups:
 
-- Continuation: `beginContinuation`, `payContinuation`, `checkContinuation`, `endContinuation`.
-- Reward: `beginReward`, `refreshReward`, `collectReward`, `checkReward`, `acknowledgeReward`, `endReward`.
-- Equipment: `refreshEquipment`, `selectEquipment`, `clearEquipment`.
-- Contracts: `startContract`, `queryContracts`, `checkContracts`, `claimContract`, `rejectContract`, `endContractSession`.
-- Cleanup: `resetForGame`, `dispose`.
+- Continuation: `beginContinuation`, `payContinuationAsync`, `checkContinuationAsync`, `endContinuation`.
+- Reward: `beginReward`, `refreshRewardAsync`, `collectRewardAsync`, `checkRewardAsync`, `acknowledgeRewardAsync`, `endReward`.
+- Equipment: `refreshEquipmentAsync`, `selectEquipmentAsync`, `clearEquipmentAsync`.
+- Contracts: `startContractAsync`, `queryContractsAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync`, `endContractSessionAsync`.
+- Cleanup: `resetForGameAsync`, `dispose`.
 
 Beginning a continuation/reward allocates workflow state without charging/minting. Views retain public workflow IDs, not BIS controllers. Contract start is a financial request initiated by the existing explicit game Start policy; its capability is not a promise that submission succeeds.
 
 ### BIS → game
 
-`IBisGame` requires `getActiveGameSession`, `captureContinuationTarget`, `applyConfirmedContinuation`, `presentConfirmedPlayerReward` and `onBisEvent`.
+`IBisGame` requires `getActiveGameSession`, `captureContinuationTarget`, `applyConfirmedContinuationAsync`, `presentConfirmedPlayerRewardAsync` and `onBisEvent`.
 
 Notifications include `stateChanged`, `accountClosed`, stable `restartRequested`, `operationChanged` and retained account connection events. This game handles state/close/restart; operation receipts are consumed from snapshots, while unneeded connection/operation notifications may be ignored. A required handler need not act on every event variant. Throwing host handlers cannot rewrite financial outcomes.
 
-The Account host's local listeners merely distribute these events inside the game. They do not subscribe to BIS context, poll its private storage or form a second BIS channel. A closed treasure window remains closed when a state update arrives; its timer renders countdown only.
+The Account host's local listeners merely distribute these events inside the game. They do not subscribe to BIS context, poll its private storage or form a second BIS channel. Account connection/disconnection events are treated as lifecycle invalidations: the game rebuilds its start menu when that menu is active so Items visibility is recalculated, and requests a browser refresh when the event arrives during gameplay or another non-menu view. BIS never owns that refresh. A closed treasure window remains closed when a state update arrives; its timer renders countdown only.
 
 ## 4. Does the game honor the contract?
 
@@ -94,7 +94,7 @@ These are implementation/automated conformance findings, not a claim that every 
 | Surface | Used / unused / remaining coupling |
 | --- | --- |
 | Public package root + `./style.css` | Used; exact local archive and peer versions pinned. |
-| `IBis`/`IBisGame` | Used as the complete runtime boundary. Some commands (`showLoading`, `hideLoading`, non-reconciling contract query) are available but not needed by current views. |
+| `IBis`/`IBisGame` | Used as the complete runtime boundary. Some commands (`showLoadingUI`, `hideLoadingUI`, non-reconciling contract query) are available but not needed by current views. |
 | Low-level public BIS factories/context/controllers | Official for supported non-game consumers; deliberately unused by this game's runtime. Being public does not make them part of the new promoted game contract. |
 | Admin, Marketplace helpers/components | Unused by game gameplay; separate apps. |
 | Account `getSession`, old factory fallback, context-view dismissal inference | Removed; historical analysis explains why. |
@@ -138,4 +138,4 @@ Provider full tests/builds/routes, isolated package consumer/type checks and liv
 - [Continuation](../src/runtime/integration/pay-to-continue.js), [trophies](../src/runtime/integration/level-reward.js), [reward feedback](../src/runtime/integration/bis-game-reward-feedback.js).
 - [Items](../src/runtime/ui/items-ui.js), [equipment effects](../src/runtime/gameplay/equipment-effects.js), [treasure bridge](../src/runtime/integration/treasure-runtime.js), [treasure policy](../src/runtime/integration/treasure-session.js), [treasure UI](../src/runtime/ui/treasure-ui.js), [reset UI](../src/runtime/ui/settings-ui.js).
 - [Archive verifier](../tools/verify-bis-package.mjs), [actual-public-type fixture](../src/test/integration/fixtures/bis-contract-types.ts), [boundary tests](../src/test/integration/bis-public-boundary.test.js), [host tests](../src/test/integration/bis-host-game.test.js).
-- [Game deep dive](deep-dive.md), [BIS deep dive](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/64b090f869656057823d023b5e31e202c28930b3/BIS/documentation/deep-dive.md), [cross-project smoke runbook](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/64b090f869656057823d023b5e31e202c28930b3/BIS/documentation/SMOKE_TEST_BIS_TO_GAME.md).
+- [Game Deep Dive Overview](deep-dive-overview.md), [BIS Deep Dive Overview](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/BIS/documentation/deep-dive-overview.md), [cross-project smoke runbook](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/BIS/documentation/SMOKE_TEST_BIS_TO_GAME.md).

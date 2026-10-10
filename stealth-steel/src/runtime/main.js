@@ -944,7 +944,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   const accountHost = createBisAccount({
     host: domScreen, pauseController,
     frameElement: gameFrame,
-    restartGame: () => progress.restart(),
+    restartGame: () => handleAccountLifecycleChange(),
     onClose: () => settingsUi?.returnFromAccount(),
     getBisGame: () => bisGame,
   });
@@ -1172,14 +1172,45 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   const itemsHud = createItemsHudUi({ host: gameUi, snapshot: equipmentSnapshot });
   let itemsWindow = null;
   let itemsEnabled = false;
+  function createStartMenu() {
+    if (!shouldShowStartGamePrompt({ showStartPrompt: showStartPrompt && !initialRun })) return null;
+    return createStartGamePrompt({
+      host: domBody,
+      frameElement: gameFrame,
+      onItems: openItems,
+      itemsVisible: itemsEnabled,
+      itemsEnabled,
+      onStart: () => {
+        treasure.start();
+        startGamePrompt?.close();
+        startGamePrompt = null;
+        settingsUi.syncGearStacking();
+        pauseController.resume();
+        setGameplayMusicActive(true);
+      },
+    });
+  }
+  function rebuildStartMenu() {
+    if (!startGamePrompt) return false;
+    startGamePrompt.close();
+    startGamePrompt = createStartMenu();
+    settingsUi.syncGearStacking();
+    pauseController.pause();
+    return true;
+  }
   const applyEquipmentState = state => {
     equipmentSnapshot = createEquipmentSnapshot(state);
     itemsHud?.render(equipmentSnapshot);
     // Equipment refreshes can briefly omit its profile while account assets settle.
     // The public capability is authoritative, independent of a Game Wallet.
-    itemsEnabled = accountHost.hasItemSupport();
-    startGamePrompt?.setItemsSupported(itemsEnabled);
-    startGamePrompt?.setItemsEnabled(itemsEnabled);
+    const nextItemsEnabled = accountHost.hasItemSupport();
+    const menuButtonPresent = Boolean(startGamePrompt?.itemsButton);
+    itemsEnabled = nextItemsEnabled;
+    if (startGamePrompt && menuButtonPresent !== nextItemsEnabled) rebuildStartMenu();
+    else {
+      startGamePrompt?.setItemsSupported(itemsEnabled);
+      startGamePrompt?.setItemsEnabled(itemsEnabled);
+    }
   };
   const openItems = () => {
     if (itemsWindow || !itemsEnabled) return;
@@ -1281,33 +1312,31 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   });
   const bisGameSessionId = crypto.randomUUID();
   const rewardFeedback=createBisGameRewardFeedback({host:gameUi});
+  let accountLifecycleHandled = false;
+  let accountWindowReloadRequested = false;
+  const handleAccountLifecycleChange = () => {
+    if (accountLifecycleHandled) return;
+    accountLifecycleHandled = true;
+    queueMicrotask(() => { accountLifecycleHandled = false; });
+    if (rebuildStartMenu()) return;
+    if (accountWindowReloadRequested) return;
+    accountWindowReloadRequested = true;
+    globalThis.window?.location?.reload?.();
+  };
   bisGame = createBisGame({
     gameId: 'stealth-and-steel',
     isActive: () => !disposed,
-    onBisEvent: event => accountHost.onBisEvent(event),
+    onBisEvent: event => {
+      accountHost.onBisEvent(event);
+      if (event.type === 'accountConnected' || event.type === 'accountDisconnected') handleAccountLifecycleChange();
+    },
     getActiveGameSessionId: () => !disposed && bisSessionActive && [GameState.LEVEL_PLAYING, GameState.LEVEL_LOST, GameState.LEVEL_COMPLETE].includes(gameStateMachine.state) ? bisGameSessionId : undefined,
     canCaptureContinuation: () => gameStateMachine.state === GameState.LEVEL_LOST,
     applyContinuation: () => revivePaidPlayer({machine:gameStateMachine,player:getRecordsByType(SpawnerType.PLAYER)[0],spawners,
       enemyType:SpawnerType.ENEMY,tileSize:TILE_SIZE,spawnPlayer,resume:()=>pauseController.resume('player-loss')}),
     presentPlayerReward: reward => rewardFeedback.present(reward),
   });
-  startGamePrompt = shouldShowStartGamePrompt({ showStartPrompt: showStartPrompt && !initialRun })
-    ? createStartGamePrompt({
-      host: domBody,
-      frameElement: gameFrame,
-      onItems: openItems,
-      itemsVisible: itemsEnabled,
-      itemsEnabled,
-      onStart: () => {
-        treasure.start();
-        startGamePrompt.close();
-        startGamePrompt = null;
-        settingsUi.syncGearStacking();
-        pauseController.resume();
-        setGameplayMusicActive(true);
-      },
-    })
-    : null;
+  startGamePrompt = createStartMenu();
   if (startGamePrompt) {
     settingsUi.syncGearStacking();
     pauseController.pause();
