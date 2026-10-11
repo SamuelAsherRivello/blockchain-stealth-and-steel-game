@@ -9,6 +9,14 @@ import {
   getArrowSpawnPosition,
 } from "../../runtime/characters/player/player.js";
 
+test("equipment refresh synchronizes existing player movement and combat stats", async () => {
+  const source = await readFile(new URL("../../runtime/main.js", import.meta.url), "utf8");
+  const apply = source.slice(source.indexOf("const applyEquipmentState = state =>"), source.indexOf("const openItems ="));
+  assert.match(apply, /for \(const record of getRecordsByType\(SpawnerType\.PLAYER\)\)/);
+  assert.match(apply, /record\.equipment = equipmentSnapshot/);
+  assert.match(apply, /record\.actor\.setMovementMultiplier\(equipmentSnapshot\.movementMultiplier\)/);
+});
+
 test("player uses a 70%-size circle collider with its body center unchanged", () => {
   assert.deepEqual(PLAYER_FRAME, { width: 192, height: 192 });
   assert.deepEqual(PLAYER_PIVOT, { x: 0.5, y: 0.78 });

@@ -485,6 +485,12 @@ export function createPlayer({
         PLAYER_COMBAT_COLLIDER,
       );
     },
+    setMovementMultiplier(value) {
+      movementMultiplier = Number.isFinite(value) && value >= 0 && value <= 2 ? value : 1;
+    },
+    getMovementSpeed() {
+      return PLAYER_SPEED * movementMultiplier;
+    },
     getPosition() {
       return { ...position };
     },
@@ -558,7 +564,7 @@ export function createPlayer({
         : selectedMovement);
       const distance = knockbackMovement
         ? Math.hypot(knockbackMovement.x, knockbackMovement.y) * deltaSeconds
-        : PLAYER_SPEED * movementMultiplier * deltaSeconds;
+        : this.getMovementSpeed() * deltaSeconds;
       const activeObstacles = [
         ...obstacles,
         ...dynamicColliders.map(({ collider }) => collider),

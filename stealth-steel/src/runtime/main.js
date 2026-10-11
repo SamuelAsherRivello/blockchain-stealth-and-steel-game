@@ -1210,6 +1210,10 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   }
   const applyEquipmentState = state => {
     equipmentSnapshot = createEquipmentSnapshot(state);
+    for (const record of getRecordsByType(SpawnerType.PLAYER)) {
+      record.equipment = equipmentSnapshot;
+      record.actor.setMovementMultiplier(equipmentSnapshot.movementMultiplier);
+    }
     itemsHud?.render(equipmentSnapshot);
     // Equipment refreshes can briefly omit its profile while account assets settle.
     // The public capability is authoritative, independent of a Game Wallet.
@@ -1465,6 +1469,9 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
             .map(({ collider }) => ({ type: CharacterType.ENEMY, collider })),
         ];
         playerRecord.actor.update(activeDelta, dynamicColliders);
+        if (import.meta.env.DEV) canvas.dataset.playerMotion = JSON.stringify({
+          position: playerRecord.actor.getPosition(), speed: playerRecord.actor.getMovementSpeed(),
+        });
         playerMovementCollider = playerRecord.actor.getMovementCollider();
         playerCombatCollider = playerRecord.combat.getCombatCollider();
         playerRecord.actor.observeHidingBushes(reactiveDecorations.filter(bush =>

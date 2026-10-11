@@ -29,6 +29,26 @@ function harness({ onExecutionStart = () => null } = {}) {
     step(dt) { updateSpriteAnimationManager(manager, dt*1000); actor.update(dt); }};
 }
 
+test('live equipment activation changes actual movement and clearing restores baseline', () => {
+  const h = harness();
+  try {
+    h.key('KeyD');
+    const measure = multiplier => {
+      h.actor.setPosition({x:320,y:320});
+      h.actor.setMovementMultiplier(multiplier);
+      h.step(.1);
+      return h.actor.getPosition().x - 320;
+    };
+    const baseline = measure(1);
+    assert.ok(baseline > 0);
+    assert.equal(h.actor.getMovementSpeed(), 210);
+    assert.ok(Math.abs(measure(1.1) / baseline - 1.1) < 1e-9);
+    assert.ok(Math.abs(h.actor.getMovementSpeed() - 231) < 1e-9);
+    assert.equal(measure(1), baseline);
+    for (const invalid of [NaN, Infinity, -1, 3]) assert.equal(measure(invalid), baseline);
+  } finally { h.actor.dispose(); }
+});
+
 test('empty-slot Attack queues a deliberate rapid follow-up and no arrow', () => {
   const h = harness();
   try {
