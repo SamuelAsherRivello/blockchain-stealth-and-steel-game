@@ -1,4 +1,21 @@
-# Current BIS release package snapshot (2026-10-10)
+# Published 0.0.21 BIS snapshot (2026-10-11)
+
+- Package: `@bis/integration` 0.0.21.
+- Artifact: `bis-integration-0.0.21.tgz`.
+- SHA-256: `7418bdb7f0c6b51774d950a08c3613df296217957347829426e361f1c18e90b6`.
+- Source commit: `a5a0956cdf8d23ebf9816a6c48f98a8faa96c18a`, with the verified release workspace changes.
+- Inventory: 134 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM.
+- BIS verification: 968/968 tests, zero skips; production build, typecheck and release-version check pass.
+- Consumer verification: the archive hash, installed-file inventory, BIS contract typecheck, publishing checks, full game tests and production build are release gates for this import.
+
+### Game-consumable public API changes
+
+- Inventory preparation accepts a backward-compatible optional force-refresh flag, allowing explicit Retry and confirmed checkout to bypass stale presentation caches. The game's public IBis facade is unchanged. Structured item deltas survive Arkade metadata encoding and fresh decoding; malformed or legacy metadata remains generic rather than receiving fabricated effects.
+- Shared inventory reads have finite deadlines, deduplicated pending work and explicit retry recovery. Confirmed Game Wallet mutations invalidate the relevant presentation cache.
+- Player/Game Wallet reads and availability checks retain the selected network, reject mismatches and discard stale completions after account/network changes.
+- The game continues consuming the existing BIS equipment APIs and chain-provided attribute deltas.
+
+# Historical published 0.0.20 snapshot (2026-10-10)
 
 - Package: `@bis/integration` 0.0.20.
 - Current artifact: `bis-integration-0.0.20.tgz`.
