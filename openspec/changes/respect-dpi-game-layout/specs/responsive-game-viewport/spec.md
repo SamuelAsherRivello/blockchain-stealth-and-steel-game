@@ -40,6 +40,18 @@ The system SHALL independently update the world crop and UI safe-area layout aft
 - **WHEN** a player clicks or taps a game control after changing browser zoom
 - **THEN** the input maps to the same logical game location represented by the visible CSS frame
 
+#### Scenario: Mobile browser chrome changes the visible viewport
+
+- **WHEN** mobile browser chrome changes the visible viewport bounds
+- **THEN** the world remains full-height and centered while the UI elements preserve their margin from the recalculated visible safe-area edges
+
+#### Scenario: Device orientation changes
+
+- **WHEN** the device changes between portrait and landscape
+- **THEN** the world crop and UI safe area recalculate independently without stretching the world or clipping the UI
+
+## ADDED Requirements
+
 ### Requirement: UI-layer zoom is independent from world presentation
 
 The system SHALL use 100% as the default UI scale. Plain mousewheel input over the game frame SHALL adjust only the UI layer in 10% increments between 50% and 150%, centered on the game frame; it SHALL not scale, crop, or reposition the logical game/world layer. Modifier-key wheel input SHALL remain available for browser zoom behavior.
@@ -58,13 +70,3 @@ The system SHALL use 100% as the default UI scale. Plain mousewheel input over t
 
 - **WHEN** the player uses Ctrl+wheel, Meta+wheel, or Alt+wheel
 - **THEN** the game does not consume the event for UI zoom and the browser may handle its normal zoom behavior
-
-#### Scenario: Mobile browser chrome changes the visible viewport
-
-- **WHEN** mobile browser chrome changes the visible viewport bounds
-- **THEN** the world remains full-height and centered while the UI elements preserve their margin from the recalculated visible safe-area edges
-
-#### Scenario: Device orientation changes
-
-- **WHEN** the device changes between portrait and landscape
-- **THEN** the world crop and UI safe area recalculate independently without stretching the world or clipping the UI

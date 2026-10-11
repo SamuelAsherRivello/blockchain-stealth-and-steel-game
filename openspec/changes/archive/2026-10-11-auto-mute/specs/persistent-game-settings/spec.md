@@ -1,4 +1,4 @@
-## MODIFIED Requirements
+## ADDED Requirements
 
 ### Requirement: URL audio mute defaults
 
@@ -37,9 +37,20 @@ SHALL leave that category's persisted volume unchanged.
 - **THEN** the matching category is set to zero for the active session
 - **AND** the other category follows its own parameter independently
 
+## MODIFIED Requirements
+
 ### Requirement: Category volume contract
 
 Music and SFX settings SHALL define category multipliers for audio playback. New
 audio playback SHALL apply the current category setting, including the URL
 audio-mute result, while the absence of an audio asset or active audio instance
 SHALL NOT cause an error.
+
+#### Scenario: Create category audio
+- **WHEN** audio playback is created while its category value is 40
+- **THEN** its effective volume is 40 percent of that sound's configured base volume
+
+#### Scenario: Project has no active audio
+- **WHEN** the player adjusts Music or SFX before audio content is introduced or while none is playing
+- **THEN** the setting is saved without an error
+- **AND** later playback can consume the saved category value
