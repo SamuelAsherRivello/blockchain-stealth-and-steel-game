@@ -220,7 +220,7 @@
   transform: none;
 }
 .tiny-swords-title-text > .tiny-swords-ribbon-art { top: 10%; bottom: 10%; }
-menu-title-label { display: inline-block; max-width: 100%; white-space: nowrap; }
+menu-title-label { display: inline-block; max-width: 100%; white-space: nowrap; transform: translateY(-3px); }
 .ui-layer .tiny-swords-button {
   position: relative; isolation: isolate; border: 0; border-radius: 0;
   box-sizing: border-box;
