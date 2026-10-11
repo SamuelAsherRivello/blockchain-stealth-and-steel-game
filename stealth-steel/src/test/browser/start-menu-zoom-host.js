@@ -18,14 +18,15 @@ observer.observe(frame);
 observer.observe(document.documentElement);
 syncLayerToFrame();
 
+const events = { start: 0, items: 0 };
 createStartGamePrompt({
   host: document.querySelector("#host"),
   frameElement: frame,
   itemsVisible: true,
   itemsEnabled: true,
-  onStart: () => {},
-  onItems: () => {},
+  onStart: () => { events.start++; },
+  onItems: () => { events.items++; },
 });
 
-window.startMenuZoomFixture = { syncLayerToFrame };
+window.startMenuZoomFixture = { syncLayerToFrame, events };
 window.addEventListener("pagehide", () => observer.disconnect(), { once: true });

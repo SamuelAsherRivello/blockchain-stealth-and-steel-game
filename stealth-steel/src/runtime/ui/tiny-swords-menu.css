@@ -342,3 +342,52 @@ menu-button-label {
 .ui-layer .treasure-content > .treasure-message { min-height: 4em; margin: 0; }
 .ui-layer .treasure-content > .treasure-countdown { min-height: 1.6em; margin: 0; }
 .settings-reset .tiny-swords-button-art i { filter: hue-rotate(175deg) saturate(2) brightness(.8); }
+
+/* C087: approved 110% frame proportions, with the current centered header and
+   full-size actions. Every measurement uses the same visible UI-frame width. */
+.ui-layer .start-game-prompt-backdrop.has-logo {
+  padding: 18.715cqw 0 0;
+}
+.ui-layer .start-game-prompt-composition {
+  width: 86.8975cqw; gap: 2.1724cqw;
+}
+.ui-layer .start-game-prompt-logo {
+  width: 49.2419cqw;
+}
+.ui-layer .start-game-prompt-panel {
+  --menu-title-font-size: 3.6207cqw;
+  padding: 11.7674cqw 10cqw 0;
+  filter: drop-shadow(0 2.1724cqw 2.8966cqw #081c2666);
+}
+.ui-layer .start-game-prompt-panel .menu-content-stack {
+  padding: .7241cqw .7241cqw 1.4483cqw;
+}
+.ui-layer .start-game-prompt-panel .game-window-header {
+  left: 0; right: 0; width: 100%; top: -5.0691cqw;
+  height: 14.8452cqw; padding: 0 13.0346cqw;
+}
+.start-game-prompt-panel .tiny-swords-ribbon-art {
+  grid-template-columns: 13.578cqw 1fr 13.578cqw;
+}
+.ui-layer .start-game-prompt-panel .menu-body {
+  gap: 2.1724cqw;
+}
+.ui-layer .start-game-prompt-body {
+  font: 3.9828cqw/1.6 Georgia, serif;
+  max-width: 58.8378cqw; min-height: 4em; margin: 0 0 1.8104cqw;
+}
+.ui-layer .start-game-prompt-panel .menu-button-container {
+  width: 49.604cqw; gap: .8689cqw; margin: 1.8104cqw auto 0;
+}
+.ui-layer .start-game-prompt-panel .tiny-swords-button {
+  height: 10.1382cqw; min-height: 10.1382cqw; padding: 0;
+  font-size: 4.7cqw;
+}
+.start-game-prompt-panel .tiny-swords-button .tiny-swords-slices {
+  grid-template-columns: 5.7932cqw 1fr 5.7932cqw;
+  grid-template-rows: 5.7932cqw 1fr 5.7932cqw;
+}
+.start-game-prompt-panel .menu-button-icon-glyph { font-size: 2.9328cqw; }
+.ui-layer .start-game-prompt-panel .tiny-swords-button.has-menu-icon .menu-button-icon {
+  margin-right: .9052cqw;
+}
