@@ -57,7 +57,7 @@ BIS and this game use the same complete version, 0.0.20. The game publishes inde
 
 BIS releases first; the game imports this immutable package and publishes the same full version, 0.0.19, independently through Pages. No wallet actions are authorized by import verification.
 
-The `0.0.19` game release is being prepared from the imported archive; browser and Pages deployment evidence will be recorded after the release workflow completes. See [paired verification](../../openspec/changes/formalize-bis-game-contracts/verification.md) for prior coverage and explicit financial/device limits.
+The `0.0.19` game release is being prepared from the imported archive; browser and Pages deployment evidence will be recorded after the release workflow completes. See [paired verification](../../openspec/changes/archive/2026-10-11-formalize-bis-game-contracts/verification.md) for prior coverage and explicit financial/device limits.
 
 ## Historical 0.0.16 snapshot (2026-10-08)
 

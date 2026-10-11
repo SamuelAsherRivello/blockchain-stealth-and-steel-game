@@ -43,6 +43,7 @@ export function createViewportSafeArea({
   windowRef = window,
   documentRef = document,
   ResizeObserverRef = globalThis.ResizeObserver,
+  onUpdate = () => {},
 }) {
   const update = () => {
     const viewport = readVisibleViewport(windowRef);
@@ -50,6 +51,7 @@ export function createViewportSafeArea({
     const visibleRect = intersectViewportWithGameFrame(viewport, frameRect);
 
     applyVisibleViewport(element, visibleRect);
+    onUpdate(visibleRect, frameRect);
   };
   const visualViewport = windowRef.visualViewport;
   const subscriptions = [

@@ -14,4 +14,4 @@
 ## 3. Verify the live result
 
 - [x] `C083-T005` 3.1 Run focused UI/viewport tests, the relevant full test suite, production build, and `git diff --check` while preserving unrelated dirty files.
-- [ ] `C083-T006` 3.2 Run the game at `?muteMusic=true&muteSFX=true` and capture/measure the supplied 100% and 50% zoom cases, confirming menu/HUD/control alignment and no off-frame UI.
+- [x] `C083-T006` 3.2 Run the game at `?muteMusic=true&muteSFX=true` and capture/measure the supplied 100% and 50% zoom cases, confirming menu/HUD/control alignment and no off-frame UI.

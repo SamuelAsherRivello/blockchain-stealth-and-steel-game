@@ -41,6 +41,7 @@ import { collidersOverlap, getOtherCharacterGridOccupancyColliders, getOtherChar
 import { createGameStateMachine, GameState } from "./gameplay/game-state.js";
 import { gridCellToWorldCenter } from "./gameplay/world-viewport.js";
 import { GAME_VIEWPORT, formatViewportDiagnostics, logicalPointFromClient, measureGameViewport } from "./gameplay/game-viewport.js";
+import { createUiViewport, MAX_PRODUCTION_DPR, observePixelRatio, updateDiagnosticBacking } from "./ui/ui-viewport.js";
 import {
   collectTiledLayerTiles,
   formatLevelCellLabel,
@@ -135,7 +136,6 @@ import {createTreasureReveal} from './systems/objects/treasure-reveal.js';
 import {createObjectSpawner} from './systems/objects/object-spawner.js';
 import { createGoal } from "./systems/goals/goal.js";
 import { createGoalExit } from "./systems/goals/goal-exit.js";
-import { createViewportSafeArea } from "./ui/viewport-safe-area.js";
 import {
   RUNTIME_DEBUG_SETTING_KEYS,
   runtimeSettingsStore,
@@ -214,7 +214,9 @@ const errorOutput = document.querySelector("#error");
   const domScreen = document.querySelector(".dom-screen");
   const updatePromptBodyCenter = () => {
     const bodyBounds = domBody.getBoundingClientRect();
-    const offset = bodyBounds.top + bodyBounds.height / 2 - window.innerHeight / 2;
+    const screenBounds = domScreen.getBoundingClientRect();
+    const scale = screenBounds.height / domScreen.clientHeight || 1;
+    const offset = (bodyBounds.top + bodyBounds.height / 2 - screenBounds.top - screenBounds.height / 2) / scale;
     domBody.style.setProperty("--prompt-body-center-offset-y", `${offset}px`);
   };
   const promptBodyResizeObserver = new ResizeObserver(updatePromptBodyCenter);
@@ -222,7 +224,7 @@ const errorOutput = document.querySelector("#error");
   updatePromptBodyCenter();
 const uiLayer = document.querySelector("#uiLayer");
 const gameFrame = document.querySelector(".game-frame");
-const viewportSafeArea = createViewportSafeArea({ element: uiLayer, frameElement: gameFrame });
+const viewportSafeArea = createUiViewport({ element: uiLayer, frameElement: gameFrame, reference: GAME_VIEWPORT.referenceResolution });
 const coordinatesUi = createCoordinatesUi();
 const runPresentation = createRunPresentation({
   virtualController: document.querySelector(".virtual-controller"),
@@ -237,6 +239,7 @@ const fullscreenTransition = createFullscreenTransition({
 let latestGameViewport = null;
 
 function refreshGameViewportDiagnostics() {
+  updateDiagnosticBacking(debugCanvas, debugContext, GAME_VIEWPORT.referenceResolution, window.devicePixelRatio);
   latestGameViewport = measureGameViewport(GAME_VIEWPORT);
   canvas.dataset.viewport = formatViewportDiagnostics(latestGameViewport);
   debugCanvas.dataset.viewport = formatViewportDiagnostics(latestGameViewport);
@@ -249,12 +252,17 @@ const viewportResizeObserver = new ResizeObserver(refreshGameViewportDiagnostics
 viewportResizeObserver.observe(gameFrame);
 window.addEventListener("resize", refreshGameViewportDiagnostics);
 window.addEventListener("resize", fullscreenTransition.resize);
+const disposePixelRatioObserver = observePixelRatio(window, () => {
+  viewportSafeArea.update();
+  refreshGameViewportDiagnostics();
+});
 
 let gameRunController = null;
 
 window.addEventListener("pagehide", () => {
   gameRunController?.dispose();
   viewportSafeArea.dispose();
+  disposePixelRatioObserver();
   viewportResizeObserver.disconnect();
   promptBodyResizeObserver.disconnect();
   window.removeEventListener("resize", refreshGameViewportDiagnostics);
@@ -321,7 +329,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   }
 
   const engine = await createEngine(canvas, {
-    maxDevicePixelRatio: 1,
+    maxDevicePixelRatio: MAX_PRODUCTION_DPR,
   });
   // Babylon Lite's automatic surface observer otherwise replaces the logical
   // render size with the CSS size on every engine frame. Keep the render
@@ -335,7 +343,9 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   const world = getLevelWorld(level);
   const worldBounds = world.bounds;
   const worldGrid = world.grid;
-  const camera = createLevelCamera(world);
+  const camera = createLevelCamera(world, {
+    getRenderScale: () => canvas.width / GAME_VIEWPORT.referenceResolution.width,
+  });
   const selectionSystem = createSelectionSystem(worldGrid);
   const terrainImages = new Set(collectTiledLayerTiles(level).map(({ image }) => image));
   const [

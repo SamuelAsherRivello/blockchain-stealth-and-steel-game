@@ -86,7 +86,8 @@ export function createMenu({
 }) {
   const backdrop = documentRef.createElement("div");
   backdrop.className = `menu-backdrop tiny-swords-menu-backdrop${showLogo ? " has-logo" : ""}`;
-  const disposeFrameBounds = bindToGameFrame({ overlay: backdrop, frameElement });
+  const coordinateRoot = frameElement?.ownerDocument?.querySelector('.ui-layer[data-ui-reference="logical"]');
+  const disposeFrameBounds = bindToGameFrame({ overlay: backdrop, frameElement, coordinateRoot });
   if (buttonClicksOnly) {
     // Focused native buttons otherwise activate on Enter or Space.
     const containKeyboard = event => {

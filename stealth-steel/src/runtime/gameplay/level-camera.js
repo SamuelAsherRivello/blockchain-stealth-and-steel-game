@@ -22,14 +22,17 @@ export function getLevelWorld(level) {
 }
 
 /** Camera offset is the bottom-left visible world point. Sprite view uses Y-down pixels. */
-export function createLevelCamera(world) {
+export function createLevelCamera(world, { getRenderScale = () => 1 } = {}) {
   const { bounds, mode } = world;
   const width = GRID.widthPx, height = GRID.heightPx;
   const halfZone = { x: CAMERA_FOLLOW.columns * GRID.tileSizePx / 2, y: CAMERA_FOLLOW.rows * GRID.tileSizePx / 2 };
   const min = { x: bounds.x, y: bounds.y };
   const max = { x: bounds.x + Math.max(0, bounds.width - width), y: bounds.y + Math.max(0, bounds.height - height) };
   const offset = mode === "fixed" ? { x: 0, y: 0 } : { ...min };
-  const view = { positionPx: [0, 0], zoom: 1, rotation: 0 };
+  // Babylon Lite projects sprite coordinates against backing pixels. Read the
+  // current backing scale when uploading each layer, including after a resize,
+  // so world coordinates and camera offsets remain logical pixels.
+  const view = { positionPx: [0, 0], get zoom() { return getRenderScale(); }, rotation: 0 };
   function sync() { view.positionPx[0] = offset.x; view.positionPx[1] = -offset.y; }
   sync();
   const api = {

@@ -6,6 +6,22 @@ const level = (overrides = {}) => ({ width: 32, height: 42, tileWidth: 64, tileH
 const make = (overrides) => createLevelCamera(getLevelWorld(level(overrides)));
 const near = (actual, expected) => assert.ok(Math.abs(actual - expected) < 1e-8, `${actual} != ${expected}`);
 
+test("backing-density changes preserve world projection and camera input coordinates", () => {
+  let backingScale = 1;
+  const camera = createLevelCamera(getLevelWorld(level()), { getRenderScale: () => backingScale });
+  camera.initialize({ x: 960, y: 1280 });
+  const point = { x: 1000, y: 1300 };
+  const screen = camera.worldToScreen(point);
+  const layer = camera.attachLayer({});
+  for (const density of [0.5, 1, 1.25, 2]) {
+    backingScale = density;
+    // The sprite shader applies view.zoom before dividing by backing size.
+    near((point.x - layer.view.positionPx[0]) * layer.view.zoom / (576 * density), screen.x / 576);
+    assert.deepEqual(camera.screenToWorld(screen), point);
+    assert.deepEqual(camera.worldToScreen(point), screen);
+  }
+});
+
 test("fixed defaults preserve the 576x1024 view regardless of player", () => {
   const world = getLevelWorld(level({ cameraMode: undefined }));
   const camera = createLevelCamera(world);

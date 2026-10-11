@@ -1,6 +1,6 @@
 # BIS ↔ Stealth & Steel communication analysis
 
-As-built C088 analysis, 2026-10-09. The original [2026-10-08 exploration](BIS_GAME_COMMUNICATION_EXPLORATION_BASELINE_2026-10-08.md) is historical evidence, not current integration guidance. This report follows the BIS 0.0.18 export and the corresponding game migration; task completion and online publication are tracked separately in [C088](../../openspec/changes/formalize-bis-game-contracts/tasks.md).
+As-built C088 analysis, 2026-10-09. The original [2026-10-08 exploration](BIS_GAME_COMMUNICATION_EXPLORATION_BASELINE_2026-10-08.md) is historical evidence, not current integration guidance. This report follows the BIS 0.0.18 export and the corresponding game migration; task completion and online publication are tracked separately in [C088](../../openspec/changes/archive/2026-10-11-formalize-bis-game-contracts/tasks.md).
 
 ## 1. Contracts
 
@@ -130,7 +130,7 @@ The verified provider export is 0.0.18 from commit `64b090f869656057823d023b5e31
 
 BIS releases first; game imports that immutable archive and exports/publishes the same complete version. The production metadata hook rejects mismatch and measures final uncompressed build bytes with fixed-width metadata. Independent `main` pushes publish BIS Admin/Marketplace together or the game's one stable route, without a tag, GitHub Release or manual dispatch prerequisite.
 
-Provider full tests/builds/routes, isolated package consumer/type checks and live demo checks passed. Game local full suite passes 1,123/1,123 with no skips; publishing/type/build and muted development/production/live browser checks pass. The [game's push Pages run](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/runs/37907941884) deployed runtime commit `0d1987c`; both visible game and embedded BIS versions are 0.0.18. [C088 verification](../../openspec/changes/formalize-bis-game-contracts/verification.md) records exact commands, CI's one optional CLI-dependent skip, platform-specific size and runtime evidence. Automated delivery fixtures do not constitute live payment/mint/claim acceptance. No credentials, signing, transactions or physical-device acceptance are part of this verification.
+Provider full tests/builds/routes, isolated package consumer/type checks and live demo checks passed. Game local full suite passes 1,123/1,123 with no skips; publishing/type/build and muted development/production/live browser checks pass. The [game's push Pages run](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/runs/37907941884) deployed runtime commit `0d1987c`; both visible game and embedded BIS versions are 0.0.18. [C088 verification](../../openspec/changes/archive/2026-10-11-formalize-bis-game-contracts/verification.md) records exact commands, CI's one optional CLI-dependent skip, platform-specific size and runtime evidence. Automated delivery fixtures do not constitute live payment/mint/claim acceptance. No credentials, signing, transactions or physical-device acceptance are part of this verification.
 
 ## 8. Source map
 

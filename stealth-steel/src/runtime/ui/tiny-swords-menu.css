@@ -304,7 +304,7 @@ menu-button-label {
   .ui-layer .tiny-swords-panel { padding: 58px 28px 0; }
 }
 /* A short desktop window has a narrow game frame even on a wide monitor. */
-@media (max-height: 650px) {
+@container (max-height: 650px) {
   .tiny-swords-menu-composition { gap: 8px; }
   .tiny-swords-menu-logo { width: min(180px, 60%); }
   .ui-layer .tiny-swords-panel { padding: 50px 24px 0; }

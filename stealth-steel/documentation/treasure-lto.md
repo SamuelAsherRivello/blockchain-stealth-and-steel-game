@@ -32,6 +32,6 @@ The palette is [`TreasureChestSpawner.tsj`](../public/assets/levels/tiled/tilese
 
 ## Verification and limits
 
-Node coverage verifies guest skip, fixed lifetime/persistence, exact offer identity, closed-window funding events, wrong scope, claim/reject, network replacement, pending navigation and late-window protection. The archive verifier checks127 installed files and the immutable archive. Full suite/build/public-type and development/production/live browser gates are recorded in [C088](../../openspec/changes/formalize-bis-game-contracts/tasks.md), not implied by this guide.
+Node coverage verifies guest skip, fixed lifetime/persistence, exact offer identity, closed-window funding events, wrong scope, claim/reject, network replacement, pending navigation and late-window protection. The archive verifier checks127 installed files and the immutable archive. Full suite/build/public-type and development/production/live browser gates are recorded in [C088](../../openspec/changes/archive/2026-10-11-formalize-bis-game-contracts/tasks.md), not implied by this guide.
 
 AI-created game URLs must contain both `muteMusic=true&muteSFX=true`; use fresh browser storage and no wallet credentials/account creation/signing. Credential-free acceptance cannot prove a live funded claim/refund. Historical isolated-operator/hosted-wallet evidence in archived plans concerns prior implementations, not acceptance of this release. Physical-device touch and actual Tiled-editor save/reload remain separate unperformed checks.
