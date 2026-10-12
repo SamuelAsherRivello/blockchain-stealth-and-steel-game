@@ -1,4 +1,20 @@
-# Published 0.0.21 BIS snapshot (2026-10-11)
+# Verified local 0.0.22 snapshot (2026-10-12)
+
+- Package: `@bis/integration` 0.0.22; artifact: `bis-integration-0.0.22.tgz`.
+- SHA-256: `3b12ed2b26a9248579e9574d4bb8775b4bb08b643313171723448c53e7463528`.
+- Source commit: `efcfb022b8efa5cfa4d51d298ad003c67ce06134`; sourceDirty: true; packed source independently matched recorded commit.
+- Inventory: 145 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM. Canonical/copied archives, extracted candidate files and archive membership/hashes verified before this metadata update.
+- Release source: an isolated archive of the recorded commit, built and tested independently while unrelated TypeScript migration work continued in the BIS checkout. Release checks, 1,094 main tests, 91 onboarding tests, 16 faucet tests (one optional live test skipped), all builds, package exclusion scan, and staged Pages routes passed.
+- Consumer verification passed: exact lockfile reinstall; archive and all 145 installed-file hashes; BIS contract typecheck; all 1,139 game tests; all 10 publishing checks; production build; and a muted isolated guest Start → Settings → Account browser check showing `BIS: v0.0.22` with no page errors or wallet actions. Only this archive remains vendored; retired archives are excluded from the repository. Deployment is verified separately after push; this import does not create a release tag or claim live financial acceptance.
+
+### Game-consumable public API notes
+
+- Existing public context/Game Wallet composition shares role-scoped wallet sessions. Configured receive addresses can become available before wallet initialization completes; account/network changes retain guarded lifetimes. No new host composition API is required.
+- Public `pendingLogoutOperations` provides read-only pending-operation classification as a count and fingerprint; it does not expose journals or clear operations.
+- `BoardingQuote.destination` optionally carries exported `BitcoinFundingDestination`; `quoteAccountTransfer` accepts that optional destination. Explicit Bitcoin funding destinations are restricted to matching-network transfers to Bitcoin and participate in unchanged-quote validation.
+- `invalidatePublicAssetInventory` invalidates scoped presentation caches; confirmed Game Wallet mint/burn/delivery and account changes invalidate shared inventory caches.
+
+# Historical published 0.0.21 BIS snapshot (2026-10-11)
 
 - Package: `@bis/integration` 0.0.21.
 - Artifact: `bis-integration-0.0.21.tgz`.
