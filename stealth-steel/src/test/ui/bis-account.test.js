@@ -84,8 +84,8 @@ test('uses one typed facade and forwards the original complete host getter',asyn
 test('snapshot capabilities preserve Player-only Items and game-local subscriptions',async()=>{
   const f=fixture();await f.adapter.readyAsync();const seen=[];const unsub=f.adapter.subscribe(value=>seen.push(value));
   f.publish({account:{playerWallet:{profileId:'player'},phase:'active'},capabilities:{items:{available:true},assetMinting:{available:true},contracts:{available:false},payments:{available:true}}});
-  assert.equal(f.adapter.getPlayerProfileId(),'player');assert.equal(f.adapter.hasItemSupport(),true);assert.equal(f.adapter.hasAssetMintingSupport(),true);assert.equal(f.adapter.hasContractSupport(),false);assert.equal(seen.length,1);
-  unsub();f.publish({account:{},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false},payments:{available:false}}});assert.equal(seen.length,1);assert.equal(f.adapter.hasItemSupport(),false);assert.equal(f.adapter.hasPaymentSupport(),false);f.adapter.dispose();
+  assert.equal(f.adapter.getPlayerProfileId(),'player');assert.equal(f.adapter.isPlayerLoggedIn(),true);assert.equal(f.adapter.hasItemSupport(),true);assert.equal(f.adapter.hasAssetMintingSupport(),true);assert.equal(f.adapter.hasContractSupport(),false);assert.equal(seen.length,1);
+  unsub();f.publish({account:{},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false},payments:{available:false}}});assert.equal(seen.length,1);assert.equal(f.adapter.isPlayerLoggedIn(),false);assert.equal(f.adapter.hasItemSupport(),false);assert.equal(f.adapter.hasPaymentSupport(),false);f.adapter.dispose();
 });
 
 test('stale events cannot restart a disposed adapter or write its views',async()=>{

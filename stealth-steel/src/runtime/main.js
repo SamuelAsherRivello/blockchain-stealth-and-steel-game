@@ -1326,8 +1326,8 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
       state: gameStateMachine.state,
     }),
   });
-  // The individual reward state owns collection availability, not contract/Game-Wallet readiness.
-  const showTrophyActions = () => true;
+  // Rewards are relevant only to an active player account. Once visible, their own state controls availability.
+  const showTrophyActions = () => accountHost.isPlayerLoggedIn();
   const levelCompleteUi = createLevelCompleteUi({host:domBody,frameElement:gameFrame,showTrophyActions,onContinue:()=>levelReward.next(),onRestart:()=>levelReward.restart(),onCollect:()=>levelReward.collect(),onCheck:()=>levelReward.check(),onAcknowledge:()=>levelReward.acknowledge()});
   const levelReward = createLevelReward({accountHost,ui:levelCompleteUi,progress,gold:goldCounter,showTrophyActions});
   const gameStateMachine = createGameStateMachine();

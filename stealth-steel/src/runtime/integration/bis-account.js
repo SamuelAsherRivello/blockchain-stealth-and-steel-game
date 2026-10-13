@@ -127,6 +127,7 @@ export function createBisAccount({host, pauseController, restartGame, documentRe
   return {open, onBisEvent, getBis:()=>bis, getSnapshot:()=>bis?.getSnapshot(),
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
     getPlayerProfileId:()=>bis?.getSnapshot().account.playerWallet?.profileId,
+    isPlayerLoggedIn:()=>Boolean(bis?.getSnapshot().account.playerWallet?.profileId),
     hasItemSupport:()=>bis?.hasItemSupport() ?? false,
     hasAssetMintingSupport:()=>bis?.hasAssetMintingSupport() ?? false,
     hasContractSupport:()=>bis?.hasContractSupport() ?? false,

@@ -79,6 +79,17 @@ test("level complete hides trophy controls and copy without asset minting suppor
   ui.dispose();
 });
 
+test("logged-out completion omits trophy controls and login copy", () => {
+  const host = new FakeElement();
+  const ui = createLevelCompleteUi({ host, documentRef, showTrophyActions: () => false });
+  ui.setState({ status: "guest", message: "Log in to collect this trophy." });
+  ui.show();
+  assert.equal(ui.collectButton.hidden, true);
+  assert.equal(ui.checkButton.hidden, true);
+  assert.doesNotMatch(ui.panel.children[1].children[0].textContent, /trophy|log in/i);
+  ui.dispose();
+});
+
 for (const outcome of ["level complete", "game complete", "paid loss"]) {
   test(`${outcome} menu blocks keyboard activation and background dismissal`, () => {
     const host = new FakeElement();

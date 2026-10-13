@@ -26,3 +26,12 @@ test('late BIS readiness cannot begin a workflow for a disposed loss screen',asy
 test('unavailable BIS leaves ordinary free restart available',async()=>{
   let restart=0,state;const flow=createPayToContinue({accountHost:{readyAsync:async()=>{throw Error('offline');}},ui:{show(){},setState:value=>state=value},restart:()=>restart++});await flow.show();assert.equal(state.canPay,false);flow.restart();assert.equal(restart,1);
 });
+
+test('logged-out loss replaces wallet status with the game message',async()=>{
+  let state;
+  const bis={beginContinuation:()=>({workflowId:'continue-1',sats:1000,canPay:false,status:'guest',message:'Awaiting Player Wallet'}),getSnapshot:()=>({continuations:[]}),hasPaymentSupport:()=>false,endContinuation(){}};
+  const flow=createPayToContinue({accountHost:{readyAsync:async()=>bis,isPlayerLoggedIn:()=>false,subscribe:()=>()=>{}},ui:{show(){},hide(){},setState:value=>state=value},restart(){}});
+  await flow.show();
+  assert.equal(state.message,'The enemy got you.');
+  flow.dispose();
+});
