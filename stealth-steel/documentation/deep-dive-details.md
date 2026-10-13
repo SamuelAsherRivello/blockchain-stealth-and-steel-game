@@ -61,7 +61,7 @@ The game invalidates the session before restart/level-transition animation, loca
 | [Trophy flow](../src/runtime/integration/level-reward.js) | `beginReward`, `refreshRewardAsync`, `collectRewardAsync`, `checkRewardAsync`, `acknowledgeRewardAsync`, `endReward`; `snapshot.rewards` | Level 1–3 metadata, quantity one, ownership/uncertainty/recheck/acknowledgement and navigation guards. |
 | [Items](../src/runtime/ui/items-ui.js) | `refreshEquipmentAsync`, `selectEquipmentAsync`, `clearEquipmentAsync`; `snapshot.equipment` | Player-only ownership/selection, nine-item catalog; movement/combat interpretation remains game-owned. |
 | [Treasure bridge](../src/runtime/integration/treasure-runtime.js) | `startContractAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync`, `endContractSessionAsync`; `snapshot.contracts` | Exact offer/purpose/reference/wallet scope; 1,000 sats and original 90-second wall-clock deadline. See [treasure guide](treasure-lto.md). |
-| [Settings](../src/runtime/ui/settings-ui.js) | Await `resetForGameAsync`; inspect completed/failed `BisResetResult` | Clear game settings separately; block duplicate clicks, show failure, and allow retry. |
+| [Settings](../src/runtime/ui/settings-ui.js) | No BIS reset command. | Reset only the game settings store and refresh the controls from its defaults. |
 
 `queryContractsAsync` is available for non-reconciling reads; the game uses the recovery-aware check command for explicit inspection. `getSnapshot`, capability queries, and lifecycle/loading commands are available without exposing mutable BIS services. Begin commands allocate workflows; they do not themselves charge or mint. Showing a completion screen can read ownership, but only Collect initiates collection.
 

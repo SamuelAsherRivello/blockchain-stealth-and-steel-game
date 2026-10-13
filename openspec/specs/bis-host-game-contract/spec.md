@@ -121,10 +121,10 @@ Account lifecycle, continuation, trophy collection, equipment, treasure, reset a
 - **THEN** the game SHALL receive the update without requiring that window's timer to poll
 - **AND** it SHALL reveal a chest only if its offer binding and gameplay eligibility still match
 
-#### Scenario: Clear All Settings fails to reset BIS
-- **WHEN** BIS reports a local cleanup failure
-- **THEN** the game SHALL present failure rather than claim complete reset
-- **AND** it SHALL permit a subsequent retry without silently abandoning BIS state
+#### Scenario: Clear Settings preserves BIS state
+- **WHEN** the user executes Clear Settings
+- **THEN** the game SHALL reset only game-owned settings and preferences
+- **AND** it SHALL not invoke BIS cleanup or alter BIS-owned local state
 
 ### Requirement: Integration documentation is accurate across the handoff
 

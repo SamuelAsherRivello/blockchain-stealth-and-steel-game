@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-import { AUDIO_SETTING_KEYS, DEBUG_SETTING_KEYS, createSettingsStore } from "../../runtime/runtime-settings/runtime-settings-store.js";
+import { AUDIO_SETTING_KEYS, DEBUG_SETTING_KEYS, SETTINGS_STORAGE_KEY, createSettingsStore } from "../../runtime/runtime-settings/runtime-settings-store.js";
 import { applyUrlAudioMuteParameters } from "../../runtime/runtime-settings/runtime-audio-settings.js";
 import { GameWindow } from "../../runtime/ui/game-window.js";
 import {
@@ -477,8 +477,17 @@ test("Enemy Tasks control writes independently and Clear All Settings clears the
   assert.equal(checkbox.checked, false);
 });
 
-test('Clear Settings resets the game store without consulting external services',()=>{
-  const documentRef=createDocument(),store=createSettingsStore(null);store.set(AUDIO_SETTING_KEYS.music,15);
+test('Clear Settings resets only its game-owned record without consulting external services',()=>{
+  const records = new Map([
+    ['external-preference', 'keep'],
+    ['another-application-state', 'preserve'],
+  ]);
+  const storage = {
+    getItem: key => records.get(key) ?? null,
+    setItem: (key, value) => records.set(key, String(value)),
+    removeItem: key => records.delete(key),
+  };
+  const documentRef=createDocument(),store=createSettingsStore(storage);store.set(AUDIO_SETTING_KEYS.music,15);
   const ui=createSettingsUi({host:new FakeElement(),documentRef,store,pauseController:{pause(){},resume(){}}});ui.open();click(elementByClass(ui.activeWindow.panel,'developer-settings-button'));click(elementByClass(ui.developerWindow.actions,'settings-reset'));
-  assert.equal(store.get(AUDIO_SETTING_KEYS.music),20);assert.match(ui.developerWindow.panel.textContent,/Settings cleared/);ui.close();
+  assert.equal(store.get(AUDIO_SETTING_KEYS.music),20);assert.equal(records.has(SETTINGS_STORAGE_KEY),false);assert.equal(records.get('external-preference'),'keep');assert.equal(records.get('another-application-state'),'preserve');assert.match(ui.developerWindow.panel.textContent,/Settings cleared/);ui.close();
 });
