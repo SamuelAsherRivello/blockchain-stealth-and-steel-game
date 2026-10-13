@@ -34,15 +34,20 @@
   display: grid; place-items: center;
   overflow: hidden;
 }
-.ui-layer .game-window .title-container {
-  display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px;
-  align-items: center; column-gap: 4px; padding-inline: 28px;
+.ui-layer .tiny-swords-panel .title-container {
+  position: absolute;
+  left: 20px; top: 5px;
+  width: 80%; height: 80%;
+  display: grid; grid-template-columns: 58px minmax(0, 1fr) 58px;
+  align-items: center; column-gap: 4px;
 }
-.ui-layer .game-window .title-container .title-text {
+.ui-layer .tiny-swords-panel .title-container .title-text {
   grid-column: 2; grid-row: 1; min-width: 0;
 }
-.ui-layer .game-window .title-container .close-button {
+.ui-layer .tiny-swords-panel .title-container .close-button {
   grid-column: 3; grid-row: 1; align-self: center;
+  width: 58px; height: 58px; margin: 0; padding: 0;
+  box-sizing: border-box; display: grid; place-items: center;
 }
 .game-window-header > .tiny-swords-ribbon-art {
   top: 10%; bottom: 10%;
@@ -96,7 +101,12 @@
 .ui-layer .menu-layout-debug-stack { --menu-layout-debug-color: #e02f9b; }
 .ui-layer .menu-layout-debug-body { --menu-layout-debug-color: #15a9e0; }
 .ui-layer .menu-layout-debug-buttons { --menu-layout-debug-color: #f07d24; }
+.ui-layer .menu-layout-debug-ribbon { --menu-layout-debug-color: #8c4fd8; }
+.ui-layer .menu-layout-debug-title-container { --menu-layout-debug-color: #d8b23f; }
+.ui-layer .menu-layout-debug-title { --menu-layout-debug-color: #35b563; }
+.ui-layer .menu-layout-debug-close { --menu-layout-debug-color: #dd4d4d; }
 .ui-layer .menu-layout-debug-stack .menu-layout-debug-label { top: -17px; }
+.ui-layer .menu-layout-debug-close .menu-layout-debug-label { top: -17px; }
 .ui-layer .menu-layout-debug-label {
   position: absolute;
   top: 2px;
@@ -106,6 +116,7 @@
   color: #fff;
   font: bold 10px/1.2 system-ui, sans-serif;
   letter-spacing: .04em;
+  white-space: nowrap;
   pointer-events: none;
 }
 .ui-layer .menu-body > :is(.settings-controls, .treasure-content) {
@@ -223,21 +234,21 @@
   width: 2.5px; height: 5px; border: solid #fff5dc; border-width: 0 1px 1px 0;
   transform: translate(-50%, -65%) rotate(45deg);
 }
-.ui-layer .game-window .game-window-close {
+.ui-layer .tiny-swords-panel .game-window-close {
   position: static;
-  width: 44px; height: 44px; padding: 0; transform: translate(-25px, -15px);
+  width: 58px; height: 58px; padding: 0; transform: none;
   z-index: 2; border: 0; border-radius: 0; box-shadow: none;
-  background: url('/ui/tiny-swords/Icon_09.png') center / 19.2px 19.2px no-repeat;
+  background: url('/ui/tiny-swords/Icon_09.png') center / 58px 58px no-repeat;
   image-rendering: pixelated;
 }
-.ui-layer .game-window .game-window-close::before,
-.ui-layer .game-window .game-window-close::after { display: none; }
-.ui-layer .game-window .game-window-close:hover { filter: brightness(1.12); outline: none; }
-.ui-layer .game-window .game-window-close:active { filter: brightness(.78) saturate(.75); }
-.ui-layer .game-window input:focus-visible,
+.ui-layer .tiny-swords-panel .game-window-close::before,
+.ui-layer .tiny-swords-panel .game-window-close::after { display: none; }
+.ui-layer .tiny-swords-panel .game-window-close:hover { filter: brightness(1.12); outline: none; }
+.ui-layer .tiny-swords-panel .game-window-close:active { filter: brightness(.78) saturate(.75); }
+.ui-layer .tiny-swords-panel input:focus-visible,
 .ui-layer .slider-control input:focus-visible,
 .ui-layer .toggle-control input:focus-visible,
-.ui-layer .game-window .game-window-close:focus-visible { outline: none; }
+.ui-layer .tiny-swords-panel .game-window-close:focus-visible { outline: none; }
 .ui-layer .tiny-swords-menu-backdrop.developer-settings-backdrop { z-index: var(--z-developer-settings-backdrop); }
 .tiny-swords-slices i {
   background-position: 0 0;

@@ -14,5 +14,5 @@
 
 ## 3. Verify the reported and adjacent flows
 
-- [ ] C092-T007 Update the managed Playwright BIS fixture to exercise logout from Account over the Start menu and Game Wallet login/logout snapshot changes; verify Start is focusable/clickable, the backdrop is gone, and no page errors or unexpected navigation occur.
-- [ ] C092-T008 Run the focused lifecycle, contract/type, full relevant test, build, and publishing checks; verify the vendored BIS boundary remains intact and record any coverage limits without wallet actions or secrets.
+- [x] C092-T007 Update the managed Playwright BIS fixture to exercise logout from Account over the Start menu and Game Wallet login/logout snapshot changes; verify Start is focusable/clickable, the backdrop is gone, and no page errors or unexpected navigation occur.
+- [x] C092-T008 Run the focused lifecycle, contract/type, full relevant test, build, and publishing checks; verify the vendored BIS boundary remains intact and record any coverage limits without wallet actions or secrets.

@@ -20,8 +20,11 @@ test("window title and close control share the ribbon layout", () => {
   assert.ok(header.className.includes("game-window-header"));
   assert.ok(menu.title.className.includes("menu-header-text"));
   assert.ok(closeButton.className.includes("menu-header-button"));
-  assert.ok(header.children.includes(menu.title));
-  assert.ok(header.children.includes(closeButton));
+  assert.ok(header.children.includes(menu.titleContainer));
+  assert.ok(menu.titleContainer.children.includes(menu.title));
+  assert.ok(menu.closeContainer.className.includes("close-button-container"));
+  assert.ok(menu.titleContainer.children.includes(menu.closeContainer));
+  assert.ok(menu.closeContainer.children.includes(closeButton));
   assert.ok(!menu.panel.children.includes(closeButton));
 });
 
@@ -80,6 +83,9 @@ test("the temporary layout guide is a sibling overlay and leaves menu parents in
       "menu-layout-debug-box menu-layout-debug-stack",
       "menu-layout-debug-box menu-layout-debug-body",
       "menu-layout-debug-box menu-layout-debug-buttons",
+      "menu-layout-debug-box menu-layout-debug-ribbon",
+      "menu-layout-debug-box menu-layout-debug-title-container",
+      "menu-layout-debug-box menu-layout-debug-title",
     ],
   );
   assert.equal(menu.bodyContainer.children[0], menu.bodyArea);

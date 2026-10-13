@@ -79,7 +79,7 @@ test("C071 applies compact shared section, form, and action rhythm without chang
   assert.match(styles, /--menu-final-action-bottom:\s*8px;/);
   assert.match(styles, /\.ui-layer \.menu-button-container\s*\{[^}]*gap:\s*var\(--menu-action-gap\);/s);
   assert.doesNotMatch(styles, /menu-action-visual-overlap/);
-  assert.match(styles, /\.ui-layer \.menu-content-stack\s*\{[^}]*overflow:\s*clip;[^}]*padding-bottom:\s*var\(--menu-final-action-bottom\);/s);
+  assert.match(styles, /\.ui-layer \.menu-content-stack\s*\{[^}]*overflow:\s*clip;[^}]*padding:\s*var\(--menu-paper-content-inset\);/s);
   assert.match(styles, /\.ui-layer \.game-window \.settings-controls\s*\{[^}]*gap:\s*var\(--menu-form-item-gap\);/s);
   assert.match(styles, /\.ui-layer \.debug-visualizations-heading\s*\{[^}]*margin:\s*0 0 var\(--menu-section-following-gap\);/s);
   assert.match(styles, /\.ui-layer \.debug-visualizations-heading ~ \.toggle-control,\s*\.ui-layer \.map-order-heading \+ \.map-order-buttons\s*\{[^}]*margin-left:\s*20px;/s);
@@ -114,15 +114,15 @@ test("C071 removes every menu scrollbar at the shared layout boundary", async ()
   assert.match(styles, /\.ui-layer \.tiny-swords-menu-backdrop\.has-logo\s*\{[^}]*overflow:\s*clip;/s);
 });
 
-test("C071 keeps the 44px close target with its supplied PNG", async () => {
+test("C071 keeps the 58px close target with its supplied PNG", async () => {
   const styles = await readFile(
     new URL("../../runtime/ui/tiny-swords-menu.css", import.meta.url),
     "utf8",
   );
 
-  assert.match(styles, /grid-template-columns:\s*44px minmax\(0, 1fr\) 44px;/);
-  assert.match(styles, /\.ui-layer \.game-window \.game-window-close\s*\{[^}]*width:\s*44px;[^}]*height:\s*44px;/s);
-  assert.match(styles, /background:\s*url\('\/ui\/tiny-swords\/Icon_09\.png'\) center \/ 19\.2px 19\.2px no-repeat;/);
+  assert.match(styles, /grid-template-columns:\s*58px minmax\(0, 1fr\) 58px;/);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.game-window-close\s*\{[^}]*width:\s*58px;[^}]*height:\s*58px;/s);
+  assert.match(styles, /background:\s*url\('\/ui\/tiny-swords\/Icon_09\.png'\) center \/ 58px 58px no-repeat;/);
   assert.match(styles, /image-rendering:\s*pixelated;/);
 });
 
@@ -136,14 +136,16 @@ test("C084 gives closable menus explicit header text and button regions", async 
     closeButton: documentRef.createElement("button"),
     documentRef,
   });
-  const closeButton = menu.header.children.find(child => child !== menu.title);
+  const closeButton = menu.closeContainer.children[0];
 
   assert.ok(menu.header.className.includes("game-window-header"));
+  assert.ok(menu.titleContainer.className.includes("title-container"));
+  assert.deepEqual(menu.titleContainer.children, [menu.title, menu.closeContainer]);
   assert.ok(menu.title.className.includes("menu-header-text"));
   assert.ok(closeButton.className.includes("menu-header-button"));
-  assert.match(styles, /\.ui-layer \.game-window \.title-container\s*\{[^}]*align-items:\s*center;/s);
-  assert.match(styles, /\.ui-layer \.game-window \.title-container \.title-text\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;/s);
-  assert.match(styles, /\.ui-layer \.game-window \.title-container \.close-button\s*\{[^}]*grid-column:\s*3;[^}]*grid-row:\s*1;[^}]*align-self:\s*center;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container\s*\{[^}]*position:\s*absolute;[^}]*left:\s*20px;[^}]*top:\s*5px;[^}]*width:\s*80%;[^}]*height:\s*80%;[^}]*align-items:\s*center;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.title-text\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.close-button\s*\{[^}]*grid-column:\s*3;[^}]*grid-row:\s*1;[^}]*align-self:\s*center;[^}]*width:\s*58px;[^}]*height:\s*58px;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
 });
 
 test("C071 removes lightning only from BIS toast messaging", async () => {

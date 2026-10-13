@@ -160,11 +160,14 @@ export function createMenu({
   else if (titleText) panel.setAttribute("aria-label", titleText);
 
   let title = null;
+  let closeContainer = null;
   let header = null;
   const headerContainer = documentRef.createElement("div");
-  headerContainer.className = "title-container header-container game-window-header";
+  headerContainer.className = "header-container game-window-header";
+  const titleContainer = documentRef.createElement("div");
+  titleContainer.className = "title-container";
   if (showHeader) {
-    title = documentRef.createElement("h2");
+    title = documentRef.createElement("div");
     title.className = "title-text menu-header-text menu-title-text tiny-swords-title-text";
     const label = documentRef.createElement("menu-title-label");
     label.textContent = titleText;
@@ -173,11 +176,15 @@ export function createMenu({
     title.id = titleId;
     header = headerContainer;
     if (closeButton) {
-      closeButton.className = `${closeButton.className ?? ""} close-button menu-header-button`.trim();
-      headerContainer.append(title, closeButton);
+      closeButton.className = `${closeButton.className ?? ""} menu-header-button`.trim();
+      closeContainer = documentRef.createElement("div");
+      closeContainer.className = "close-button-container close-button";
+      closeContainer.append(closeButton);
+      titleContainer.append(title, closeContainer);
     } else {
-      headerContainer.append(title);
+      titleContainer.append(title);
     }
+    headerContainer.append(titleContainer);
     addRibbonArt(headerContainer, documentRef);
   }
   const bodyArea = documentRef.createElement("div");
@@ -226,6 +233,12 @@ export function createMenu({
       { label: "MENU CONTENT STACK", element: contentStack, className: "menu-layout-debug-stack" },
       { label: "BODY PARENT", element: bodyContainer, className: "menu-layout-debug-body" },
       { label: "BUTTONS PARENT", element: footerContainer, className: "menu-layout-debug-buttons" },
+      ...(showHeader ? [
+        { label: "BLUE RIBBON", element: headerContainer, className: "menu-layout-debug-ribbon" },
+        { label: "TITLE CONTAINER", element: titleContainer, className: "menu-layout-debug-title-container" },
+        { label: "TITLE DIV", element: title, className: "menu-layout-debug-title" },
+        ...(closeContainer ? [{ label: "CLOSE DIV", element: closeContainer, className: "menu-layout-debug-close" }] : []),
+      ] : []),
     ],
     documentRef,
   });
@@ -237,7 +250,9 @@ export function createMenu({
     panel,
     header,
     headerContainer,
+    titleContainer,
     title,
+    closeContainer,
     body: body ?? bodyArea,
     bodyArea,
     bodyContainer,
