@@ -1,3 +1,16 @@
+# Verified local 0.0.23 snapshot (2026-10-13)
+
+- Package: `@bis/integration` 0.0.23; artifact: `bis-integration-0.0.23.tgz`.
+- SHA-256: `1ad3cdb15b4d67d23a42addedb921999aff30bde694f0bc6a5bb546995aceace`.
+- Source commit: `f5ced44f0079d0cf8501ba53800009a1bd275132`; sourceDirty: false.
+- Inventory: 149 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM. The archive contains the public `dist` JavaScript and stylesheet exports plus packed source.
+- BIS verification: release-version check, 966-test full suite, typecheck, and production build passed before packaging. Game-consumer verification is recorded after the exact lockfile reinstall, package verifier, contract typecheck, focused integration/UI tests, and production build.
+
+### Game-consumable public API changes
+
+- `IBisGame` can authorize Player Wallet logout as `allow`, `deny`, or `confirm`; a confirmation response carries only an opaque authorization ID and game-provided body copy. BIS owns dialog title and buttons, then rechecks authorization before logout.
+- The package preserves explicit Player/Game Wallet lifecycle signals and public equipment state. No wallet credentials, journal contents, or financial actions are included in this archive.
+
 # Verified local 0.0.22 snapshot (2026-10-12)
 
 - Package: `@bis/integration` 0.0.22; artifact: `bis-integration-0.0.22.tgz`.
