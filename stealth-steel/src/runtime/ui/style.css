@@ -341,12 +341,19 @@ body {
 
 .ui-layer .menu-body > .items-menu { width: 100%; }
 
+.menu-panel.items-window { transform: translateY(200px); }
+.menu-panel.settings-window { transform: translateY(200px); }
+.menu-panel.developer-window { transform: translateY(200px); }
+.menu-panel.game-window:has(.items-menu) { transform: translateY(200px); }
+.menu-panel.game-window:has(.settings-controls) { transform: translateY(200px); }
+
 .ui-layer .items-menu-status {
   max-width: 25rem;
   margin: 0 auto 8px;
   color: #294650;
   font: bold clamp(12px, 2.8cqw, 16px) / 1.2 Georgia, serif;
   text-align: center;
+  white-space: pre-line;
 }
 
 .items-menu-grid {

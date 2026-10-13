@@ -3,7 +3,7 @@ import { createMenu } from "./menu.js";
 export function createLevelLostUi({ host, onPay, onRestart, frameElement = null, documentRef = globalThis.document }) {
   const menu = createMenu({titleText:'You Lost',bodyText:'Try again!',frameElement,documentRef,
     buttonClicksOnly: true,
-    buttons:[{displayText:'Pay … Sats To Continue',icon:'⚡',className:'level-lost-pay'},{displayText:'Restart Game',className:'level-lost-restart'}]});
+    buttons:[{displayText:'Continue (… Sats)',icon:'⚡',className:'level-lost-pay'},{displayText:'Restart Game',className:'level-lost-restart'}]});
   const {backdrop,panel,body,actions,buttons:[payButton,restartButton]} = menu;
   backdrop.className += ' level-complete-backdrop'; panel.className += ' level-complete-panel outcome-loss';
   backdrop.hidden = true; payButton.disabled = true;
@@ -23,7 +23,7 @@ export function createLevelLostUi({ host, onPay, onRestart, frameElement = null,
   payButton.addEventListener('click',pay); restartButton.addEventListener('click',restart); host.append(backdrop);
   return {backdrop,panel,actions,payButton,restartButton,
     setState({sats,canPay,status,message,paymentSupported = true}) {
-      payButton.menuLabel.textContent = `Pay ${sats ?? '…'} Sats To Continue`;
+      payButton.menuLabel.textContent = `Continue (${sats ?? '…'} Sats)`;
       payButton.hidden = !paymentSupported;
       payButton.disabled = !canPay;
       restartButton.disabled = status === 'pending';
@@ -32,7 +32,7 @@ export function createLevelLostUi({ host, onPay, onRestart, frameElement = null,
     },
     show() { backdrop.hidden=false; (payButton.disabled ? restartButton : payButton).focus(); },
     hide() { backdrop.hidden=true; },
-    dispose() { payButton.removeEventListener('click',pay); restartButton.removeEventListener('click',restart); backdrop.removeEventListener('keydown',containKey); backdrop.removeEventListener('keyup',containKey); menu.disposeFrameBounds(); backdrop.remove(); },
+    dispose() { payButton.removeEventListener('click',pay); restartButton.removeEventListener('click',restart); backdrop.removeEventListener('keydown',containKey); backdrop.removeEventListener('keyup',containKey); menu.disposeFrameBounds(); menu.disposeLayoutDebug(); backdrop.remove(); },
   };
 }
 
@@ -40,8 +40,8 @@ export function createLevelCompleteUi({host, onContinue, onRestart = onContinue,
   if(outcome === 'loss'){const ui=createLevelLostUi({host,onPay:()=>{},onRestart,frameElement,documentRef});ui.payButton.hidden=true;return {...ui,button:ui.restartButton};}
   const menu = createMenu({titleText:'Completed',bodyText:'',frameElement,documentRef,
     buttonClicksOnly: true,
-    buttons:[{displayText:'Collect Level 1 Trophy',className:'level-complete-collect'},
-      {displayText:'Continue To Next Level',className:'level-complete-continue'},
+    buttons:[{displayText:'Collect Trophy',className:'level-complete-collect'},
+      {displayText:'Next Level',className:'level-complete-continue'},
       {displayText:'Restart Game',className:'level-complete-restart'},
       {displayText:'Check Trophy Status',className:'level-complete-check'},
       {displayText:'OK',className:'level-complete-acknowledge'}]});
@@ -61,7 +61,7 @@ export function createLevelCompleteUi({host, onContinue, onRestart = onContinue,
     body.textContent=final?`Great Job. You completed ${completion.levelsCompleted}/${completion.totalLevels} levels. You collected ${gold} gold in the final level and reached the exit.`:`Great Job. You collected ${gold} gold and reached the exit.`;
     const message=state.status==='owned'?'You already own this trophy.':state.status==='guest'?'Log in to collect this trophy.':state.message;
     if(trophyVisible && message)body.textContent+=` ${message}`;
-    collectButton.menuLabel.textContent=`Collect Level ${completion.levelNumber} Trophy`;
+    collectButton.menuLabel.textContent='Collect Trophy';
     collectButton.hidden=!trophyVisible; collectButton.disabled=!trophyVisible || !state.canCollect || state.busy || state.needsAcknowledgment;
     continueButton.hidden=final; continueButton.disabled=state.busy || state.needsAcknowledgment;
     restartButton.disabled=state.busy || state.needsAcknowledgment;
@@ -87,6 +87,6 @@ export function createLevelCompleteUi({host, onContinue, onRestart = onContinue,
     setCompletion(value){completion={...completion,...value};render();},
     setState(value){state={...state,...value};render();if(state.needsAcknowledgment)acknowledgeButton.focus();},
     show(){render();backdrop.hidden=false;(menu.buttons.find(button=>!button.hidden&&!button.disabled)??panel).focus();},
-    dispose(){for(const [button,handler]of actionHandlers)button.removeEventListener('click',handler);backdrop.removeEventListener('keydown',keydown);backdrop.removeEventListener('keyup',keydown);menu.disposeFrameBounds();backdrop.remove();},
+    dispose(){for(const [button,handler]of actionHandlers)button.removeEventListener('click',handler);backdrop.removeEventListener('keydown',keydown);backdrop.removeEventListener('keyup',keydown);menu.disposeFrameBounds();menu.disposeLayoutDebug();backdrop.remove();},
   };
 }

@@ -68,7 +68,7 @@ test("Items renders a non-scrolling square nine-card grid with the required inst
   assert.equal(ui.window.backdrop.hidden, false);
   assert.match(ui.window.panel.className, /tiny-swords-panel/);
   assert.match(ui.window.panel.className, /game-window/);
-  assert.doesNotMatch(ui.window.panel.className, /items-window/);
+  assert.match(ui.window.panel.className, /items-window/);
   assert.equal(ui.content.children[0].textContent, "Click item to toggle activation.");
   assert.equal(ui.content.children[1].dataset.layout, "3x3");
   assert.equal(ui.content.children[1].children.length, 9);
@@ -120,13 +120,15 @@ test("Items explains when BIS is ready and the player owns no items", async () =
     documentRef });
   await flush();
 
-  assert.equal(ui.content.children[0].textContent, "You have no items.");
+  assert.equal(ui.content.children[0].textContent, "\n\n\nYou have no items.");
 });
 
 test("Items does not override the shared menu with desktop viewport dimensions", async () => {
   const styles = await readFile(new URL("../../runtime/ui/style.css", import.meta.url), "utf8");
-  const itemsWindowRules = styles.match(/\.ui-layer \.menu-panel\.items-window\s*\{([^}]*)\}/s)?.[1] ?? "";
+  const itemsWindowRules = styles.match(/\.menu-panel\.items-window\s*\{([^}]*)\}/s)?.[1] ?? "";
 
+  assert.match(itemsWindowRules, /transform:\s*translateY\(200px\);/);
+  assert.match(styles, /\.menu-panel\.game-window:has\(\.items-menu\)\s*\{[^}]*transform:\s*translateY\(200px\);/s);
   assert.doesNotMatch(itemsWindowRules, /(?:100vw|100dvh|70rem|dvh|vw)/);
 });
 

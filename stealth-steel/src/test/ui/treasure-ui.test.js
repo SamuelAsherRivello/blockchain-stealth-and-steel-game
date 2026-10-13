@@ -29,7 +29,7 @@ test('treasure sound plays once each time the chest window opens',t=>{
 });
 test('all treasure messages and action eligibility update in one open game window',t=>{
  const s=setup(t);s.ui.open();assert.equal(s.doc.activeElement,s.button('Back'));
- assert.ok(s.host.textContent.includes('You found a treasure of 1000 sats.'));
+ assert.ok(s.host.textContent.includes('Limited Time Offer: Treasure found — Claim 1,000 sats?'));
  assert.ok(s.host.textContent.includes('90 secs remaining ...'));
  for(const status of ['preparing','active','expired','missing-player','no-offer','unavailable','pending','claimed','rejected']){
   s.setState({status});assert.ok(s.host.textContent.includes(treasureMessage(status)));

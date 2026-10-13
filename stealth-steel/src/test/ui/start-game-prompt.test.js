@@ -41,7 +41,7 @@ test("start prompt requires its Start button and ignores background clicks", () 
   let starts = 0;
   const prompt = createStartGamePrompt({ host, onStart: () => { starts += 1; }, documentRef });
   assert.match(prompt.panel.textContent, new RegExp(`Welcome${START_PROMPT_BODY.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
-  assert.equal(prompt.startButton.textContent, "Start");
+  assert.equal(prompt.startButton.textContent, "Start Game");
   assert.ok(prompt.panel.children.length >= 1);
   assert.equal(prompt.backdrop.children[0].children[0].alt, "Stealth & Steel");
   assert.equal(prompt.startButton.focused, true);
@@ -64,8 +64,8 @@ test("supported start prompt places bolt Items below Start and enables it only f
   const host = new FakeElement();
   let opens = 0;
   const prompt = createStartGamePrompt({ host, onStart: () => {}, onItems: () => opens++, itemsVisible: true, itemsEnabled: false, documentRef });
-  assert.equal(prompt.startButton.textContent, "Start");
-  assert.equal(prompt.itemsButton.textContent, "⚡Items");
+  assert.equal(prompt.startButton.textContent, "Start Game");
+  assert.equal(prompt.itemsButton.textContent, "⚡View Items");
   assert.equal(prompt.itemsButton.disabled, true);
   prompt.setItemsEnabled(true);
   assert.equal(prompt.itemsButton.disabled, false);

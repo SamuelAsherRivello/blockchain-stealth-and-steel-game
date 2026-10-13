@@ -12,7 +12,7 @@ export function shouldSkipIntro({ isDevelopment = false, search = "" } = {}) {
 
 export function createStartGamePrompt({ host, onStart, onItems, itemsVisible = false, itemsEnabled = false, frameElement = null, documentRef = globalThis.document }) {
   const itemButtonOptions = itemsVisible
-    ? [{ displayText: "Items", icon: "⚡", className: "start-game-prompt-items" }]
+    ? [{ displayText: "View Items", icon: "⚡", className: "start-game-prompt-items" }]
     : [];
   const menu = createMenu({
     titleText: "Welcome",
@@ -22,7 +22,7 @@ export function createStartGamePrompt({ host, onStart, onItems, itemsVisible = f
     showLogo: true,
     logoAlt: "Stealth & Steel",
     buttons: [
-      { displayText: "Start", variant: "primary", className: "start-game-prompt-start" },
+      { displayText: "Start Game", variant: "primary", className: "start-game-prompt-start" },
       ...itemButtonOptions,
     ],
     frameElement,
@@ -60,6 +60,7 @@ export function createStartGamePrompt({ host, onStart, onItems, itemsVisible = f
       startButton.removeEventListener("click", handleStart);
       itemsButton?.removeEventListener("click", handleItems);
       menu.disposeFrameBounds();
+      menu.disposeLayoutDebug();
       backdrop.remove();
     },
   };

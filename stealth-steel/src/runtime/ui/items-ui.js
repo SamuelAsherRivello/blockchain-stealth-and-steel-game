@@ -2,7 +2,7 @@ import { GameWindow } from "./game-window.js";
 import { playSfx } from "../audio/sfx.js";
 
 const BODY_TEXT = "Click item to toggle activation.";
-const EMPTY_BODY_TEXT = "You have no items.";
+const EMPTY_BODY_TEXT = "\n\n\nYou have no items.";
 const afterPaint = () => typeof globalThis.requestAnimationFrame === "function"
   ? new Promise(resolve => requestAnimationFrame(resolve))
   : Promise.resolve();
@@ -38,6 +38,7 @@ export function createItemsUi({ host, screenLayer, frameElement = null, opener, 
     host,
     title: "Items",
     content,
+    className: "items-window",
     documentRef,
     opener,
     closeLabel: "Close items",

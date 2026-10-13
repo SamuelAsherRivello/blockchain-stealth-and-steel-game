@@ -53,6 +53,31 @@
   box-sizing: border-box;
   width: 100%;
 }
+
+/* TEMP layout guide: a sibling overlay, deliberately outside menu layout. */
+.ui-layer .menu-layout-debug-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+.ui-layer .menu-layout-debug-box {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px dashed #e02f9b;
+  pointer-events: none;
+}
+.ui-layer .menu-layout-debug-label {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  padding: 1px 4px;
+  background: #e02f9b;
+  color: #fff;
+  font: bold 10px/1.2 system-ui, sans-serif;
+  letter-spacing: .04em;
+  pointer-events: none;
+}
 .ui-layer .menu-body > :is(.settings-controls, .treasure-content) {
   width: 100%;
 }
@@ -123,6 +148,14 @@
 .ui-layer .level-complete-panel .menu-button-container {
   margin-top: 18px;
 }
+.ui-layer .level-complete-panel.outcome-loss {
+  /* Preserve the paper frame; reclaim room for the action stack inside it. */
+  padding-inline: clamp(28px, 6cqw, 36px);
+}
+.ui-layer .level-complete-panel.outcome-loss .menu-button-container {
+  width: 100%;
+  margin-top: 12px;
+}
 .ui-layer .start-game-prompt-panel .menu-button-container {
   margin-top: 10px;
 }
@@ -179,7 +212,7 @@
 }
 .ui-layer .game-window .game-window-close {
   position: static;
-  width: 44px; height: 44px; padding: 0; transform: none;
+  width: 44px; height: 44px; padding: 0; transform: translate(-25px, -15px);
   z-index: 2; border: 0; border-radius: 0; box-shadow: none;
   background: url('/ui/tiny-swords/Icon_09.png') center / 19.2px 19.2px no-repeat;
   image-rendering: pixelated;
@@ -222,8 +255,9 @@
   filter: drop-shadow(0 12px 16px #081c2666);
 }
 .ui-layer .tiny-swords-panel.developer-window {
-  /* Keep the shared paper size while making room for the wider action group. */
-  padding-inline: clamp(28px, 6cqw, 36px);
+  /* Keep Developer body content aligned with the shared paper-menu inset.
+     The control group retains its own responsive width below. */
+  padding-inline: clamp(28px, 10cqw, 60px);
 }
 .ui-layer .tiny-swords-panel.developer-window .footer-container {
   display: grid;
@@ -381,7 +415,8 @@ menu-button-label {
 .treasure-content > [hidden] { display: none; }
 .ui-layer .treasure-content > .treasure-message { min-height: 4em; margin: 0; }
 .ui-layer .treasure-content > .treasure-countdown { min-height: 1.6em; margin: 0; }
-.settings-reset .tiny-swords-button-art i { filter: hue-rotate(175deg) saturate(2) brightness(.8); }
+.settings-reset .tiny-swords-button-art i,
+.developer-settings-button .tiny-swords-button-art i { filter: hue-rotate(175deg) saturate(2) brightness(.8); }
 
 /* C087: approved 110% frame proportions, with the current centered header and
    full-size actions. Every measurement uses the same visible UI-frame width. */

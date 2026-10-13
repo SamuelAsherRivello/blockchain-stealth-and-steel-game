@@ -7,6 +7,59 @@ let nextMenuId = 0;
 const DEFAULT_LOGO_SRC = `${import.meta.env?.BASE_URL ?? "/"}ui/tiny-swords/`
   + "stealth-and-steel-logo-transparent.png";
 
+function createMenuLayoutDebugLayer({ backdrop, targets, documentRef }) {
+  const layer = documentRef.createElement("div");
+  layer.className = "menu-layout-debug-layer";
+  layer.setAttribute("aria-hidden", "true");
+  const boxes = targets.map(({ label, element }) => {
+    const box = documentRef.createElement("div");
+    box.className = "menu-layout-debug-box";
+    const labelElement = documentRef.createElement("span");
+    labelElement.className = "menu-layout-debug-label";
+    labelElement.textContent = `TEMP: ${label}`;
+    box.append(labelElement);
+    layer.append(box);
+    return { box, element };
+  });
+
+  const windowRef = documentRef.defaultView ?? globalThis.window;
+  const update = () => {
+    const overlayBounds = backdrop.getBoundingClientRect?.();
+    if (!overlayBounds?.width || !overlayBounds?.height) return;
+    // The logical UI root may be CSS-scaled. Convert rendered client pixels
+    // back into the overlay's local coordinate system before drawing.
+    const scaleX = overlayBounds.width / (backdrop.offsetWidth || overlayBounds.width);
+    const scaleY = overlayBounds.height / (backdrop.offsetHeight || overlayBounds.height);
+    for (const { box, element } of boxes) {
+      const bounds = element.getBoundingClientRect?.();
+      if (!bounds) continue;
+      Object.assign(box.style, {
+        left: `${(bounds.left - overlayBounds.left) / scaleX}px`,
+        top: `${(bounds.top - overlayBounds.top) / scaleY}px`,
+        width: `${bounds.width / scaleX}px`,
+        height: `${bounds.height / scaleY}px`,
+      });
+    }
+  };
+  const observer = globalThis.ResizeObserver ? new ResizeObserver(update) : null;
+  observer?.observe(backdrop);
+  for (const { element } of boxes) observer?.observe(element);
+  windowRef?.addEventListener?.("resize", update);
+  const requestFrame = windowRef?.requestAnimationFrame ?? globalThis.requestAnimationFrame;
+  const frameId = requestFrame?.(update);
+  if (frameId == null) update();
+
+  return {
+    layer,
+    dispose() {
+      observer?.disconnect();
+      windowRef?.removeEventListener?.("resize", update);
+      const cancelFrame = windowRef?.cancelAnimationFrame ?? globalThis.cancelAnimationFrame;
+      if (frameId != null) cancelFrame?.(frameId);
+    },
+  };
+}
+
 /**
  * @typedef {Object} MenuButtonProps
  * @property {string} displayText Text displayed inside the button.
@@ -158,6 +211,16 @@ export function createMenu({
   contentStack.append(headerContainer, bodyContainer, footerContainer);
   panel.append(contentStack, createPanelArt(documentRef));
 
+  const layoutDebug = createMenuLayoutDebugLayer({
+    backdrop,
+    targets: [
+      { label: "MENU CONTENT STACK", element: contentStack },
+      { label: "BODY PARENT", element: bodyContainer },
+      { label: "BUTTONS PARENT", element: footerContainer },
+    ],
+    documentRef,
+  });
+
   let logoElement = null;
   if (showLogo) {
     logoElement = documentRef.createElement("img");
@@ -167,7 +230,7 @@ export function createMenu({
     composition.append(logoElement);
   }
   composition.append(panel);
-  backdrop.append(composition);
+  backdrop.append(composition, layoutDebug.layer);
   return {
     backdrop,
     composition,
@@ -184,5 +247,6 @@ export function createMenu({
     buttons: actionButtons,
     logo: logoElement,
     disposeFrameBounds,
+    disposeLayoutDebug: layoutDebug.dispose,
   };
 }

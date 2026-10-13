@@ -4,6 +4,10 @@
 
 - Prefer hardcoded UI values for sizing and spacing. Use CSS `calc()` only when the user explicitly requests it.
 
+## Browser validation
+
+- Use the `playwright-cli` skill and its managed built-in browser for browser validation. Do not attach to or rely on an external or in-app browser session when a managed Playwright browser can perform the check.
+
 ## Lockstep release versions
 
 - The game and `@bis/integration` are released separately, but their complete

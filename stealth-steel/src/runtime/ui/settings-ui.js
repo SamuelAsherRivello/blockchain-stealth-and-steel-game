@@ -128,7 +128,7 @@ export function createSettingsUi({
     bisGithubButton.addEventListener("click", () => {
       openExternal(BIS_GITHUB_URL, "_blank", "noopener,noreferrer");
     });
-    const resetButton = createMenuButton({ displayText: "Clear Local Storage", variant: "secondary", className: "settings-reset", documentRef });
+    const resetButton = createMenuButton({ displayText: "Clear Settings", variant: "secondary", className: "settings-reset", documentRef });
     const mapHeading = documentRef.createElement("h3");
     mapHeading.className = "map-order-heading menu-label-text";
     mapHeading.textContent = "Map";
@@ -226,6 +226,7 @@ export function createSettingsUi({
       host: modalHost,
       title: "Settings",
       content,
+      className: "settings-window",
       buttons: settingsButtons,
       documentRef,
       opener: gear,

@@ -30,9 +30,9 @@ async function run(label,work,query='') {
 }
 try {
  await run('guest capabilities, gameplay, reset and matching visible versions',async page=>{
-  const items=page.getByRole('button',{name:'⚡ Items',exact:true});
+  const items=page.getByRole('button',{name:'⚡ View Items',exact:true});
   if(await items.count())assert.equal(await items.isDisabled(),true,'Guest cannot activate Items');
-  await page.getByRole('button',{name:'Start',exact:true}).click();
+  await page.getByRole('button',{name:'Start Game',exact:true}).click();
   assert.equal((await page.locator('.release-metadata').textContent()).split(' ')[0],`v${version}`);
   assert.equal(await page.getByRole('dialog',{name:'Treasure Chest',exact:true}).count(),0);
   await page.waitForTimeout(600); // Let the normal player spawn animation finish.
@@ -44,7 +44,7 @@ try {
   if(capture)await page.screenshot({path:'stealth-steel/documentation/images/stealth-and-steel-bis-hud.png'});
   await page.getByRole('button',{name:'Back',exact:true}).click();
   await page.getByRole('button',{name:'Developer',exact:true}).click();
-  await page.getByRole('button',{name:'Clear Local Storage',exact:true}).click();
+  await page.getByRole('button',{name:'Clear Settings',exact:true}).click();
   await page.getByText('Local settings cleared. Remote transactions are not cancelled.',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Close developer settings',exact:true}).click();
   await page.getByRole('button',{name:'Close settings',exact:true}).first().click();
@@ -57,15 +57,15 @@ try {
   await run(`real guest ${outcome} workflow and replacement runtime`,async page=>{
    const documentSession=await page.locator('html').getAttribute('data-game-document-session');
    if(outcome==='loss') {
-    const pay=page.getByRole('button',{name:/Pay .*Sats To Continue/});
+    const pay=page.getByRole('button',{name:/Continue \(.* Sats\)/});
     await pay.waitFor();assert.equal(await pay.isDisabled(),true);
     assert.match(await pay.textContent(),/1000/,'BIS publishes the unchanged price');
    }else {
-    const collect=page.getByRole('button',{name:'Collect Level 1 Trophy',exact:true});
+    const collect=page.getByRole('button',{name:'Collect Trophy',exact:true});
     await collect.waitFor();
     await page.getByText(/Log in to collect this trophy/).waitFor();
     assert.equal(await collect.isDisabled(),true);
-    assert.equal(await page.getByRole('button',{name:'Continue To Next Level',exact:true}).isEnabled(),true);
+    assert.equal(await page.getByRole('button',{name:'Next Level',exact:true}).isEnabled(),true);
    }
    await page.getByRole('button',{name:'Restart Game',exact:true}).click();
    await page.waitForFunction(()=>document.querySelectorAll('.level-complete-backdrop').length===2 && !document.querySelector('.level-complete-backdrop:not([hidden])'),{},{timeout:60000});

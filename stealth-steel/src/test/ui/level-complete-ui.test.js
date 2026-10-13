@@ -21,7 +21,7 @@ test('paid loss has BIS-priced Pay first, Restart second and guards disabled act
  const host=new FakeElement();let pays=0,restarts=0;
  const ui=createLevelLostUi({host,documentRef,onPay:()=>pays++,onRestart:()=>restarts++});
  ui.setState({sats:2345,canPay:false,status:'idle',message:''});ui.show();
- assert.equal(ui.payButton.textContent,'⚡Pay 2345 Sats To Continue');assert.equal(ui.restartButton.textContent,'Restart Game');
+ assert.equal(ui.payButton.textContent,'⚡Continue (2345 Sats)');assert.equal(ui.restartButton.textContent,'Restart Game');
  assert.equal(ui.payButton.children[0].textContent,'⚡');
  assert.deepEqual(ui.actions.children, [ui.payButton, ui.restartButton]);
  ui.payButton.dispatchEvent(new Event('click'));assert.equal(pays,0);

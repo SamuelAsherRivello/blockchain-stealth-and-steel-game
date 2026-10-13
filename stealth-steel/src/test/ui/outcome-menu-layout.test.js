@@ -10,5 +10,7 @@ test("outcome menus give the paper and action stack their own readable footprint
 
   assert.match(styles, /\.ui-layer \.level-complete-panel \.menu-content-stack\s*\{[^}]*padding-bottom:\s*28px;[^}]*min-height:\s*0;/s);
   assert.match(styles, /\.ui-layer \.level-complete-panel \.menu-button-container\s*\{[^}]*margin-top:\s*18px;/s);
+  assert.match(styles, /\.ui-layer \.level-complete-panel\.outcome-loss\s*\{[^}]*padding-inline:\s*clamp\(28px, 6cqw, 36px\);/s);
+  assert.match(styles, /\.ui-layer \.level-complete-panel\.outcome-loss \.menu-button-container\s*\{[^}]*width:\s*100%;[^}]*margin-top:\s*12px;/s);
   assert.doesNotMatch(styles, /level-complete-panel \.menu-actions > \.tiny-swords-button/);
 });

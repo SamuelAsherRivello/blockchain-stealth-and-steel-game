@@ -291,7 +291,7 @@ test("settings source composes required controls, persistence, and pause lifecyc
   assert.match(source, /applyFullscreen\(checked, documentRef\)/);
   assert.doesNotMatch(source, /DISPLAY_SETTING_KEYS/);
   assert.match(source, /createSliderControl\(\{ labelText, value: store\.get\(key\)/);
-  assert.match(source, /createMenuButton\(\{ displayText: "Clear Local Storage"/);
+  assert.match(source, /createMenuButton\(\{ displayText: "Clear Settings"/);
   assert.match(source, /createMenuButton\(\{ displayText: "Stealth & Steel"/);
   assert.match(source, /createMenuButton\(\{ displayText: "BIS"/);
   assert.match(source, /PROJECT_GITHUB_URL = "https:\/\/github\.com\/SamuelAsherRivello\/stealth-and-steel-game"/);
@@ -372,7 +372,7 @@ test("developer settings opens both related GitHub projects above local storage 
   assert.equal(githubButtons.length, 2);
   assert.equal(githubButtons[0].textContent, "Stealth & Steel");
   assert.equal(githubButtons[1].textContent, "BIS");
-  assert.equal(resetButton.textContent, "Clear Local Storage");
+  assert.equal(resetButton.textContent, "Clear Settings");
   click(githubButtons[0]);
   click(githubButtons[1]);
   assert.deepEqual(opened, [
@@ -407,6 +407,9 @@ test("settings chrome follows inspiration frame-relative measurements", async ()
     assert.doesNotMatch(scalableDeclarations, /(?:\d|\.)(?:px|vw|vh)\b/);
   }
   assert.match(styles, /--screen-margin:\s*20px/);
+  assert.match(styles, /\.menu-panel\.settings-window\s*\{[^}]*transform:\s*translateY\(200px\);/s);
+  assert.match(styles, /\.menu-panel\.developer-window\s*\{[^}]*transform:\s*translateY\(200px\);/s);
+  assert.match(styles, /\.menu-panel\.game-window:has\(\.settings-controls\)\s*\{[^}]*transform:\s*translateY\(200px\);/s);
   assert.match(styles, /\.settings-gear\s*\{[^}]*top:\s*var\(--ui-safe-top\);[^}]*right:\s*var\(--ui-safe-right\);[^}]*width:\s*clamp\(1\.375rem, 4cqw, 2rem\);[^}]*height:\s*clamp\(1\.375rem, 4cqw, 2rem\);[^}]*padding:\s*0\.35cqw;[^}]*border:\s*0\.175cqw solid/s);
   assert.match(styles, /\.game-window-backdrop\s*\{[^}]*position:\s*fixed;[^}]*inset:\s*0;[^}]*background:\s*rgb\(0 0 0 \/ 42%\)/s);
   assert.match(styles, /\.game-window-dimmer\s*\{[^}]*inset:\s*0;[^}]*rgb\(0 0 0 \/ 20%\)/s);
@@ -414,9 +417,9 @@ test("settings chrome follows inspiration frame-relative measurements", async ()
   assert.match(styles, /\.menu-panel\s*\{[^}]*box-shadow:\s*5px 5px 5px rgb\(0 0 0 \/ 32\.5%\);[^}]*max-height:\s*100%;[^}]*overflow:\s*auto;/s);
 });
 
-test("Clear All Settings uses red button artwork", async () => {
+test("Clear Settings and Developer use red button artwork", async () => {
   const styles = await readFile(new URL("../../runtime/ui/tiny-swords-menu.css", import.meta.url), "utf8");
-  assert.match(styles, /\.settings-reset \.tiny-swords-button-art i\s*\{[^}]*filter:\s*hue-rotate\(175deg\) saturate\(2\) brightness\(\.8\);/s);
+  assert.match(styles, /\.settings-reset \.tiny-swords-button-art i,\s*\.developer-settings-button \.tiny-swords-button-art i\s*\{[^}]*filter:\s*hue-rotate\(175deg\) saturate\(2\) brightness\(\.8\);/s);
 });
 
 test("gear icon is transparent vector artwork", async () => {

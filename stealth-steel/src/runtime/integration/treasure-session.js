@@ -90,7 +90,7 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
 }
 
 export function treasureMessage(status) {
-  return ({active:'You found a treasure of 1000 sats.',preparing:'Treasure is being prepared',expired:"You found a treasure but it's expired",
+  return ({active:'Limited Time Offer: Treasure found — Claim 1,000 sats?',preparing:'Treasure is being prepared',expired:"You found a treasure but it's expired",
     'missing-player':'Connect an account to receive treasure offers','no-offer':'No treasure offer available',unavailable:'Treasure status is unavailable',
     pending:'Treasure transaction is pending',claimed:'Reward claimed',rejected:'Offer ended'})[status] ?? 'No treasure offer available';
 }
