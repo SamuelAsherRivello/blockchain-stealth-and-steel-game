@@ -73,7 +73,7 @@ test('dispose during import or hydration prevents late mounting',async()=>{
 test('Account close followed by stable logout restart neither returns to Settings nor resumes',async()=>{
   const f=fixture();await f.adapter.open();f.emit({type:'accountClosed'});
   f.emit({type:'restartRequested',reason:'logout',logoutId:'one'});f.emit({type:'restartRequested',reason:'logout',logoutId:'one'});await flush();
-  assert.equal(f.counts().restarts,1);assert.equal(f.counts().closes,0);assert.equal(f.pause.isPaused,true);f.adapter.dispose();
+  assert.equal(f.counts().restarts,1);assert.equal(f.counts().closes,1);assert.equal(f.adapter.isOpen,false);assert.equal(f.other.inert,false);assert.equal(f.pause.isPaused,true);f.adapter.dispose();
 });
 
 test('uses one typed facade and forwards the original complete host getter',async()=>{

@@ -129,3 +129,15 @@ Final acceptance snapshot: bis-integration-0.14.1-g1-g2-8b79d547b577.tgz; SHA-25
 Default-enabled LTO snapshot: bis-integration-0.14.1-g1-g2-3b1f7f91ca8c.tgz; SHA-256 3b1f7f91ca8cc79981227d54a8449dc7419c740b5c346deca0633077beec61ca. Supersedes all earlier G1/G2 snapshots above. All 93 installed files verify and the game build passes. Creation uses runtime readiness by default; explicit creationEnabled:false retains recovery. This is an unreleased local snapshot.
 
 Asset-carrier funding fix: bis-integration-0.14.1-g1-g2-d191d1bc8688.tgz; SHA-256 d191d1bc8688c22c77fccf8bf23e5156b6adf17275b16014013d90f30459a47c. Supersedes earlier G1/G2 snapshots. The 93-file inventory verifies. Preserves every asset in game change and provides sanitized preparation failure reasons.
+- Package: `@bis/integration` 0.0.23; artifact: `bis-integration-0.0.23.tgz`.
+- SHA-256: `1cef2cdbda2a28ccb82f9b10a802d8e11a51dc14e4f92d74023a11ebdcde5fa7`.
+- Source commit: `657ec3cf0b47ab7f1ebf7e0a91737859c8f1828b`; sourceDirty: true. The requested logout-host contract is included in the local packed source.
+- Inventory: 149 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM.
+- Verification: package release check, focused logout lifecycle tests, TypeScript contract check, archive/install hash verification, and production builds are the import gates. The BIS repository-wide suite has unrelated pre-existing dirty-work failures; no wallet action was performed.
+
+### Game-consumable public API changes
+
+- `IBisGame.authorizePlayerLogoutAsync` lets a game return `allow`, `deny`, or `confirm` with a bounded, game-authored body. BIS owns the dialog title and buttons.
+- `IBisGame.confirmPlayerLogoutAsync` rechecks an opaque confirmation authorization immediately before Player Wallet cleanup. Timeouts, unavailable hosts, and invalid responses require an explicit BIS override rather than silently proceeding.
+- Public account snapshots keep Player Wallet and Game Wallet role identities distinct; game consumers must compare both and discard stale asynchronous work after either changes.
+

@@ -10,8 +10,10 @@
   --menu-final-action-bottom: 8px;
   --menu-content-min-height: min(325px, 25dvh);
   --menu-paper-edge-inline: 5%;
-  --menu-paper-content-inset: 12px;
-  --menu-paper-top: 65px;
+  /* The content stack begins at the parchment/ribbon seam and uses one
+     deliberately generous safe inset in every menu. */
+  --menu-paper-content-inset: 25px;
+  --menu-paper-top: 45px;
   --menu-ribbon-title-safe-inset: 72px;
   --menu-title-font-size: 20px;
 }
@@ -374,13 +376,11 @@ menu-button-label {
 }
 @container (max-width: 400px) {
   .ui-layer .tiny-swords-body-text { font-size: 18px; }
-  .ui-layer .tiny-swords-panel { --menu-paper-top: 58px; }
 }
 /* A short desktop window has a narrow game frame even on a wide monitor. */
 @container (max-height: 650px) {
   .tiny-swords-menu-composition { gap: 8px; }
   .tiny-swords-menu-logo { width: min(180px, 60%); }
-  .ui-layer .tiny-swords-panel { --menu-paper-top: 50px; }
   .ui-layer .menu-body { gap: 8px; }
   .ui-layer .tiny-swords-body-text { font-size: 16px; line-height: 1.4; }
   .ui-layer .tiny-swords-button { min-height: 56px; padding-inline: 16px; }
@@ -429,8 +429,6 @@ menu-button-label {
 }
 .ui-layer .start-game-prompt-panel {
   --menu-title-font-size: 3.6207cqw;
-  --menu-paper-top: 11.7674cqw;
-  --menu-paper-content-inset: .7241cqw;
   filter: drop-shadow(0 2.1724cqw 2.8966cqw #081c2666);
 }
 .ui-layer .start-game-prompt-panel .menu-content-stack {

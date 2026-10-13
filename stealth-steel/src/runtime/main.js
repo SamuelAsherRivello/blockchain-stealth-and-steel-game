@@ -117,6 +117,7 @@ import { loadStatusBadgeArt } from "./ui/status-badge.js";
 import { createCharacterOverhead, drawCharacterOverheads } from "./ui/character-overhead.js";
 import { createBisAccount } from "./integration/bis-account.js";
 import { createBisGame } from "./integration/bis-host-game.js";
+import { createWalletLifecycle } from "./integration/wallet-lifecycle.js";
 import { createPayToContinue } from "./integration/pay-to-continue.js";
 import { createLevelReward } from "./integration/level-reward.js";
 import { createLevelProgress } from "./gameplay/level-progress.js";
@@ -960,6 +961,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   });
   let equipmentSnapshot = EMPTY_EQUIPMENT_SNAPSHOT;
   let unsubscribeEquipment = () => {};
+  const walletLifecycle = createWalletLifecycle();
   const bisPromise = accountHost.readyAsync();
   const initialEquipmentState = bisPromise.then(bis => bis?.refreshEquipmentAsync());
   equipmentSnapshot = createEquipmentSnapshot(await Promise.race([
@@ -1262,10 +1264,20 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   }
   void bisPromise.then(bis => {
     if (disposed) return;
-    unsubscribeEquipment = accountHost.subscribe(snapshot=>applyEquipmentState(snapshot.equipment));
-    if(bis)applyEquipmentState(bis.getSnapshot().equipment);
+    unsubscribeEquipment = accountHost.subscribe(snapshot=>{
+      walletLifecycle.observe(snapshot);
+      applyEquipmentState(snapshot.equipment);
+    });
+    if(bis) {
+      const snapshot = bis.getSnapshot();
+      walletLifecycle.observe(snapshot);
+      applyEquipmentState(snapshot.equipment);
+    }
   }).catch(() => {});
-  void initialEquipmentState.then(applyEquipmentState).catch(() => {});
+  const initialEquipmentRevision = walletLifecycle.revision;
+  void initialEquipmentState.then(state => {
+    if (walletLifecycle.current(initialEquipmentRevision)) applyEquipmentState(state);
+  }).catch(() => {});
   const goal = createGoal({ host: world.mode === "follow-player" ? gameFrame : gameUi, position: { x: (level.goals[0].gameCell.x + 0.5) * TILE_SIZE, y: (level.goals[0].gameCell.y + 0.5) * TILE_SIZE }, screenWidth: SCREEN_WIDTH, screenHeight: SCREEN_HEIGHT });
   const goalAtlas = await loadSpriteAtlas(engine, `${import.meta.env.BASE_URL}assets/images/goals/StepsDown-uneven.png`, {
     gridSize: [64, 64], sampling: "nearest",
@@ -1326,6 +1338,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   });
   const bisGameSessionId = crypto.randomUUID();
   const rewardFeedback=createBisGameRewardFeedback({host:gameUi});
+  let logoutAuthorization;
   let accountLifecycleHandled = false;
   let accountWindowReloadRequested = false;
   const handleAccountLifecycleChange = () => {
@@ -1343,6 +1356,19 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     onBisEvent: event => {
       accountHost.onBisEvent(event);
       if (event.type === 'accountConnected' || event.type === 'accountDisconnected') handleAccountLifecycleChange();
+    },
+    authorizePlayerLogoutAsync: async () => {
+      if (startGamePrompt) return { decision: 'allow' };
+      const authorizationId = crypto.randomUUID();
+      logoutAuthorization = { authorizationId, gameSessionId: bisGameSessionId };
+      return { decision: 'confirm', authorizationId, body: 'Logging out will discard this game\'s current progress. Are you sure you want to continue?' };
+    },
+    confirmPlayerLogoutAsync: async ({ authorizationId }) => {
+      const current = logoutAuthorization;
+      logoutAuthorization = undefined;
+      return current?.authorizationId === authorizationId && current.gameSessionId === bisGameSessionId && !startGamePrompt
+        ? { decision: 'allow' }
+        : { decision: 'deny', message: 'The game state changed. Review logout again before continuing.' };
     },
     getActiveGameSessionId: () => !disposed && bisSessionActive && [GameState.LEVEL_PLAYING, GameState.LEVEL_LOST, GameState.LEVEL_COMPLETE].includes(gameStateMachine.state) ? bisGameSessionId : undefined,
     canCaptureContinuation: () => gameStateMachine.state === GameState.LEVEL_LOST,

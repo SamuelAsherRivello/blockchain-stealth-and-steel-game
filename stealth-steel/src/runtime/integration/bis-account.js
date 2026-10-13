@@ -70,6 +70,13 @@ export function createBisAccount({host, pauseController, restartGame, documentRe
     onClose();
     pauseController.resume('bis-account');
   }
+  function releaseForRestart() {
+    active = false; visit++; passive();
+    documentRef.removeEventListener('focusin', keepFocus, true);
+    restoreInteraction();
+    onClose();
+    pauseController.resume('bis-account');
+  }
   back.addEventListener('click', close);
   /** Called only by the game-owned IBisGame.onBisEvent implementation. */
   function onBisEvent(event) {
@@ -81,7 +88,7 @@ export function createBisAccount({host, pauseController, restartGame, documentRe
       queueMicrotask(() => { if (!disposed && !restarting) close(); });
     } else if (event.type === 'restartRequested' && !restarts.has(event.logoutId)) {
       restarts.add(event.logoutId); restarting = true;
-      pauseController.pause('bis-account');
+      releaseForRestart();
       try { restartGame(); }
       catch { status.hidden = false; mount.hidden = true; message.textContent = 'Account logged out. Reload the game to continue.'; back.hidden = true; }
     }

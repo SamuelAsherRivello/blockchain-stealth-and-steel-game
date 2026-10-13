@@ -8,7 +8,7 @@ import { mutedGameUrl, browserOptions } from './bis-smoke-options.mjs';
 const fixture = `
 export class BisService {
   constructor({getBisGame}) {
-    this.connected=false; this.revision=0;
+    this.connected=false; this.gameConnected=false; this.revision=0;
     this.getBisGame=getBisGame;
     window.accountLifecycleFixture={
       ready:()=>Boolean(getBisGame()),
@@ -17,6 +17,10 @@ export class BisService {
         const game=getBisGame();
         game.onBisEvent({type:'stateChanged',snapshot:this.getSnapshot()});
         game.onBisEvent({type:connected?'accountConnected':'accountDisconnected',profileId:'synthetic-player'});
+      },
+      changeGame:connected=>{
+        this.gameConnected=connected; this.revision++;
+        getBisGame().onBisEvent({type:'stateChanged',snapshot:this.getSnapshot()});
       },
       restart:()=>getBisGame().onBisEvent({type:'restartRequested',logoutId:'synthetic-logout'}),
     };
@@ -32,7 +36,8 @@ export class BisService {
   getSnapshot(){return {
     revision:this.revision,version:'synthetic',disposed:false,
     account:{visible:false,hasProfile:this.connected,phase:this.connected?'ready':'guest',
-      ...(this.connected?{playerWallet:{profileId:'synthetic-player'}}:{})},
+      ...(this.connected?{playerWallet:{profileId:'synthetic-player',network:'signet'}}:{}),
+      ...(this.gameConnected?{gameWallet:{profileId:'synthetic-game',network:'signet'}}:{})},
     capabilities:{items:{available:this.connected},contracts:{available:false},payments:{available:false}},
     equipment:{status:this.connected?'ready':'unavailable',ownedItems:[],effective:{}},
     continuations:[],rewards:[],contracts:{status:'unavailable',contracts:[]},
@@ -74,6 +79,12 @@ try {
     await items.waitFor({state:'visible'});
     assert.equal(await items.isEnabled(),true);
     assert.equal(await oldMenu.evaluate(element=>element.isConnected),false);
+    assert.equal(await menu.count(),1);
+    // Game Wallet snapshots are distinct from Player Wallet lifecycle events.
+    // Toggling that role must not rebuild or darken the interactive Start menu.
+    const playerMenu=await menu.elementHandle();
+    await page.evaluate(()=>{window.accountLifecycleFixture.changeGame(true);window.accountLifecycleFixture.changeGame(false);});
+    assert.equal(await playerMenu.evaluate(element=>element.isConnected),true);
     assert.equal(await menu.count(),1);
     await page.screenshot({path:directory+'/'+mode+'-connected.png'});
     const connectedMenu=await menu.elementHandle();
