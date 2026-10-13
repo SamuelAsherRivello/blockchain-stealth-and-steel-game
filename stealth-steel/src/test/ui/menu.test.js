@@ -120,3 +120,17 @@ test("reusable buttons retain caller text and native action events", () => {
   assert.equal(clicks, 1);
   assert.equal(button.children[1].attributes.get("aria-hidden"), "true");
 });
+
+test("menus expose a reduced-motion lifecycle that hides and restores accessibility", () => {
+  const menu = createMenu({ titleText: "Example", documentRef });
+  let hidden = 0;
+  menu.hide(() => hidden++);
+  assert.equal(menu.backdrop.hidden, true);
+  assert.equal(menu.backdrop.attributes.get("inert"), "");
+  assert.equal(menu.backdrop.attributes.get("aria-hidden"), "true");
+  assert.equal(hidden, 1);
+  menu.show();
+  assert.equal(menu.backdrop.hidden, false);
+  assert.equal(menu.backdrop.attributes.has("inert"), false);
+  assert.equal(menu.backdrop.attributes.has("aria-hidden"), false);
+});

@@ -47,6 +47,7 @@ export class GameWindow {
     this.actions = menu.actions;
     this.buttons = menu.buttons;
     this.backdrop = menu.backdrop;
+    this.menu = menu;
     this.disposeFrameBounds = menu.disposeFrameBounds;
     this.backdrop.className += " game-window-backdrop";
 
@@ -57,25 +58,34 @@ export class GameWindow {
     this.backdrop.addEventListener("click", this.handleBackdrop);
     this.closeButton.addEventListener("click", this.handleClose);
     host.append(this.backdrop);
+    this.menu.show();
     this.closeButton.focus();
   }
 
   close() {
-    if (!this.backdrop.isConnected && !this.backdrop.parentNode) {
+    if (this.closing || (!this.backdrop.isConnected && !this.backdrop.parentNode)) {
       return;
     }
-    this.backdrop.removeEventListener("click", this.handleBackdrop);
-    this.disposeFrameBounds?.();
-    this.closeButton.removeEventListener("click", this.handleClose);
-    this.dimmer?.removeEventListener("click", this.handleDimmer);
-    this.dimmer?.remove();
-    this.backdrop.remove();
-    this.onClose?.();
-    this.opener?.focus?.();
+    this.closing = true;
+    this.menu.hide(() => {
+      this.backdrop.removeEventListener("click", this.handleBackdrop);
+      this.disposeFrameBounds?.();
+      this.closeButton.removeEventListener("click", this.handleClose);
+      this.dimmer?.removeEventListener("click", this.handleDimmer);
+      this.dimmer?.remove();
+      this.menu.disposeTransition();
+      this.backdrop.remove();
+      this.onClose?.();
+      this.opener?.focus?.();
+    });
   }
 
   setVisible(visible) {
-    this.backdrop.hidden = !visible;
-    if (this.dimmer) this.dimmer.hidden = !visible;
+    if (visible) {
+      this.dimmer && (this.dimmer.hidden = false);
+      this.menu.show();
+    } else {
+      this.menu.hide(() => { if (this.dimmer) this.dimmer.hidden = true; });
+    }
   }
 }

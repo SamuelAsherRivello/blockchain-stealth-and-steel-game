@@ -4,6 +4,7 @@ import "./menu-button-label.js";
 import "./menu-title-label.js";
 
 let nextMenuId = 0;
+const MENU_TRANSITION_DURATION_MS = 100;
 const DEFAULT_LOGO_SRC = `${import.meta.env?.BASE_URL ?? "/"}ui/tiny-swords/`
   + "stealth-and-steel-logo-transparent.png";
 
@@ -175,6 +176,75 @@ export function createMenu({
   }
   composition.append(panel);
   backdrop.append(composition);
+
+  let exitTimer = null;
+  let exitCallback = null;
+  const windowRef = documentRef.defaultView ?? globalThis.window;
+  const reducedMotion = () => !windowRef?.matchMedia
+    || windowRef.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const classNames = element => (element.className ?? "").split(/\s+/).filter(Boolean);
+  const addClass = (element, name) => {
+    if (!classNames(element).includes(name)) element.className = `${element.className ?? ""} ${name}`.trim();
+  };
+  const removeClass = (element, name) => {
+    element.className = classNames(element).filter(value => value !== name).join(" ");
+  };
+  const removeAttribute = (element, name) => {
+    if (element.removeAttribute) element.removeAttribute(name);
+    else element.attributes?.delete?.(name);
+  };
+  const clearExit = () => {
+    if (exitTimer !== null) clearTimeout(exitTimer);
+    exitTimer = null;
+    removeClass(backdrop, "menu-transition-exit");
+  };
+  const finishExit = () => {
+    if (!classNames(backdrop).includes("menu-transition-exit")) return;
+    const callback = exitCallback;
+    exitCallback = null;
+    clearExit();
+    backdrop.hidden = true;
+    callback?.();
+  };
+  const handleAnimationEnd = event => {
+    if (event.target !== composition || event.animationName !== "menu-exit") return;
+    finishExit();
+  };
+  composition.addEventListener("animationend", handleAnimationEnd);
+  const show = () => {
+    clearExit();
+    exitCallback = null;
+    backdrop.hidden = false;
+    removeAttribute(backdrop, "inert");
+    removeAttribute(backdrop, "aria-hidden");
+    removeClass(backdrop, "menu-transition-enter");
+    if (!reducedMotion()) {
+      void composition.offsetWidth;
+      addClass(backdrop, "menu-transition-enter");
+    }
+  };
+  const hide = (callback = null) => {
+    if (backdrop.hidden) { callback?.(); return; }
+    clearExit();
+    backdrop.setAttribute("inert", "");
+    backdrop.setAttribute("aria-hidden", "true");
+    exitCallback = callback;
+    if (reducedMotion()) {
+      backdrop.hidden = true;
+      const finish = exitCallback;
+      exitCallback = null;
+      finish?.();
+      return;
+    }
+    removeClass(backdrop, "menu-transition-enter");
+    addClass(backdrop, "menu-transition-exit");
+    exitTimer = setTimeout(finishExit, MENU_TRANSITION_DURATION_MS + 50);
+  };
+  const disposeTransition = () => {
+    clearExit();
+    exitCallback = null;
+    composition.removeEventListener("animationend", handleAnimationEnd);
+  };
   return {
     backdrop,
     composition,
@@ -193,5 +263,8 @@ export function createMenu({
     buttons: actionButtons,
     logo: logoElement,
     disposeFrameBounds,
+    show,
+    hide,
+    disposeTransition,
   };
 }

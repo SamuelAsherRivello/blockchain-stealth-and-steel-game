@@ -47,6 +47,7 @@ export function createStartGamePrompt({ host, onStart, onItems, itemsVisible = f
   itemsButton?.addEventListener("click", handleItems);
 
   host.append(backdrop);
+  menu.show();
   startButton.focus();
 
   const prompt = {
@@ -59,8 +60,11 @@ export function createStartGamePrompt({ host, onStart, onItems, itemsVisible = f
     close() {
       startButton.removeEventListener("click", handleStart);
       itemsButton?.removeEventListener("click", handleItems);
-      menu.disposeFrameBounds();
-      backdrop.remove();
+      menu.hide(() => {
+        menu.disposeFrameBounds();
+        menu.disposeTransition();
+        backdrop.remove();
+      });
     },
   };
   return prompt;

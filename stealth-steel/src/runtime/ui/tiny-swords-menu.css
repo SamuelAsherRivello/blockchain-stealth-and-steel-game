@@ -1,5 +1,8 @@
 /* C061: shared menu, title text, body text and action button presentation. */
 .ui-layer {
+  --menu-transition-duration: 100ms;
+  --menu-transition-from-scale: 0.8;
+  --menu-transition-to-scale: 1;
   --menu-toast-bottom: 9dvh;
   --menu-toast-offset: 15px;
   --menu-first-visible-top: calc(var(--menu-toast-bottom) + var(--menu-toast-offset));
@@ -600,6 +603,43 @@ menu-button-label {
 }
 .ui-layer .menu-backdrop-surface[hidden] {
   display: none;
+}
+.ui-layer .menu-backdrop-surface.menu-transition-enter {
+  animation: menu-backdrop-enter var(--menu-transition-duration) ease-out both;
+}
+.ui-layer .menu-backdrop-surface.menu-transition-exit {
+  pointer-events: none;
+  animation: menu-backdrop-exit var(--menu-transition-duration) ease-in both;
+}
+.ui-layer .menu-backdrop-surface.menu-transition-enter .menu-composition {
+  animation: menu-enter var(--menu-transition-duration) ease-out both;
+}
+.ui-layer .menu-backdrop-surface.menu-transition-exit .menu-composition {
+  animation: menu-exit var(--menu-transition-duration) ease-in both;
+}
+@keyframes menu-backdrop-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes menu-backdrop-exit {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes menu-enter {
+  from { opacity: 0; transform: scale(var(--menu-transition-from-scale)); }
+  to { opacity: 1; transform: scale(var(--menu-transition-to-scale)); }
+}
+@keyframes menu-exit {
+  from { opacity: 1; transform: scale(var(--menu-transition-to-scale)); }
+  to { opacity: 0; transform: scale(var(--menu-transition-from-scale)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-layer .menu-backdrop-surface.menu-transition-enter,
+  .ui-layer .menu-backdrop-surface.menu-transition-exit,
+  .ui-layer .menu-backdrop-surface.menu-transition-enter .menu-composition,
+  .ui-layer .menu-backdrop-surface.menu-transition-exit .menu-composition {
+    animation: none;
+  }
 }
 .ui-layer .menu-backdrop-surface:not(.has-logo) {
   padding: calc(var(--menu-first-visible-top) + var(--menu-ribbon-overhang)) 22px 28px;

@@ -30,9 +30,9 @@ export function createLevelLostUi({ host, onPay, onRestart, frameElement = null,
       body.textContent = message || 'Try again!';
       panel.setAttribute('aria-busy',String(status === 'pending'));
     },
-    show() { backdrop.hidden=false; (payButton.disabled ? restartButton : payButton).focus(); },
-    hide() { backdrop.hidden=true; },
-    dispose() { payButton.removeEventListener('click',pay); restartButton.removeEventListener('click',restart); backdrop.removeEventListener('keydown',containKey); backdrop.removeEventListener('keyup',containKey); menu.disposeFrameBounds(); backdrop.remove(); },
+    show() { menu.show(); (payButton.disabled ? restartButton : payButton).focus(); },
+    hide() { menu.hide(); },
+    dispose() { menu.hide(() => { payButton.removeEventListener('click',pay); restartButton.removeEventListener('click',restart); backdrop.removeEventListener('keydown',containKey); backdrop.removeEventListener('keyup',containKey); menu.disposeFrameBounds(); menu.disposeTransition(); backdrop.remove(); }); },
   };
 }
 
@@ -86,7 +86,7 @@ export function createLevelCompleteUi({host, onContinue, onRestart = onContinue,
   return {backdrop,panel,actions,button:continueButton,collectButton,continueButton,restartButton,checkButton,acknowledgeButton,
     setCompletion(value){completion={...completion,...value};render();},
     setState(value){state={...state,...value};render();if(state.needsAcknowledgment)acknowledgeButton.focus();},
-    show(){render();backdrop.hidden=false;(menu.buttons.find(button=>!button.hidden&&!button.disabled)??panel).focus();},
-    dispose(){for(const [button,handler]of actionHandlers)button.removeEventListener('click',handler);backdrop.removeEventListener('keydown',keydown);backdrop.removeEventListener('keyup',keydown);menu.disposeFrameBounds();backdrop.remove();},
+    show(){render();menu.show();(menu.buttons.find(button=>!button.hidden&&!button.disabled)??panel).focus();},
+    dispose(){menu.hide(()=>{for(const [button,handler]of actionHandlers)button.removeEventListener('click',handler);backdrop.removeEventListener('keydown',keydown);backdrop.removeEventListener('keyup',keydown);menu.disposeFrameBounds();menu.disposeTransition();backdrop.remove();});},
   };
 }
