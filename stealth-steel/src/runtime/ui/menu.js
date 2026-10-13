@@ -7,13 +7,13 @@ let nextMenuId = 0;
 const DEFAULT_LOGO_SRC = `${import.meta.env?.BASE_URL ?? "/"}ui/tiny-swords/`
   + "stealth-and-steel-logo-transparent.png";
 
-function createMenuLayoutDebugLayer({ backdrop, targets, documentRef }) {
+function createMenuLayoutDebugLayer({ overlayRoot, targets, documentRef }) {
   const layer = documentRef.createElement("div");
   layer.className = "menu-layout-debug-layer";
   layer.setAttribute("aria-hidden", "true");
-  const boxes = targets.map(({ label, element }) => {
+  const boxes = targets.map(({ label, element, className }) => {
     const box = documentRef.createElement("div");
-    box.className = "menu-layout-debug-box";
+    box.className = `menu-layout-debug-box ${className}`;
     const labelElement = documentRef.createElement("span");
     labelElement.className = "menu-layout-debug-label";
     labelElement.textContent = `TEMP: ${label}`;
@@ -24,12 +24,12 @@ function createMenuLayoutDebugLayer({ backdrop, targets, documentRef }) {
 
   const windowRef = documentRef.defaultView ?? globalThis.window;
   const update = () => {
-    const overlayBounds = backdrop.getBoundingClientRect?.();
+    const overlayBounds = overlayRoot.getBoundingClientRect?.();
     if (!overlayBounds?.width || !overlayBounds?.height) return;
     // The logical UI root may be CSS-scaled. Convert rendered client pixels
     // back into the overlay's local coordinate system before drawing.
-    const scaleX = overlayBounds.width / (backdrop.offsetWidth || overlayBounds.width);
-    const scaleY = overlayBounds.height / (backdrop.offsetHeight || overlayBounds.height);
+    const scaleX = overlayBounds.width / (overlayRoot.offsetWidth || overlayBounds.width);
+    const scaleY = overlayBounds.height / (overlayRoot.offsetHeight || overlayBounds.height);
     for (const { box, element } of boxes) {
       const bounds = element.getBoundingClientRect?.();
       if (!bounds) continue;
@@ -42,7 +42,7 @@ function createMenuLayoutDebugLayer({ backdrop, targets, documentRef }) {
     }
   };
   const observer = globalThis.ResizeObserver ? new ResizeObserver(update) : null;
-  observer?.observe(backdrop);
+  observer?.observe(overlayRoot);
   for (const { element } of boxes) observer?.observe(element);
   windowRef?.addEventListener?.("resize", update);
   const requestFrame = windowRef?.requestAnimationFrame ?? globalThis.requestAnimationFrame;
@@ -211,16 +211,6 @@ export function createMenu({
   contentStack.append(headerContainer, bodyContainer, footerContainer);
   panel.append(contentStack, createPanelArt(documentRef));
 
-  const layoutDebug = createMenuLayoutDebugLayer({
-    backdrop,
-    targets: [
-      { label: "MENU CONTENT STACK", element: contentStack },
-      { label: "BODY PARENT", element: bodyContainer },
-      { label: "BUTTONS PARENT", element: footerContainer },
-    ],
-    documentRef,
-  });
-
   let logoElement = null;
   if (showLogo) {
     logoElement = documentRef.createElement("img");
@@ -230,7 +220,17 @@ export function createMenu({
     composition.append(logoElement);
   }
   composition.append(panel);
-  backdrop.append(composition, layoutDebug.layer);
+  const layoutDebug = createMenuLayoutDebugLayer({
+    overlayRoot: composition,
+    targets: [
+      { label: "MENU CONTENT STACK", element: contentStack, className: "menu-layout-debug-stack" },
+      { label: "BODY PARENT", element: bodyContainer, className: "menu-layout-debug-body" },
+      { label: "BUTTONS PARENT", element: footerContainer, className: "menu-layout-debug-buttons" },
+    ],
+    documentRef,
+  });
+  composition.append(layoutDebug.layer);
+  backdrop.append(composition);
   return {
     backdrop,
     composition,

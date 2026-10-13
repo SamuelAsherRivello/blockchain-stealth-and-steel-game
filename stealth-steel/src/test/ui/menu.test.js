@@ -38,7 +38,8 @@ test("menus accept independent content, unique accessible labels, and no logo by
   assert.ok(first.actions.className.split(" ").includes("menu-button-container"));
   assert.ok(first.actions.className.split(" ").includes("menu-actions"));
   assert.equal(first.logo, null);
-  assert.equal(first.composition.children.length, 1);
+  assert.equal(first.composition.children.length, 2);
+  assert.equal(first.composition.children[1].className, "menu-layout-debug-layer");
   assert.notEqual(first.title.id, second.title.id);
   assert.equal(first.panel.attributes.get("aria-labelledby"), first.title.id);
   assert.equal(first.panel.attributes.get("aria-describedby"), first.body.id);
@@ -58,6 +59,29 @@ test("menus combine optional body text, custom content, and shared actions", () 
   assert.deepEqual(menu.bodyArea.children, [menu.body, content]);
   assert.deepEqual(menu.actions.children, menu.buttons);
   assert.ok(!menu.panel.children.includes(menu.buttons[0]));
+  assert.equal(menu.bodyContainer.children[0], menu.bodyArea);
+  assert.equal(menu.footerContainer.children[0], menu.actions);
+});
+
+test("the temporary layout guide is a sibling overlay and leaves menu parents intact", () => {
+  const menu = createMenu({
+    titleText: "Example",
+    bodyText: "Instructions",
+    buttons: [{ displayText: "Proceed" }],
+    documentRef,
+  });
+
+  const overlay = menu.composition.children.at(-1);
+  assert.equal(overlay.className, "menu-layout-debug-layer");
+  assert.equal(menu.contentStack.children.length, 3);
+  assert.deepEqual(
+    overlay.children.map(box => box.className),
+    [
+      "menu-layout-debug-box menu-layout-debug-stack",
+      "menu-layout-debug-box menu-layout-debug-body",
+      "menu-layout-debug-box menu-layout-debug-buttons",
+    ],
+  );
   assert.equal(menu.bodyContainer.children[0], menu.bodyArea);
   assert.equal(menu.footerContainer.children[0], menu.actions);
 });
