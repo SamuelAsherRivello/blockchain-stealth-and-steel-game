@@ -48,7 +48,6 @@ export class GameWindow {
     this.buttons = menu.buttons;
     this.backdrop = menu.backdrop;
     this.disposeFrameBounds = menu.disposeFrameBounds;
-    this.disposeLayoutDebug = menu.disposeLayoutDebug;
     this.backdrop.className += " game-window-backdrop";
 
     this.handleBackdrop = (event) => {
@@ -67,7 +66,6 @@ export class GameWindow {
     }
     this.backdrop.removeEventListener("click", this.handleBackdrop);
     this.disposeFrameBounds?.();
-    this.disposeLayoutDebug?.();
     this.closeButton.removeEventListener("click", this.handleClose);
     this.dimmer?.removeEventListener("click", this.handleDimmer);
     this.dimmer?.remove();

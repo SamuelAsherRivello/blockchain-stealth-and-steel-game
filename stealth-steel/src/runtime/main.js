@@ -1173,8 +1173,6 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   settingsUi = createSettingsUi({
     host: gameUi, modalHost: domBody, screenLayer: domScreen, frameElement: gameFrame, pauseController,
     catalog: __GAME_LEVELS__, openAccount: () => accountHost.open(),
-    getBis: () => accountHost.getBis(),
-    onBisReset: () => { bisSessionActive=false; },
     showMapLevelSelectorInSettings,
     isStartMenuVisible: () => startGamePrompt !== null,
   });

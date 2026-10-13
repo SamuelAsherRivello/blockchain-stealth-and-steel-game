@@ -147,8 +147,11 @@ test("unavailable storage falls back to an authoritative in-memory session", () 
   assert.equal(store.get(AUDIO_SETTING_KEYS.sfx), 100);
 });
 
-test("reset removes only game settings, restores defaults, and notifies", () => {
-  const storage = createStorage({ unrelated: "keep" });
+test("reset removes only the game settings record, restores defaults, and notifies", () => {
+  const storage = createStorage({
+    "external-preference": "keep",
+    "another-application-state": "preserve",
+  });
   const store = createSettingsStore(storage);
   store.set(AUDIO_SETTING_KEYS.music, 10);
   store.set(AUDIO_SETTING_KEYS.sfx, 20);
@@ -165,7 +168,8 @@ test("reset removes only game settings, restores defaults, and notifies", () => 
   store.reset();
 
   assert.equal(storage.has(SETTINGS_STORAGE_KEY), false);
-  assert.equal(storage.read("unrelated"), "keep");
+  assert.equal(storage.read("external-preference"), "keep");
+  assert.equal(storage.read("another-application-state"), "preserve");
   assert.equal(store.get(AUDIO_SETTING_KEYS.music), 20);
   assert.equal(store.get(AUDIO_SETTING_KEYS.sfx), 100);
   assert.equal(store.get(DEBUG_SETTING_KEYS.showColliders), false);

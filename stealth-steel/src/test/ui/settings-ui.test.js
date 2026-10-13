@@ -303,7 +303,7 @@ test("settings source composes required controls, persistence, and pause lifecyc
   assert.match(main, /settingsUi = createSettingsUi\(\{/);
   assert.match(main, /openAccount: \(\) => accountHost\.open\(\)/);
   assert.match(main, /equipmentProvider: \(\) => bisPromise/);
-  assert.match(main, /onBisReset: \(\) => \{ bisSessionActive=false; \}/);
+  assert.doesNotMatch(main, /onBisReset:|getBis: \(\) => accountHost\.getBis\(\)/);
   assert.match(main, /getActiveGameSessionId: \(\) => !disposed && bisSessionActive/);
   assert.match(main, /updateSpriteAnimationManager\(animationManager, activeDelta \* 1000\)/);
   assert.match(main, /playerRecord\.actor\.update\(activeDelta, dynamicColliders\)/);
@@ -477,17 +477,8 @@ test("Enemy Tasks control writes independently and Clear All Settings clears the
   assert.equal(checkbox.checked, false);
 });
 
-test('BIS reset is awaited, blocks duplicate clicks, reports failure and permits retry',async()=>{
-  const documentRef=createDocument(),store=createSettingsStore(null);let calls=0,invalidate=0,finish;
-  const ui=createSettingsUi({host:new FakeElement(),documentRef,store,pauseController:{pause(){},resume(){}},onBisReset:()=>invalidate++,getBis:()=>({resetForGameAsync:()=>{calls++;return new Promise(resolve=>finish=resolve);}})});
-  ui.open();click(elementByClass(ui.activeWindow.panel,'developer-settings-button'));const button=elementByClass(ui.developerWindow.actions,'settings-reset');
-  click(button);click(button);assert.equal(calls,1);assert.equal(button.disabled,true);assert.equal(invalidate,1);
-  finish({status:'failed',error:{code:'cleanup-failed'}});await new Promise(resolve=>setImmediate(resolve));assert.equal(button.disabled,false);assert.match(ui.developerWindow.panel.textContent,/BIS cleanup failed/);
-  click(button);assert.equal(calls,2);finish({status:'completed',resetId:'two'});await new Promise(resolve=>setImmediate(resolve));assert.match(ui.developerWindow.panel.textContent,/Remote transactions are not cancelled/);ui.close();
-});
-
-test('absent BIS wallet/package does not prevent local settings reset',async()=>{
+test('Clear Settings resets the game store without consulting external services',()=>{
   const documentRef=createDocument(),store=createSettingsStore(null);store.set(AUDIO_SETTING_KEYS.music,15);
   const ui=createSettingsUi({host:new FakeElement(),documentRef,store,pauseController:{pause(){},resume(){}}});ui.open();click(elementByClass(ui.activeWindow.panel,'developer-settings-button'));click(elementByClass(ui.developerWindow.actions,'settings-reset'));
-  await new Promise(resolve=>setImmediate(resolve));assert.equal(store.get(AUDIO_SETTING_KEYS.music),20);assert.match(ui.developerWindow.panel.textContent,/Local settings cleared/);ui.close();
+  assert.equal(store.get(AUDIO_SETTING_KEYS.music),20);assert.match(ui.developerWindow.panel.textContent,/Settings cleared/);ui.close();
 });

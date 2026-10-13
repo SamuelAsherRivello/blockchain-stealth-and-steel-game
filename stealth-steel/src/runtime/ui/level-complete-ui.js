@@ -32,7 +32,7 @@ export function createLevelLostUi({ host, onPay, onRestart, frameElement = null,
     },
     show() { backdrop.hidden=false; (payButton.disabled ? restartButton : payButton).focus(); },
     hide() { backdrop.hidden=true; },
-    dispose() { payButton.removeEventListener('click',pay); restartButton.removeEventListener('click',restart); backdrop.removeEventListener('keydown',containKey); backdrop.removeEventListener('keyup',containKey); menu.disposeFrameBounds(); menu.disposeLayoutDebug(); backdrop.remove(); },
+    dispose() { payButton.removeEventListener('click',pay); restartButton.removeEventListener('click',restart); backdrop.removeEventListener('keydown',containKey); backdrop.removeEventListener('keyup',containKey); menu.disposeFrameBounds(); backdrop.remove(); },
   };
 }
 
@@ -87,6 +87,6 @@ export function createLevelCompleteUi({host, onContinue, onRestart = onContinue,
     setCompletion(value){completion={...completion,...value};render();},
     setState(value){state={...state,...value};render();if(state.needsAcknowledgment)acknowledgeButton.focus();},
     show(){render();backdrop.hidden=false;(menu.buttons.find(button=>!button.hidden&&!button.disabled)??panel).focus();},
-    dispose(){for(const [button,handler]of actionHandlers)button.removeEventListener('click',handler);backdrop.removeEventListener('keydown',keydown);backdrop.removeEventListener('keyup',keydown);menu.disposeFrameBounds();menu.disposeLayoutDebug();backdrop.remove();},
+    dispose(){for(const [button,handler]of actionHandlers)button.removeEventListener('click',handler);backdrop.removeEventListener('keydown',keydown);backdrop.removeEventListener('keyup',keydown);menu.disposeFrameBounds();backdrop.remove();},
   };
 }

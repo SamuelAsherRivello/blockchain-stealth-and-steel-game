@@ -70,12 +70,12 @@
 }
 .ui-layer .menu-surface .title-container .close-button {
   position: absolute;
-  right: 2%;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   margin: 0;
   padding: 0;
 }
@@ -124,58 +124,6 @@
   min-height: 0;
 }
 
-/* TEMP layout guide: a sibling overlay, deliberately outside menu layout. */
-.ui-layer .menu-layout-debug-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 2500;
-  pointer-events: none;
-}
-.ui-layer .menu-layout-debug-box {
-  position: absolute;
-  box-sizing: border-box;
-  border: 2px dashed var(--menu-layout-debug-color);
-  pointer-events: none;
-}
-.ui-layer .menu-layout-debug-stack {
-  --menu-layout-debug-color: #e02f9b;
-}
-.ui-layer .menu-layout-debug-body {
-  --menu-layout-debug-color: #15a9e0;
-}
-.ui-layer .menu-layout-debug-buttons {
-  --menu-layout-debug-color: #f07d24;
-}
-.ui-layer .menu-layout-debug-ribbon {
-  --menu-layout-debug-color: #8c4fd8;
-}
-.ui-layer .menu-layout-debug-title-container {
-  --menu-layout-debug-color: #d8b23f;
-}
-.ui-layer .menu-layout-debug-title {
-  --menu-layout-debug-color: #35b563;
-}
-.ui-layer .menu-layout-debug-close {
-  --menu-layout-debug-color: #dd4d4d;
-}
-.ui-layer .menu-layout-debug-stack .menu-layout-debug-label {
-  top: -17px;
-}
-.ui-layer .menu-layout-debug-close .menu-layout-debug-label {
-  top: -17px;
-}
-.ui-layer .menu-layout-debug-label {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  padding: 1px 4px;
-  background: var(--menu-layout-debug-color);
-  color: #fff;
-  font: bold 10px/1.2 system-ui, sans-serif;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  pointer-events: none;
-}
 .ui-layer .menu-body > :is(.settings-controls, .treasure-content) {
   width: 100%;
 }

@@ -145,7 +145,7 @@ test("C084 gives closable menus explicit header text and button regions", async 
   assert.ok(closeButton.className.includes("menu-header-button"));
   assert.match(styles, /\.ui-layer \.menu-surface \.title-container\s*\{[^}]*position:\s*absolute;[^}]*left:\s*\d+(?:\.\d+)?px;[^}]*top:\s*\d+(?:\.\d+)?px;[^}]*width:\s*\d+(?:\.\d+)?%;[^}]*height:\s*\d+(?:\.\d+)?%;[^}]*align-items:\s*center;/s);
   assert.match(styles, /\.ui-layer \.menu-surface \.title-container \.title-text\s*\{[^}]*grid-column:\s*1\s*\/\s*-1;[^}]*grid-row:\s*1;[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
-  assert.match(styles, /\.ui-layer \.menu-surface \.title-container \.close-button\s*\{[^}]*position:\s*absolute;[^}]*right:\s*\d+(?:\.\d+)?%;[^}]*top:\s*50%;[^}]*transform:\s*translateY\(-50%\);[^}]*width:\s*\d+(?:\.\d+)?px;[^}]*height:\s*\d+(?:\.\d+)?px;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
+  assert.match(styles, /\.ui-layer \.menu-surface \.title-container \.close-button\s*\{[^}]*position:\s*absolute;[^}]*right:\s*0(?:px|%)?;[^}]*top:\s*50%;[^}]*transform:\s*translateY\(-50%\);[^}]*width:\s*\d+(?:\.\d+)?px;[^}]*height:\s*\d+(?:\.\d+)?px;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
   assert.match(styles, /\.ui-layer \.menu-surface \.title-container \.close-button > \.game-window-close\s*\{[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*background-size:\s*100% 100%;/s);
 });
 

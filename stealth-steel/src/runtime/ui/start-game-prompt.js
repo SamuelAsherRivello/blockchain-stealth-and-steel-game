@@ -60,7 +60,6 @@ export function createStartGamePrompt({ host, onStart, onItems, itemsVisible = f
       startButton.removeEventListener("click", handleStart);
       itemsButton?.removeEventListener("click", handleItems);
       menu.disposeFrameBounds();
-      menu.disposeLayoutDebug();
       backdrop.remove();
     },
   };
