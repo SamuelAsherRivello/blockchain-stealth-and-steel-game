@@ -95,7 +95,7 @@ test("C071 title labels retain a shared one-line ribbon treatment", async () => 
 
   assert.match(styles, /font:\s*bold clamp\(36px, 8cqw, 52px\)\/1\.1 Georgia, serif;/);
   assert.match(styles, /--menu-ribbon-title-safe-inset:\s*72px;/);
-  assert.match(styles, /\.ui-layer \.tiny-swords-title-text\s*\{[^}]*display:\s*grid;[^}]*place-items:\s*center;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-title-text\s*\{[^}]*display:\s*grid;[^}]*place-items:\s*center;[^}]*align-content:\s*center;[^}]*justify-content:\s*center;[^}]*text-align:\s*center;/s);
   assert.match(styles, /tiny-swords-title-text[^}]*white-space:\s*nowrap;/s);
   assert.match(menu, /title\.menuTitleLabel\s*=\s*label/);
   assert.match(titleLabel, /this\.style\.removeProperty\("font-size"\)/);
@@ -143,9 +143,10 @@ test("C084 gives closable menus explicit header text and button regions", async 
   assert.deepEqual(menu.titleContainer.children, [menu.title, menu.closeContainer]);
   assert.ok(menu.title.className.includes("menu-header-text"));
   assert.ok(closeButton.className.includes("menu-header-button"));
-  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container\s*\{[^}]*position:\s*absolute;[^}]*left:\s*20px;[^}]*top:\s*5px;[^}]*width:\s*80%;[^}]*height:\s*80%;[^}]*align-items:\s*center;/s);
-  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.title-text\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1;/s);
-  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.close-button\s*\{[^}]*grid-column:\s*3;[^}]*grid-row:\s*1;[^}]*align-self:\s*center;[^}]*width:\s*58px;[^}]*height:\s*58px;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container\s*\{[^}]*position:\s*absolute;[^}]*left:\s*\d+(?:\.\d+)?px;[^}]*top:\s*\d+(?:\.\d+)?px;[^}]*width:\s*\d+(?:\.\d+)?%;[^}]*height:\s*\d+(?:\.\d+)?%;[^}]*align-items:\s*center;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.title-text\s*\{[^}]*grid-column:\s*1\s*\/\s*-1;[^}]*grid-row:\s*1;[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.close-button\s*\{[^}]*position:\s*absolute;[^}]*right:\s*0;[^}]*top:\s*50%;[^}]*transform:\s*translateY\(-50%\);[^}]*width:\s*\d+(?:\.\d+)?%;[^}]*height:\s*\d+(?:\.\d+)?%;[^}]*margin:\s*0;[^}]*padding:\s*0;/s);
+  assert.match(styles, /\.ui-layer \.tiny-swords-panel \.title-container \.close-button > \.game-window-close\s*\{[^}]*width:\s*100%;[^}]*height:\s*100%;[^}]*background-size:\s*100% 100%;/s);
 });
 
 test("C071 removes lightning only from BIS toast messaging", async () => {

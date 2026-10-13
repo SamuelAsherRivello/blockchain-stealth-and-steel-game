@@ -2,7 +2,9 @@
 .ui-layer {
   --menu-toast-bottom: 9dvh;
   --menu-toast-offset: 15px;
-  --menu-first-visible-top: calc(var(--menu-toast-bottom) + var(--menu-toast-offset));
+  --menu-first-visible-top: calc(
+    var(--menu-toast-bottom) + var(--menu-toast-offset)
+  );
   --menu-ribbon-overhang: 28px;
   --menu-action-gap: 4.8px;
   --menu-section-following-gap: 2.4px;
@@ -15,11 +17,15 @@
   --menu-paper-content-inset: 25px;
   --menu-paper-top: 45px;
   --menu-ribbon-title-safe-inset: 72px;
-  --menu-title-font-size: 20px;
+  --menu-title-font-size: 25px;
 }
 .tiny-swords-slices {
-  position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  display: grid; grid-template-columns: 32px 1fr 32px;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
   grid-template-rows: 32px 1fr 32px;
 }
 
@@ -29,33 +35,74 @@
   padding: var(--menu-paper-top) var(--menu-paper-edge-inline) 0;
 }
 .ui-layer .tiny-swords-title-text {
-  grid-column: 2; min-width: 0; margin: 0; padding: 0;
-  font: bold var(--menu-title-font-size)/1.1 Georgia, serif;
-  display: grid; place-items: center;
+  grid-column: 2;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font:
+    bold var(--menu-title-font-size)/1.1 Georgia,
+    serif;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
   overflow: hidden;
 }
 .ui-layer .tiny-swords-panel .title-container {
   position: absolute;
-  left: 20px; top: 5px;
-  width: 80%; height: 80%;
-  display: grid; grid-template-columns: 58px minmax(0, 1fr) 58px;
-  align-items: center; column-gap: 4px;
+  left: 50px;
+  top: 10px;
+  width: 80%;
+  height: 60%;
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) 58px;
+  align-items: center;
+  column-gap: 4px;
 }
 .ui-layer .tiny-swords-panel .title-container .title-text {
-  grid-column: 2; grid-row: 1; min-width: 0;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 .ui-layer .tiny-swords-panel .title-container .close-button {
-  grid-column: 3; grid-row: 1; align-self: center;
-  width: 58px; height: 58px; margin: 0; padding: 0;
-  box-sizing: border-box; display: grid; place-items: center;
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+}
+.ui-layer
+  .tiny-swords-panel
+  .title-container
+  .close-button
+  > .game-window-close {
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
 }
 .game-window-header > .tiny-swords-ribbon-art {
-  top: 10%; bottom: 10%;
+  top: 10%;
+  bottom: 10%;
 }
 .ui-layer .menu-body {
   width: 100%;
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: flex-start; gap: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
   padding: 0;
 }
 .ui-layer .header-container,
@@ -98,15 +145,33 @@
   border: 2px dashed var(--menu-layout-debug-color);
   pointer-events: none;
 }
-.ui-layer .menu-layout-debug-stack { --menu-layout-debug-color: #e02f9b; }
-.ui-layer .menu-layout-debug-body { --menu-layout-debug-color: #15a9e0; }
-.ui-layer .menu-layout-debug-buttons { --menu-layout-debug-color: #f07d24; }
-.ui-layer .menu-layout-debug-ribbon { --menu-layout-debug-color: #8c4fd8; }
-.ui-layer .menu-layout-debug-title-container { --menu-layout-debug-color: #d8b23f; }
-.ui-layer .menu-layout-debug-title { --menu-layout-debug-color: #35b563; }
-.ui-layer .menu-layout-debug-close { --menu-layout-debug-color: #dd4d4d; }
-.ui-layer .menu-layout-debug-stack .menu-layout-debug-label { top: -17px; }
-.ui-layer .menu-layout-debug-close .menu-layout-debug-label { top: -17px; }
+.ui-layer .menu-layout-debug-stack {
+  --menu-layout-debug-color: #e02f9b;
+}
+.ui-layer .menu-layout-debug-body {
+  --menu-layout-debug-color: #15a9e0;
+}
+.ui-layer .menu-layout-debug-buttons {
+  --menu-layout-debug-color: #f07d24;
+}
+.ui-layer .menu-layout-debug-ribbon {
+  --menu-layout-debug-color: #8c4fd8;
+}
+.ui-layer .menu-layout-debug-title-container {
+  --menu-layout-debug-color: #d8b23f;
+}
+.ui-layer .menu-layout-debug-title {
+  --menu-layout-debug-color: #35b563;
+}
+.ui-layer .menu-layout-debug-close {
+  --menu-layout-debug-color: #dd4d4d;
+}
+.ui-layer .menu-layout-debug-stack .menu-layout-debug-label {
+  top: -17px;
+}
+.ui-layer .menu-layout-debug-close .menu-layout-debug-label {
+  top: -17px;
+}
 .ui-layer .menu-layout-debug-label {
   position: absolute;
   top: 2px;
@@ -114,8 +179,10 @@
   padding: 1px 4px;
   background: var(--menu-layout-debug-color);
   color: #fff;
-  font: bold 10px/1.2 system-ui, sans-serif;
-  letter-spacing: .04em;
+  font:
+    bold 10px/1.2 system-ui,
+    sans-serif;
+  letter-spacing: 0.04em;
   white-space: nowrap;
   pointer-events: none;
 }
@@ -123,14 +190,24 @@
   width: 100%;
 }
 .ui-layer .game-window .settings-controls {
-  display: flex; flex-direction: column; gap: var(--menu-form-item-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--menu-form-item-gap);
 }
 .ui-layer .menu-button-container {
-  width: min(274px, 100%); display: flex; flex-direction: column;
-  align-items: stretch; gap: var(--menu-action-gap); margin: 0 auto;
+  width: min(274px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--menu-action-gap);
+  margin: 0 auto;
 }
-.ui-layer .menu-button-container:empty { display: none; }
-.ui-layer .menu-button-container > .tiny-swords-button { width: 100%; }
+.ui-layer .menu-button-container:empty {
+  display: none;
+}
+.ui-layer .menu-button-container > .tiny-swords-button {
+  width: 100%;
+}
 .ui-layer .developer-settings-actions {
   /* The widest label establishes one shared action width; the padding keeps
      its painted button ends clear of the paper edge without a fixed width. */
@@ -148,7 +225,10 @@
   min-width: 0;
   margin-top: 0;
 }
-.ui-layer .developer-settings-actions > .tiny-swords-button.has-menu-icon .menu-button-icon {
+.ui-layer
+  .developer-settings-actions
+  > .tiny-swords-button.has-menu-icon
+  .menu-button-icon {
   transform: none;
   display: block;
   width: 22px;
@@ -167,15 +247,22 @@
   transform: none;
   justify-self: center;
 }
-.ui-layer .developer-settings-actions > .tiny-swords-button + .tiny-swords-button {
+.ui-layer
+  .developer-settings-actions
+  > .tiny-swords-button
+  + .tiny-swords-button {
   margin-top: 0;
 }
 .ui-layer .developer-settings-actions > .settings-reset {
   grid-column: 1 / -1;
 }
 .ui-layer .menu-content-stack {
-  width: 100%; min-height: var(--menu-content-min-height); flex: 1 1 auto;
-  display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+  min-height: var(--menu-content-min-height);
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow: clip;
   padding: var(--menu-paper-content-inset);
   box-sizing: border-box;
@@ -183,99 +270,221 @@
 .ui-layer .level-complete-panel.outcome-loss .menu-button-container {
   width: 100%;
 }
-.ui-layer .header-container:empty { display: none; }
-.ui-layer :is(.slider-control, .toggle-control) .menu-label-text { font: bold clamp(12.8px, 2.8cqw, 16px)/1.3 Georgia, serif; color: #513d2a; }
-.ui-layer .slider-control .menu-body-text { font: 14px/1 Georgia, serif; color: #513d2a; }
-.ui-layer .slider-control { gap: 0; text-align: left; }
-.ui-layer .slider-control .volume-scale { position: relative; grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 0; }
+.ui-layer .header-container:empty {
+  display: none;
+}
+.ui-layer :is(.slider-control, .toggle-control) .menu-label-text {
+  font:
+    bold clamp(12.8px, 2.8cqw, 16px)/1.3 Georgia,
+    serif;
+  color: #513d2a;
+}
+.ui-layer .slider-control .menu-body-text {
+  font:
+    14px/1 Georgia,
+    serif;
+  color: #513d2a;
+}
+.ui-layer .slider-control {
+  gap: 0;
+  text-align: left;
+}
+.ui-layer .slider-control .volume-scale {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin-top: 0;
+}
 .ui-layer .slider-control .volume-scale::before {
-  content: ''; position: absolute; left: 6.4px; right: 6.4px; top: 50%;
-  height: 5px; transform: translateY(-50%); box-sizing: border-box;
-  background: #3f91a0; border: 1px solid #254956; border-radius: 1.5px; pointer-events: none;
+  content: "";
+  position: absolute;
+  left: 6.4px;
+  right: 6.4px;
+  top: 50%;
+  height: 5px;
+  transform: translateY(-50%);
+  box-sizing: border-box;
+  background: #3f91a0;
+  border: 1px solid #254956;
+  border-radius: 1.5px;
+  pointer-events: none;
 }
 .ui-layer .slider-control .volume-scale input[type="range"] {
-  appearance: none; width: 100%; height: 22px; margin: 0;
-  position: relative; background: transparent; cursor: pointer;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  margin: 0;
+  position: relative;
+  background: transparent;
+  cursor: pointer;
 }
 .ui-layer .slider-control input[type="range"]::-webkit-slider-runnable-track {
-  height: 5px; background: transparent; border: 0;
+  height: 5px;
+  background: transparent;
+  border: 0;
 }
 .ui-layer .slider-control input[type="range"]::-moz-range-track {
-  height: 5px; background: transparent; border: 0;
+  height: 5px;
+  background: transparent;
+  border: 0;
 }
 .ui-layer .slider-control input[type="range"]::-webkit-slider-thumb {
-  appearance: none; width: 12.8px; height: 12.8px; margin-top: -3.9px; border: 0;
-  background: url('/ui/tiny-swords/SmallBlueRoundButton_Regular.png') center / 137.5%; image-rendering: pixelated;
+  appearance: none;
+  width: 12.8px;
+  height: 12.8px;
+  margin-top: -3.9px;
+  border: 0;
+  background: url("/ui/tiny-swords/SmallBlueRoundButton_Regular.png") center /
+    137.5%;
+  image-rendering: pixelated;
 }
 .ui-layer .slider-control input[type="range"]::-moz-range-thumb {
-  width: 12.8px; height: 12.8px; border: 0; border-radius: 0;
-  background: url('/ui/tiny-swords/SmallBlueRoundButton_Regular.png') center / 137.5%; image-rendering: pixelated;
+  width: 12.8px;
+  height: 12.8px;
+  border: 0;
+  border-radius: 0;
+  background: url("/ui/tiny-swords/SmallBlueRoundButton_Regular.png") center /
+    137.5%;
+  image-rendering: pixelated;
 }
 .ui-layer .toggle-control,
 .ui-layer .game-window .fullscreen-control {
-  min-height: 22px; display: flex; align-items: center; justify-content: space-between;
-  gap: 0; text-align: left;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  text-align: left;
 }
-.ui-layer .toggle-control .menu-label-text { flex: 1; min-width: 0; max-width: none; }
+.ui-layer .toggle-control .menu-label-text {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+}
 .ui-layer .toggle-control input[type="checkbox"] {
-  appearance: none; flex: 0 0 44px; width: 44px; height: 22px; margin: 0;
-  position: relative; border: 0; border-radius: 0; background: transparent;
-  cursor: pointer; display: grid; place-content: center;
+  appearance: none;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 22px;
+  margin: 0;
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
 }
 .ui-layer .toggle-control input[type="checkbox"]::before {
-  content: ''; box-sizing: border-box; width: 11px; height: 11px;
-  border: 1px solid #285762; border-radius: 2px; background: #d6c69f;
+  content: "";
+  box-sizing: border-box;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #285762;
+  border-radius: 2px;
+  background: #d6c69f;
   /* Match the 12.8px slider thumb's endpoint within a 44px hit area. */
   transform: translateX(15.6px);
 }
-.ui-layer .toggle-control input[type="checkbox"]:checked::before { background: #3f91a0; }
+.ui-layer .toggle-control input[type="checkbox"]:checked::before {
+  background: #3f91a0;
+}
 .ui-layer .toggle-control input[type="checkbox"]:checked::after {
-  content: ''; position: absolute; left: calc(50% + 15.6px); top: 50%;
-  width: 2.5px; height: 5px; border: solid #fff5dc; border-width: 0 1px 1px 0;
+  content: "";
+  position: absolute;
+  left: calc(50% + 15.6px);
+  top: 50%;
+  width: 2.5px;
+  height: 5px;
+  border: solid #fff5dc;
+  border-width: 0 1px 1px 0;
   transform: translate(-50%, -65%) rotate(45deg);
 }
 .ui-layer .tiny-swords-panel .game-window-close {
   position: static;
-  width: 58px; height: 58px; padding: 0; transform: none;
-  z-index: 2; border: 0; border-radius: 0; box-shadow: none;
-  background: url('/ui/tiny-swords/Icon_09.png') center / 58px 58px no-repeat;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  transform: none;
+  z-index: 2;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: url("/ui/tiny-swords/Icon_09.png") center / 58px 58px no-repeat;
   image-rendering: pixelated;
 }
 .ui-layer .tiny-swords-panel .game-window-close::before,
-.ui-layer .tiny-swords-panel .game-window-close::after { display: none; }
-.ui-layer .tiny-swords-panel .game-window-close:hover { filter: brightness(1.12); outline: none; }
-.ui-layer .tiny-swords-panel .game-window-close:active { filter: brightness(.78) saturate(.75); }
+.ui-layer .tiny-swords-panel .game-window-close::after {
+  display: none;
+}
+.ui-layer .tiny-swords-panel .game-window-close:hover {
+  filter: brightness(1.12);
+  outline: none;
+}
+.ui-layer .tiny-swords-panel .game-window-close:active {
+  filter: brightness(0.78) saturate(0.75);
+}
 .ui-layer .tiny-swords-panel input:focus-visible,
 .ui-layer .slider-control input:focus-visible,
 .ui-layer .toggle-control input:focus-visible,
-.ui-layer .tiny-swords-panel .game-window-close:focus-visible { outline: none; }
-.ui-layer .tiny-swords-menu-backdrop.developer-settings-backdrop { z-index: var(--z-developer-settings-backdrop); }
+.ui-layer .tiny-swords-panel .game-window-close:focus-visible {
+  outline: none;
+}
+.ui-layer .tiny-swords-menu-backdrop.developer-settings-backdrop {
+  z-index: var(--z-developer-settings-backdrop);
+}
 .tiny-swords-slices i {
   background-position: 0 0;
   background-size: 500% 500%;
   image-rendering: pixelated;
 }
-.tiny-swords-slices i:nth-child(3n+2) { background-position-x: 50%; }
-.tiny-swords-slices i:nth-child(3n) { background-position-x: 100%; }
-.tiny-swords-slices i:nth-child(n+4) { background-position-y: 50%; }
-.tiny-swords-slices i:nth-child(n+7) { background-position-y: 100%; }
+.tiny-swords-slices i:nth-child(3n + 2) {
+  background-position-x: 50%;
+}
+.tiny-swords-slices i:nth-child(3n) {
+  background-position-x: 100%;
+}
+.tiny-swords-slices i:nth-child(n + 4) {
+  background-position-y: 50%;
+}
+.tiny-swords-slices i:nth-child(n + 7) {
+  background-position-y: 100%;
+}
 .tiny-swords-panel > .tiny-swords-slices {
-  left: 5%; right: 5%;
-  background: url('/ui/tiny-swords/RegularPaper-v2.png') center / 100% 100% no-repeat;
+  left: 5%;
+  right: 5%;
+  background: url("/ui/tiny-swords/RegularPaper-v2.png") center / 100% 100%
+    no-repeat;
   border-radius: 12px;
   overflow: hidden;
   grid-template-columns: 5px 1fr 5px;
   grid-template-rows: 5px 1fr 5px;
 }
-.tiny-swords-panel > .tiny-swords-slices > i { display: none; }
+.tiny-swords-panel > .tiny-swords-slices > i {
+  display: none;
+}
 .ui-layer .tiny-swords-panel {
   margin: 0;
-  width: 100%; height: auto; min-height: 0; max-height: none; flex: 0 0 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  flex: 0 0 auto;
   padding: var(--menu-paper-top) var(--menu-paper-edge-inline) 0;
-  border: 0; border-radius: 0; background: none; box-shadow: none;
-  color: #513d2a; text-align: center; overflow: visible;
-  container-type: normal; transform: none; isolation: isolate;
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: #513d2a;
+  text-align: center;
+  overflow: visible;
+  container-type: normal;
+  transform: none;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   filter: drop-shadow(0 12px 16px #081c2666);
 }
 @media (max-width: 1000px) {
@@ -284,61 +493,156 @@
   }
 }
 .tiny-swords-ribbon-art {
-  position: absolute; inset: 0; display: grid;
-  grid-template-columns: 75px 1fr 75px; z-index: -1; pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 75px 1fr 75px;
+  z-index: -1;
+  pointer-events: none;
   filter: drop-shadow(0 4px 0 #172d3150);
 }
 .tiny-swords-ribbon-art i {
-  background: url('/ui/tiny-swords/Ribbon_Blue_3Slides.png') 0 0 / 300% 100%;
+  background: url("/ui/tiny-swords/Ribbon_Blue_3Slides.png") 0 0 / 300% 100%;
   image-rendering: pixelated;
 }
-.tiny-swords-ribbon-art i:nth-child(2) { background-position-x: 50%; }
-.tiny-swords-ribbon-art i:nth-child(3) { background-position-x: 100%; }
-.ui-layer .tiny-swords-ribbon {
-  position: absolute; top: -28px; left: -8px; right: -8px;
-  height: 82px; margin: 0; padding: 0 var(--menu-ribbon-title-safe-inset);
-  display: flex; align-items: center; justify-content: center; isolation: isolate;
-  font: bold clamp(36px, 8cqw, 52px)/1.1 Georgia, serif;
-  color: #fff4d9; text-shadow: 0 2px #204e5d;
+.tiny-swords-ribbon-art i:nth-child(2) {
+  background-position-x: 50%;
 }
-.ui-layer .tiny-swords-title-text { width: 100%; padding-bottom: 0; white-space: nowrap; transform: none; }
+.tiny-swords-ribbon-art i:nth-child(3) {
+  background-position-x: 100%;
+}
+.ui-layer .tiny-swords-ribbon {
+  position: absolute;
+  top: -28px;
+  left: -8px;
+  right: -8px;
+  height: 82px;
+  margin: 0;
+  padding: 0 var(--menu-ribbon-title-safe-inset);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  font:
+    bold clamp(36px, 8cqw, 52px)/1.1 Georgia,
+    serif;
+  color: #fff4d9;
+  text-shadow: 0 2px #204e5d;
+}
+.ui-layer .tiny-swords-title-text {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 .ui-layer .start-game-prompt-panel .tiny-swords-title-text {
   transform: none;
 }
-.tiny-swords-title-text > .tiny-swords-ribbon-art { top: 10%; bottom: 10%; }
-menu-title-label { display: inline-block; max-width: 100%; white-space: nowrap; transform: translateY(-3px); }
-.ui-layer .tiny-swords-button {
-  position: relative; isolation: isolate; border: 0; border-radius: 0;
-  box-sizing: border-box;
-  width: min(274px, 100%); height: 56px; min-height: 56px; padding: 0;
-  background: none; color: #fff5dc; text-shadow: 0 2px #25565d;
-  font: bold clamp(22px, 4.7cqw, 27px)/1.2 Georgia, serif;
-  cursor: pointer; touch-action: manipulation;
+.tiny-swords-title-text > .tiny-swords-ribbon-art {
+  top: 10%;
+  bottom: 10%;
 }
-.tiny-swords-button-art i { background-image: url('/ui/tiny-swords/BigBlueButton_Regular.png'); }
-.menu-button-secondary .tiny-swords-button-art i { filter: hue-rotate(175deg) saturate(2) brightness(.8); }
-.map-order-buttons { display: flex; flex-wrap: nowrap; gap: 8px; width: 100%; justify-content: flex-start; padding: 4px 0; box-sizing: border-box; }
-.ui-layer .game-window .map-order-button { flex: 0 1 68px; min-width: 0; width: 68px; height: 9px; min-height: 9px; padding: 0 4px; font-size: 13px; line-height: 1; }
-.ui-layer .map-order-button .tiny-swords-button-art { grid-template-columns: 5px 1fr 5px; grid-template-rows: 5px 1fr 5px; }
-.ui-layer .map-order-button menu-button-label { line-height: 9px; }
+menu-title-label {
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  transform: none;
+}
+.ui-layer .tiny-swords-button {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  border-radius: 0;
+  box-sizing: border-box;
+  width: min(274px, 100%);
+  height: 56px;
+  min-height: 56px;
+  padding: 0;
+  background: none;
+  color: #fff5dc;
+  text-shadow: 0 2px #25565d;
+  font:
+    bold clamp(22px, 4.7cqw, 27px)/1.2 Georgia,
+    serif;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.tiny-swords-button-art i {
+  background-image: url("/ui/tiny-swords/BigBlueButton_Regular.png");
+}
+.menu-button-secondary .tiny-swords-button-art i {
+  filter: hue-rotate(175deg) saturate(2) brightness(0.8);
+}
+.map-order-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+.ui-layer .game-window .map-order-button {
+  flex: 0 1 68px;
+  min-width: 0;
+  width: 68px;
+  height: 9px;
+  min-height: 9px;
+  padding: 0 4px;
+  font-size: 13px;
+  line-height: 1;
+}
+.ui-layer .map-order-button .tiny-swords-button-art {
+  grid-template-columns: 5px 1fr 5px;
+  grid-template-rows: 5px 1fr 5px;
+}
+.ui-layer .map-order-button menu-button-label {
+  line-height: 9px;
+}
 menu-button-label {
-  display: block; min-width: 0; max-width: 100%;
-  white-space: nowrap; line-height: 1;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  line-height: 1;
 }
 .ui-layer .tiny-swords-button.has-menu-icon {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   grid-template-rows: 1fr;
 }
 .ui-layer .tiny-swords-button.has-menu-icon .menu-button-icon {
-  grid-column: 1; grid-row: 1; justify-self: end; margin-right: 6px;
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  margin-right: 6px;
 }
-.ui-layer .tiny-swords-button.has-menu-icon:has(.menu-button-icon-glyph) .menu-button-icon { margin-right: 5px; }
-.ui-layer .tiny-swords-button.has-menu-icon menu-button-label { grid-column: 2; grid-row: 1; }
-.menu-button-icon { flex: 0 0 auto; line-height: 1; }
-.menu-button-icon-glyph { font-size: 16.2px; transform: scaleX(.8); transform-origin: right center; }
-.menu-button-icon svg { display: block; width: 22px; height: 22px; fill: currentColor; }
+.ui-layer
+  .tiny-swords-button.has-menu-icon:has(.menu-button-icon-glyph)
+  .menu-button-icon {
+  margin-right: 5px;
+}
+.ui-layer .tiny-swords-button.has-menu-icon menu-button-label {
+  grid-column: 2;
+  grid-row: 1;
+}
+.menu-button-icon {
+  flex: 0 0 auto;
+  line-height: 1;
+}
+.menu-button-icon-glyph {
+  font-size: 16.2px;
+  transform: scaleX(0.8);
+  transform-origin: right center;
+}
+.menu-button-icon svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
 .ui-layer .tiny-swords-button {
-  display: grid; place-items: center;
+  display: grid;
+  place-items: center;
   padding: 0;
 }
 .ui-layer .menu-button-primary,
@@ -347,61 +651,130 @@ menu-button-label {
   height: 56px;
   min-height: 56px;
 }
-.ui-layer .menu-button-secondary { color: #fff5dc; }
-.ui-layer .settings-bis-button { font-size: clamp(17.6px, 3.76cqw, 21.6px); }
-.ui-layer .tiny-swords-button:hover:not(:focus-visible) { outline: none; }
-.ui-layer .tiny-swords-button:hover .tiny-swords-button-art { filter: brightness(1.12); }
-.ui-layer .tiny-swords-button:active .tiny-swords-button-art { filter: brightness(.78) saturate(.75); }
-.ui-layer .tiny-swords-button:focus-visible { outline: none; }
+.ui-layer .menu-button-secondary {
+  color: #fff5dc;
+}
+.ui-layer .settings-bis-button {
+  font-size: clamp(17.6px, 3.76cqw, 21.6px);
+}
+.ui-layer .tiny-swords-button:hover:not(:focus-visible) {
+  outline: none;
+}
+.ui-layer .tiny-swords-button:hover .tiny-swords-button-art {
+  filter: brightness(1.12);
+}
+.ui-layer .tiny-swords-button:active .tiny-swords-button-art {
+  filter: brightness(0.78) saturate(0.75);
+}
+.ui-layer .tiny-swords-button:focus-visible {
+  outline: none;
+}
 .ui-layer .tiny-swords-menu-backdrop {
-  position: fixed; z-index: var(--z-settings-backdrop);
-  display: grid; place-items: start center; padding: 28px 22px;
-  background: #1429279e; overflow: clip; pointer-events: auto;
+  position: fixed;
+  z-index: var(--z-settings-backdrop);
+  display: grid;
+  place-items: start center;
+  padding: 28px 22px;
+  background: #1429279e;
+  overflow: clip;
+  pointer-events: auto;
 }
-.ui-layer .tiny-swords-menu-backdrop[hidden] { display: none; }
+.ui-layer .tiny-swords-menu-backdrop[hidden] {
+  display: none;
+}
 .ui-layer .tiny-swords-menu-backdrop:not(.has-logo) {
-  padding: calc(var(--menu-first-visible-top) + var(--menu-ribbon-overhang)) 22px 28px;
+  padding: calc(var(--menu-first-visible-top) + var(--menu-ribbon-overhang))
+    22px 28px;
 }
-.ui-layer .tiny-swords-button:disabled { cursor: default; }
-.ui-layer .tiny-swords-button:disabled .tiny-swords-button-art { filter: grayscale(1) brightness(.75); }
+.ui-layer .tiny-swords-button:disabled {
+  cursor: default;
+}
+.ui-layer .tiny-swords-button:disabled .tiny-swords-button-art {
+  filter: grayscale(1) brightness(0.75);
+}
 .ui-layer .tiny-swords-menu-backdrop.has-logo {
-  background: #1429279e; overflow: clip;
-  padding: var(--menu-first-visible-top) 22px 28px; place-items: start center;
+  background: #1429279e;
+  overflow: clip;
+  padding: var(--menu-first-visible-top) 22px 28px;
+  place-items: start center;
 }
 .tiny-swords-menu-composition {
   position: relative;
-  width: min(480px, calc(100cqw - 44px), 100%); display: flex; flex-direction: column;
-  align-items: center; gap: 12px; margin: 0 auto auto; pointer-events: none;
+  width: min(480px, calc(100cqw - 44px), 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0 auto auto;
+  pointer-events: none;
 }
-.tiny-swords-menu-composition > .tiny-swords-panel { pointer-events: auto; }
+.tiny-swords-menu-composition > .tiny-swords-panel {
+  pointer-events: auto;
+}
 .tiny-swords-menu-logo {
-  position: relative; z-index: calc(var(--z-settings-window) + 1);
-  display: block; width: min(272px, 65%); height: auto;
-  object-fit: contain; filter: drop-shadow(0 5px 3px #0b1f2b55);
+  position: relative;
+  z-index: calc(var(--z-settings-window) + 1);
+  display: block;
+  width: min(272px, 65%);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 3px #0b1f2b55);
 }
 .ui-layer .tiny-swords-body-text {
-  font: 22px/1.6 Georgia, serif; min-height: 4em; margin: 0 0 10px;
-  max-width: 325px; color: #513d2a;
-  display: flex; align-items: center; justify-content: center;
+  font:
+    22px/1.6 Georgia,
+    serif;
+  min-height: 4em;
+  margin: 0 0 10px;
+  max-width: 325px;
+  color: #513d2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 @container (max-width: 400px) {
-  .ui-layer .tiny-swords-body-text { font-size: 18px; }
+  .ui-layer .tiny-swords-body-text {
+    font-size: 18px;
+  }
 }
 /* A short desktop window has a narrow game frame even on a wide monitor. */
 @container (max-height: 650px) {
-  .tiny-swords-menu-composition { gap: 8px; }
-  .tiny-swords-menu-logo { width: min(180px, 60%); }
-  .ui-layer .menu-body { gap: 8px; }
-  .ui-layer .tiny-swords-body-text { font-size: 16px; line-height: 1.4; }
-  .ui-layer .tiny-swords-button { min-height: 56px; padding-inline: 16px; }
-  .tiny-swords-button .tiny-swords-slices {
-    grid-template-columns: 24px 1fr 24px; grid-template-rows: 24px 1fr 24px;
+  .tiny-swords-menu-composition {
+    gap: 8px;
   }
-  .ui-layer .tiny-swords-panel .tiny-swords-ribbon { height: 64px; top: -22px; padding-bottom: 0; }
-  .ui-layer .tiny-swords-panel .tiny-swords-title-text { padding-bottom: 0; }
-  .ui-layer .game-window .game-window-header .tiny-swords-title-text { padding: 0; }
-  .tiny-swords-panel .tiny-swords-ribbon-art { grid-template-columns: 58px 1fr 58px; }
+  .tiny-swords-menu-logo {
+    width: min(180px, 60%);
+  }
+  .ui-layer .menu-body {
+    gap: 8px;
+  }
+  .ui-layer .tiny-swords-body-text {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .ui-layer .tiny-swords-button {
+    min-height: 56px;
+    padding-inline: 16px;
+  }
+  .tiny-swords-button .tiny-swords-slices {
+    grid-template-columns: 24px 1fr 24px;
+    grid-template-rows: 24px 1fr 24px;
+  }
+  .ui-layer .tiny-swords-panel .tiny-swords-ribbon {
+    height: 64px;
+    top: -22px;
+    padding-bottom: 0;
+  }
+  .ui-layer .tiny-swords-panel .tiny-swords-title-text {
+    padding-bottom: 0;
+  }
+  .ui-layer .game-window .game-window-header .tiny-swords-title-text {
+    padding: 0;
+  }
+  .tiny-swords-panel .tiny-swords-ribbon-art {
+    grid-template-columns: 58px 1fr 58px;
+  }
 }
 
 .ui-layer .debug-visualizations-heading {
@@ -410,22 +783,48 @@ menu-button-label {
   text-align: left;
   color: #513d2a;
 }
-.ui-layer .map-order-heading { margin: var(--menu-form-item-gap) 0 var(--menu-section-following-gap); font: bold clamp(18px, 4cqw, 23px)/1.3 Georgia, serif; text-align: left; color: #513d2a; }
+.ui-layer .map-order-heading {
+  margin: var(--menu-form-item-gap) 0 var(--menu-section-following-gap);
+  font: bold clamp(18px, 4cqw, 23px)/1.3 Georgia, serif;
+  text-align: left;
+  color: #513d2a;
+}
 .ui-layer .debug-visualizations-heading ~ .toggle-control,
 .ui-layer .map-order-heading + .map-order-buttons {
-  width: calc(100% - 20px); margin-left: 20px;
+  width: calc(100% - 20px);
+  margin-left: 20px;
 }
 
-.level-complete-panel .menu-button-text:disabled { filter:grayscale(1); opacity:.5; cursor:default; }
-.level-complete-panel [hidden] { display:none !important; }
-.level-complete-panel .level-complete-check { font-size:12px; }
+.level-complete-panel .menu-button-text:disabled {
+  filter: grayscale(1);
+  opacity: 0.5;
+  cursor: default;
+}
+.level-complete-panel [hidden] {
+  display: none !important;
+}
+.level-complete-panel .level-complete-check {
+  font-size: 12px;
+}
 
-.treasure-content { display: contents; }
-.treasure-content > [hidden] { display: none; }
-.ui-layer .treasure-content > .treasure-message { min-height: 4em; margin: 0; }
-.ui-layer .treasure-content > .treasure-countdown { min-height: 1.6em; margin: 0; }
+.treasure-content {
+  display: contents;
+}
+.treasure-content > [hidden] {
+  display: none;
+}
+.ui-layer .treasure-content > .treasure-message {
+  min-height: 4em;
+  margin: 0;
+}
+.ui-layer .treasure-content > .treasure-countdown {
+  min-height: 1.6em;
+  margin: 0;
+}
 .settings-reset .tiny-swords-button-art i,
-.developer-settings-button .tiny-swords-button-art i { filter: hue-rotate(175deg) saturate(2) brightness(.8); }
+.developer-settings-button .tiny-swords-button-art i {
+  filter: hue-rotate(175deg) saturate(2) brightness(0.8);
+}
 
 /* C087: approved 110% frame proportions, with the current centered header and
    full-size actions. Every measurement uses the same visible UI-frame width. */
@@ -433,21 +832,25 @@ menu-button-label {
   padding: 18.715cqw 0 0;
 }
 .ui-layer .start-game-prompt-composition {
-  width: 86.8975cqw; gap: 2.1724cqw;
+  width: 86.8975cqw;
+  gap: 2.1724cqw;
 }
 .ui-layer .start-game-prompt-logo {
   width: 49.2419cqw;
 }
 .ui-layer .start-game-prompt-panel {
-  --menu-title-font-size: 3.6207cqw;
   filter: drop-shadow(0 2.1724cqw 2.8966cqw #081c2666);
 }
 .ui-layer .start-game-prompt-panel .menu-content-stack {
   padding: var(--menu-paper-content-inset);
 }
 .ui-layer .start-game-prompt-panel .game-window-header {
-  left: 0; right: 0; width: 100%; top: -5.0691cqw;
-  height: 14.8452cqw; padding: 0 13.0346cqw;
+  left: 0;
+  right: 0;
+  width: 100%;
+  top: -5.0691cqw;
+  height: 14.8452cqw;
+  padding: 0 13.0346cqw;
 }
 .start-game-prompt-panel .tiny-swords-ribbon-art {
   grid-template-columns: 13.578cqw 1fr 13.578cqw;
@@ -456,21 +859,33 @@ menu-button-label {
   gap: 2.1724cqw;
 }
 .ui-layer .start-game-prompt-body {
-  font: 3.9828cqw/1.6 Georgia, serif;
-  max-width: 58.8378cqw; min-height: 4em; margin: 0 0 1.8104cqw;
+  font:
+    3.9828cqw/1.6 Georgia,
+    serif;
+  max-width: 58.8378cqw;
+  min-height: 4em;
+  margin: 0 0 1.8104cqw;
 }
 .ui-layer .start-game-prompt-panel .menu-button-container {
-  width: 49.604cqw; gap: .8689cqw;
+  width: 49.604cqw;
+  gap: 0.8689cqw;
 }
 .ui-layer .start-game-prompt-panel .tiny-swords-button {
-  height: 10.1382cqw; min-height: 10.1382cqw; padding: 0;
+  height: 10.1382cqw;
+  min-height: 10.1382cqw;
+  padding: 0;
   font-size: 4.7cqw;
 }
 .start-game-prompt-panel .tiny-swords-button .tiny-swords-slices {
   grid-template-columns: 5.7932cqw 1fr 5.7932cqw;
   grid-template-rows: 5.7932cqw 1fr 5.7932cqw;
 }
-.start-game-prompt-panel .menu-button-icon-glyph { font-size: 2.9328cqw; }
-.ui-layer .start-game-prompt-panel .tiny-swords-button.has-menu-icon .menu-button-icon {
-  margin-right: .9052cqw;
+.start-game-prompt-panel .menu-button-icon-glyph {
+  font-size: 2.9328cqw;
+}
+.ui-layer
+  .start-game-prompt-panel
+  .tiny-swords-button.has-menu-icon
+  .menu-button-icon {
+  margin-right: 0.9052cqw;
 }

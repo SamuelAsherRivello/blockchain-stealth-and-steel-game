@@ -46,15 +46,23 @@ function createMenuLayoutDebugLayer({ overlayRoot, targets, documentRef }) {
   for (const { element } of boxes) observer?.observe(element);
   windowRef?.addEventListener?.("resize", update);
   const requestFrame = windowRef?.requestAnimationFrame ?? globalThis.requestAnimationFrame;
-  const frameId = requestFrame?.(update);
-  if (frameId == null) update();
+  const cancelFrame = windowRef?.cancelAnimationFrame ?? globalThis.cancelAnimationFrame;
+  let frameId = null;
+  let disposed = false;
+  const syncOnFrame = () => {
+    if (disposed) return;
+    update();
+    frameId = requestFrame?.(syncOnFrame) ?? null;
+  };
+  update();
+  frameId = requestFrame?.(syncOnFrame) ?? null;
 
   return {
     layer,
     dispose() {
       observer?.disconnect();
       windowRef?.removeEventListener?.("resize", update);
-      const cancelFrame = windowRef?.cancelAnimationFrame ?? globalThis.cancelAnimationFrame;
+      disposed = true;
       if (frameId != null) cancelFrame?.(frameId);
     },
   };
