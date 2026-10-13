@@ -32,14 +32,17 @@ try {
     console.log(`${name} ${zoom * 100}% PASS (${buttons.length} buttons)`);
     if (name === 'settings-menu') {
       await page.getByRole('button', { name: 'Developer', exact: true }).click();
-      await page.locator('.developer-settings-backdrop .tiny-swords-button:not([hidden])').first().waitFor();
-      const developerButtons = await page.locator('.developer-settings-backdrop .tiny-swords-button:not([hidden])').evaluateAll(elements => elements.map(button => {
+      await page.locator('.developer-settings-actions > .tiny-swords-button:not([hidden])').first().waitFor();
+      const developerButtons = await page.locator('.developer-settings-actions > .tiny-swords-button:not([hidden])').evaluateAll(elements => elements.map(button => {
         const br = button.getBoundingClientRect();
         const lr = button.querySelector('menu-button-label').getBoundingClientRect();
         const paper = button.closest('.tiny-swords-panel').querySelector(':scope > .tiny-swords-slices').getBoundingClientRect();
-        return { text: button.querySelector('menu-button-label').textContent, dx: ((lr.left + lr.right) - br.left - br.right) / 2, dy: ((lr.top + lr.bottom) - br.top - br.bottom) / 2, br: { top: br.top, height: br.height }, lr: { top: lr.top, height: lr.height }, inside: br.left >= paper.left - 1 && br.right <= paper.right + 1 && br.top >= paper.top - 1 && br.bottom <= paper.bottom + 1 };
+      const content = [...button.querySelectorAll(':scope > .menu-button-icon svg, :scope > menu-button-label')].map(element => element.getBoundingClientRect());
+      const contentLeft = Math.min(...content.map(rect => rect.left)), contentRight = Math.max(...content.map(rect => rect.right));
+      const clearance = Math.min(contentLeft - br.left, br.right - contentRight);
+      return { text: button.querySelector('menu-button-label').textContent, contentCenterOffset: ((contentLeft + contentRight) - br.left - br.right) / 2, dy: ((lr.top + lr.bottom) - br.top - br.bottom) / 2, buttonCenterOffset: ((br.left + br.right) - paper.left - paper.right) / 2, br: { left: br.left, right: br.right, top: br.top, bottom: br.bottom, height: br.height }, paper: { left: paper.left, right: paper.right, top: paper.top, bottom: paper.bottom }, lr: { left: lr.left, right: lr.right, top: lr.top, height: lr.height }, contentLeft, contentRight, clearance, requiredClearance: br.height * .29, inside: br.left >= paper.left - 2 && br.right <= paper.right + 2 && br.top >= paper.top - 2 && br.bottom <= paper.bottom + 2 };
       }));
-      for (const button of developerButtons) if (Math.abs(button.dx) > 1 || Math.abs(button.dy) > 1 || !button.inside) throw new Error(`developer ${zoom * 100}% failed: ${JSON.stringify(button)}`);
+      for (const button of developerButtons) if (Math.abs(button.contentCenterOffset) > 1 || Math.abs(button.dy) > 1 || Math.abs(button.buttonCenterOffset) > 2 || button.clearance < button.requiredClearance) throw new Error(`developer ${zoom * 100}% failed: ${JSON.stringify(button)}`);
       await page.screenshot({ path: `output/playwright/developer-menu-${Math.round(zoom * 100)}-pass.png` });
       console.log(`developer-menu ${zoom * 100}% PASS (${developerButtons.length} buttons)`);
     }

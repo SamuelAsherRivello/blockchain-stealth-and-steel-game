@@ -181,6 +181,7 @@ export function createSettingsUi({
         host: modalHost,
         title: "Developer",
         content: developerContent,
+      className: "developer-window",
         buttons: [githubButton, bisGithubButton, resetButton],
         documentRef,
         opener: developerButton,

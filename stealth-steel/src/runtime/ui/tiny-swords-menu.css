@@ -66,16 +66,40 @@
 .ui-layer .menu-button-container:empty { display: none; }
 .ui-layer .menu-button-container > .tiny-swords-button { width: 100%; }
 .ui-layer .developer-settings-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  column-gap: 2.5px;
+  /* The widest label establishes one shared action width; the padding keeps
+     its painted button ends clear of the paper edge without a fixed width. */
+  width: calc-size(fit-content, size * 1.5);
+  max-width: 100%;
+  box-sizing: border-box;
+  display: inline-grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
   row-gap: var(--menu-action-gap);
-  padding-top: 30px;
+  padding-inline: 4px;
 }
 .ui-layer .developer-settings-actions > .tiny-swords-button {
   width: 100%;
   min-width: 0;
   margin-top: 0;
+}
+.ui-layer .developer-settings-actions > .tiny-swords-button.has-menu-icon .menu-button-icon {
+  transform: none;
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+.ui-layer .developer-settings-actions > .tiny-swords-button.has-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.ui-layer .developer-settings-actions {
+  position: static;
+  margin: 0;
+  transform: none;
+  justify-self: center;
 }
 .ui-layer .developer-settings-actions > .tiny-swords-button + .tiny-swords-button {
   margin-top: 0;
@@ -196,6 +220,22 @@
   container-type: normal; transform: none; isolation: isolate;
   display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
   filter: drop-shadow(0 12px 16px #081c2666);
+}
+.ui-layer .tiny-swords-panel.developer-window {
+  /* Keep the shared paper size while making room for the wider action group. */
+  padding-inline: clamp(28px, 6cqw, 36px);
+}
+.ui-layer .tiny-swords-panel.developer-window .footer-container {
+  display: grid;
+  place-items: center;
+}
+@media (max-width: 1000px) {
+  .ui-layer .tiny-swords-panel.developer-window {
+    padding-inline: 12px;
+  }
+  .ui-layer .developer-settings-actions > .tiny-swords-button {
+    font-size: 18px;
+  }
 }
 .tiny-swords-ribbon-art {
   position: absolute; inset: 0; display: grid;
