@@ -96,7 +96,9 @@
   place-items: center;
   box-shadow: 0 0.15rem 1rem rgb(0 0 0 / 28%);
   transform: translateY(calc((var(--action-control-size) - var(--move-control-size)) / 2));
-  transition: background 80ms ease, transform 80ms ease;
+  transition:
+    background 80ms ease,
+    transform 80ms ease;
 }
 
 #item-action .action-symbol {

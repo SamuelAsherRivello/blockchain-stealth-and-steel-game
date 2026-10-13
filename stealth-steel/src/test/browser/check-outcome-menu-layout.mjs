@@ -29,12 +29,12 @@ try {
         if (!value) throw new Error(`Missing ${selector}`);
         return { left: value.left, top: value.top, right: value.right, bottom: value.bottom, width: value.width, height: value.height };
       };
-      const visible = [...document.querySelectorAll(".level-complete-panel .menu-actions > .tiny-swords-button")]
+      const visible = [...document.querySelectorAll(".level-complete-panel .menu-actions > .menu-action-button")]
         .filter(button => !button.hidden);
       return {
         frame: bounds(".game-frame"),
-        paper: bounds(".level-complete-panel > .tiny-swords-slices"),
-        body: bounds(".level-complete-panel .tiny-swords-body-text"),
+        paper: bounds(".level-complete-panel > .framed-slices"),
+        body: bounds(".level-complete-panel .menu-prose"),
         actions: visible.map(button => ({
           rect: (() => { const value = button.getBoundingClientRect(); return { top: value.top, bottom: value.bottom }; })(),
           label: button.textContent,

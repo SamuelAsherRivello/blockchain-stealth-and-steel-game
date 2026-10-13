@@ -30,8 +30,8 @@ export function createTreasureUi({host,screenLayer,frameElement=null,pauseContro
     open(){
       if(disposed||window)return;
       const content=documentRef.createElement('div');content.className='treasure-content';
-      message=documentRef.createElement('p');message.className='tiny-swords-body-text treasure-message';message.setAttribute('role','status');
-      countdown=documentRef.createElement('p');countdown.className='tiny-swords-body-text treasure-countdown';
+      message=documentRef.createElement('p');message.className='menu-prose treasure-message';message.setAttribute('role','status');
+      countdown=documentRef.createElement('p');countdown.className='menu-prose treasure-countdown';
       claim=createMenuButton({displayText:'Claim',documentRef});reject=createMenuButton({displayText:'Reject',documentRef});back=createMenuButton({displayText:'Back',documentRef});
       claim.addEventListener('click',()=>void act('claim'));reject.addEventListener('click',()=>void act('reject'));back.addEventListener('click',()=>window?.close());
       content.append(message,countdown);

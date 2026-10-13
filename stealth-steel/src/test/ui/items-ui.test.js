@@ -66,7 +66,7 @@ test("Items renders a non-scrolling square nine-card grid with the required inst
 
   assert.deepEqual(loadingCalls, ["show", "hide"]);
   assert.equal(ui.window.backdrop.hidden, false);
-  assert.match(ui.window.panel.className, /tiny-swords-panel/);
+  assert.match(ui.window.panel.className, /menu-surface/);
   assert.match(ui.window.panel.className, /game-window/);
   assert.match(ui.window.panel.className, /items-window/);
   assert.equal(ui.content.children[0].textContent, "Click item to toggle activation.");

@@ -8,24 +8,30 @@
   --hud-ink: #fff5d9;
 }
 .ui-layer .dom-hud {
-  inset: calc(env(safe-area-inset-top, 0px) + var(--hud-safe-area))
-    calc(env(safe-area-inset-right, 0px) + var(--hud-safe-area))
-    calc(env(safe-area-inset-bottom, 0px) + var(--hud-safe-area))
+  inset: calc(env(safe-area-inset-top, 0px) + var(--hud-safe-area)) calc(env(safe-area-inset-right, 0px) + var(--hud-safe-area)) calc(env(safe-area-inset-bottom, 0px) + var(--hud-safe-area))
     calc(env(safe-area-inset-left, 0px) + var(--hud-safe-area));
 }
 .ui-layer .release-metadata {
-  top: 0; left: 0; width: auto; text-align: left;
-  font: 9.6px/16px system-ui, sans-serif; color: var(--hud-ink);
+  top: 0;
+  left: 0;
+  width: auto;
+  text-align: left;
+  font: 9.6px/16px system-ui, sans-serif;
+  color: var(--hud-ink);
   -webkit-text-stroke: 0;
 }
 .ui-layer .gold-counter,
 .ui-layer .level-counter,
 .ui-layer .items-counter {
   left: 0;
-  display: block; width: auto; height: var(--hud-gold-height);
-  padding: 0; text-align: left;
+  display: block;
+  width: auto;
+  height: var(--hud-gold-height);
+  padding: 0;
+  text-align: left;
   font: bold var(--hud-gold-height)/1 Georgia, serif;
-  color: var(--hud-ink); -webkit-text-stroke: 0;
+  color: var(--hud-ink);
+  -webkit-text-stroke: 0;
 }
 .ui-layer .release-metadata,
 .ui-layer .gold-counter,
@@ -33,7 +39,9 @@
 .ui-layer .items-counter {
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
 }
-.ui-layer .gold-counter { top: var(--hud-header-offset); }
+.ui-layer .gold-counter {
+  top: var(--hud-header-offset);
+}
 .ui-layer .level-counter {
   top: calc(var(--hud-header-offset) + var(--hud-gold-height) + 4px);
 }
@@ -48,68 +56,106 @@
   justify-content: center;
   background: rgb(255 245 217 / 18%);
 }
-.ui-layer .items-counter[hidden] { display: none; }
+.ui-layer .items-counter[hidden] {
+  display: none;
+}
 .ui-layer .coordinates-ui {
   top: calc(var(--hud-header-offset) + (var(--hud-gold-height) + 4px) * 3);
-  left: 0; padding: 4px 8px; border-radius: 3px;
-  background: #173a40db; color: var(--hud-ink);
-  font: 12px/1.4 ui-monospace, monospace; -webkit-text-stroke: 0;
+  left: 0;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #173a40db;
+  color: var(--hud-ink);
+  font: 12px/1.4 ui-monospace, monospace;
+  -webkit-text-stroke: 0;
 }
 .ui-layer .settings-gear {
   top: calc(var(--hud-header-offset) + (var(--hud-gold-height) - var(--hud-round-size)) / 2);
   right: 24px;
-  width: var(--hud-round-size); height: var(--hud-round-size);
-  display: grid; place-items: center; padding: 0; border: 0;
+  width: var(--hud-round-size);
+  height: var(--hud-round-size);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
   /* Halve the artwork while preserving the existing accessible hit area. */
   background: var(--hud-round) center / 70.3125% no-repeat;
-  image-rendering: pixelated; box-shadow: none;
+  image-rendering: pixelated;
+  box-shadow: none;
 }
 .ui-layer .settings-gear img {
-  width: 36%; height: 36%; transform: translateY(-5%);
+  width: 36%;
+  height: 36%;
+  transform: translateY(-5%);
   image-rendering: pixelated;
 }
 .ui-layer .virtual-controller {
   --move-control-size: clamp(84px, 24.6528cqw, 142px);
   --action-control-size: clamp(56px, 16.6667cqw, 96px);
   --controller-color: var(--hud-ink);
-  align-items: start; padding: 0 24px 11px 6px;
+  align-items: start;
+  padding: 0 24px 11px 6px;
   transform: translateY(20px);
 }
 .ui-layer .movement-control,
 .ui-layer .action-control {
-  display: grid; grid-template-rows: var(--move-control-size) 22px;
-  align-items: center; justify-items: center; gap: 8px;
+  display: grid;
+  grid-template-rows: var(--move-control-size) 22px;
+  align-items: center;
+  justify-items: center;
+  gap: 8px;
 }
-.ui-layer .action-controls { align-items: start; gap: clamp(12px, 2.9514cqw, 17px); }
+.ui-layer .action-controls {
+  align-items: start;
+  gap: clamp(12px, 2.9514cqw, 17px);
+}
 .ui-layer .joystick,
 .ui-layer .action-symbol,
 .ui-layer .control-puck {
-  border: 0; background: var(--hud-round) center / 137.5% no-repeat;
-  image-rendering: pixelated; box-shadow: none;
+  border: 0;
+  background: var(--hud-round) center / 137.5% no-repeat;
+  image-rendering: pixelated;
+  box-shadow: none;
 }
-.ui-layer .joystick { background-size: 133.803%; }
+.ui-layer .joystick {
+  background-size: 133.803%;
+}
 .ui-layer .control-puck {
-  width: 49.3%; height: 49.3%; pointer-events: none;
+  width: 49.3%;
+  height: 49.3%;
+  pointer-events: none;
   filter: brightness(1.22) drop-shadow(0 1.5px 3px #203c3455);
 }
 .ui-layer .action-symbol,
 .ui-layer .action-control:last-child .action-symbol {
-  position: relative; transform: none; font-size: 0; pointer-events: none;
+  position: relative;
+  transform: none;
+  font-size: 0;
+  pointer-events: none;
 }
 .ui-layer .action-symbol::after {
-  content: ''; position: absolute; left: 50%; top: 50%;
-  transform: translate(-50%, -50%); width: 45.5%; height: 45.5%;
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 45.5%;
+  height: 45.5%;
   background: url('/ui/tiny-swords/Icon_05.png') center / contain no-repeat;
 }
 .ui-layer #item-action .action-symbol::after {
-  width: 25%; height: 25%;
+  width: 25%;
+  height: 25%;
   background: #fff;
 }
 .ui-layer .control-label {
   font: bold clamp(12px, 3.125cqw, 18px)/22px Georgia, serif;
-  letter-spacing: 0; color: var(--hud-ink);
-  text-shadow: 1px 1px 0 #172b27; filter: none;
-  user-select: none; -webkit-user-select: none;
+  letter-spacing: 0;
+  color: var(--hud-ink);
+  text-shadow: 1px 1px 0 #172b27;
+  filter: none;
+  user-select: none;
+  -webkit-user-select: none;
   transform: translateY(calc(-100% + 20px));
 }
 .ui-layer .joystick.is-pressed .control-puck,
@@ -117,29 +163,37 @@
   background: var(--hud-round) center / 137.5% no-repeat;
 }
 .ui-layer .joystick.is-pressed .control-puck {
-  filter: brightness(.9) saturate(.75) drop-shadow(0 1.5px 3px #203c3455);
+  filter: brightness(0.9) saturate(0.75) drop-shadow(0 1.5px 3px #203c3455);
 }
 .ui-layer .action-control.is-pressed .action-symbol {
   transform: none;
-  filter: brightness(.78) saturate(.75);
+  filter: brightness(0.78) saturate(0.75);
 }
 .ui-layer .settings-gear:active {
   background: var(--hud-round) center / 70.3125% no-repeat;
-  filter: brightness(.78) saturate(.75);
+  filter: brightness(0.78) saturate(0.75);
 }
 .ui-layer .settings-gear:hover,
-.ui-layer .settings-gear:focus-visible { outline: none; }
+.ui-layer .settings-gear:focus-visible {
+  outline: none;
+}
 .ui-layer .joystick:focus-visible,
 .ui-layer .action-control:focus-visible .action-symbol {
-  outline: 3px solid #fff4ad; outline-offset: 2px;
+  outline: 3px solid #fff4ad;
+  outline-offset: 2px;
 }
 .ui-layer .action-control:disabled,
 .ui-layer .joystick:disabled,
-.ui-layer .settings-gear:disabled { filter: grayscale(1); opacity: .6; }
+.ui-layer .settings-gear:disabled {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
 @media (hover: hover) {
   .ui-layer .settings-gear:hover:not(:active),
   .ui-layer .joystick:hover:not(.is-pressed),
-  .ui-layer .action-control:hover:not(.is-pressed) .action-symbol { filter: brightness(1.12); }
+  .ui-layer .action-control:hover:not(.is-pressed) .action-symbol {
+    filter: brightness(1.12);
+  }
 }
 /* Keep the goal artwork readable against the terrain. */
 .ui-layer .runtime-goal-marker img {

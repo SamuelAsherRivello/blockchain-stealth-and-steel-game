@@ -20,11 +20,11 @@ try {
     await page.setViewportSize({ width: Math.round(1280 / zoom), height: Math.round(800 / zoom) });
     const separator = path.includes('?') ? '&' : '?';
     await page.goto(`${fixtureRoot}${path}${separator}muteMusic=true&muteSFX=true`);
-    await page.locator(`${selector} .tiny-swords-button:not([hidden])`).first().waitFor();
-    const buttons = await page.locator(`${selector} .tiny-swords-button:not([hidden])`).evaluateAll(elements => elements.map(button => {
+    await page.locator(`${selector} .menu-action-button:not([hidden])`).first().waitFor();
+    const buttons = await page.locator(`${selector} .menu-action-button:not([hidden])`).evaluateAll(elements => elements.map(button => {
       const br = button.getBoundingClientRect();
       const lr = button.querySelector('menu-button-label').getBoundingClientRect();
-      const paper = button.closest('.tiny-swords-panel').querySelector(':scope > .tiny-swords-slices').getBoundingClientRect();
+      const paper = button.closest('.menu-surface').querySelector(':scope > .framed-slices').getBoundingClientRect();
       return { text: button.querySelector('menu-button-label').textContent, dx: ((lr.left + lr.right) - br.left - br.right) / 2, dy: ((lr.top + lr.bottom) - br.top - br.bottom) / 2, inside: br.left >= paper.left - 1 && br.right <= paper.right + 1 && br.top >= paper.top - 1 && br.bottom <= paper.bottom + 1 };
     }));
     for (const button of buttons) if (Math.abs(button.dx) > 1 || Math.abs(button.dy) > 1 || !button.inside) throw new Error(`${name} ${zoom * 100}% failed: ${JSON.stringify(button)}`);
@@ -32,11 +32,11 @@ try {
     console.log(`${name} ${zoom * 100}% PASS (${buttons.length} buttons)`);
     if (name === 'settings-menu') {
       await page.getByRole('button', { name: 'Developer', exact: true }).click();
-      await page.locator('.developer-settings-actions > .tiny-swords-button:not([hidden])').first().waitFor();
-      const developerButtons = await page.locator('.developer-settings-actions > .tiny-swords-button:not([hidden])').evaluateAll(elements => elements.map(button => {
+      await page.locator('.developer-settings-actions > .menu-action-button:not([hidden])').first().waitFor();
+      const developerButtons = await page.locator('.developer-settings-actions > .menu-action-button:not([hidden])').evaluateAll(elements => elements.map(button => {
         const br = button.getBoundingClientRect();
         const lr = button.querySelector('menu-button-label').getBoundingClientRect();
-        const paper = button.closest('.tiny-swords-panel').querySelector(':scope > .tiny-swords-slices').getBoundingClientRect();
+        const paper = button.closest('.menu-surface').querySelector(':scope > .framed-slices').getBoundingClientRect();
       const content = [...button.querySelectorAll(':scope > .menu-button-icon svg, :scope > menu-button-label')].map(element => element.getBoundingClientRect());
       const contentLeft = Math.min(...content.map(rect => rect.left)), contentRight = Math.max(...content.map(rect => rect.right));
       const clearance = Math.min(contentLeft - br.left, br.right - contentRight);

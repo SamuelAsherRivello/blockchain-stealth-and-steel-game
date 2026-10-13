@@ -69,20 +69,18 @@ body {
 .letterbox-presentation::after {
   position: absolute;
   inset: 0;
-  content: "";
+  content: '';
   pointer-events: none;
 }
 
 .letterbox-presentation::before {
-  background: url("/assets/images/ui/letterbox/forest-gate-backdrop-v2.png") center / cover no-repeat;
-  filter: brightness(.94) saturate(.95) contrast(1.02);
+  background: url('/assets/images/ui/letterbox/forest-gate-backdrop-v2.png') center / cover no-repeat;
+  filter: brightness(0.94) saturate(0.95) contrast(1.02);
   transform: scale(1.015);
 }
 
 .letterbox-presentation::after {
-  background:
-    linear-gradient(90deg, rgb(4 10 13 / 10%), transparent 22%, transparent 78%, rgb(4 10 13 / 10%)),
-    radial-gradient(ellipse at center, transparent 18%, rgb(5 10 14 / 20%) 76%);
+  background: linear-gradient(90deg, rgb(4 10 13 / 10%), transparent 22%, transparent 78%, rgb(4 10 13 / 10%)), radial-gradient(ellipse at center, transparent 18%, rgb(5 10 14 / 20%) 76%);
 }
 
 .letterbox-presentation__rail {
@@ -95,22 +93,21 @@ body {
   overflow: hidden;
   background: #071013;
   outline: none;
-  --letterbox-rail-finish:
-    inset 3px 0 0 rgb(187 207 194 / 25%),
-    inset -3px 0 0 rgb(0 0 0 / 52%),
-    0 0 0 1px rgb(2 6 8 / 90%);
+  --letterbox-rail-finish: inset 3px 0 0 rgb(187 207 194 / 25%), inset -3px 0 0 rgb(0 0 0 / 52%), 0 0 0 1px rgb(2 6 8 / 90%);
 }
 
 .letterbox-presentation__rail::before {
   position: absolute;
   inset: 0;
-  content: "";
-  background: url("/assets/images/ui/letterbox/forest-gate-rail.png") center / 100% 100% no-repeat;
+  content: '';
+  background: url('/assets/images/ui/letterbox/forest-gate-rail.png') center / 100% 100% no-repeat;
 }
 
 .letterbox-presentation__rail--left {
   left: calc(50% - var(--game-frame-half-width) - var(--letterbox-rail-width));
-  box-shadow: var(--letterbox-rail-finish), -30px 0 30px -8px rgb(0 0 0 / 72%);
+  box-shadow:
+    var(--letterbox-rail-finish),
+    -30px 0 30px -8px rgb(0 0 0 / 72%);
 }
 
 .letterbox-presentation__rail--left::before {
@@ -119,7 +116,9 @@ body {
 
 .letterbox-presentation__rail--right {
   right: calc(50% - var(--game-frame-half-width) - var(--letterbox-rail-width));
-  box-shadow: var(--letterbox-rail-finish), 30px 0 30px -8px rgb(0 0 0 / 72%);
+  box-shadow:
+    var(--letterbox-rail-finish),
+    30px 0 30px -8px rgb(0 0 0 / 72%);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -245,15 +244,62 @@ body {
   z-index: 10;
   pointer-events: none;
 }
-.runtime-goal-marker { position:absolute; width:max-content; height:max-content; transform:translate(-50%,-50%); pointer-events:none; }
-.runtime-goal-marker img { display:block; width:64px; height:64px; image-rendering:pixelated; }
-.game-frame > .runtime-goal-marker img { width:11.111111cqw; height:11.111111cqw; }
-.level-complete-backdrop { position:absolute; inset:0; z-index:2500; display:grid; place-items:center; padding:24px; background:rgb(0 0 0 / 62%); pointer-events:auto; }
-.level-complete-backdrop[hidden] { display:none; }
-.level-complete-panel { width:min(86%,360px); margin-bottom:50px; padding:34px 28px 28px; border:2px solid rgb(255 255 255 / 75%); border-radius:22px; background:linear-gradient(155deg,#17213b,#0b1020); box-shadow:0 20px 60px rgb(0 0 0 / 60%); text-align:center; color:#eef6ff; }
-.level-complete-panel h2 { margin:0 0 12px; }
-.level-complete-panel p { margin:0 0 26px; color:#cbd5e1; }
-.level-complete-continue { padding:12px 28px; border:0; border-radius:999px; background:#facc15; color:#422006; cursor:pointer; }
+.runtime-goal-marker {
+  position: absolute;
+  width: max-content;
+  height: max-content;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.runtime-goal-marker img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}
+.game-frame > .runtime-goal-marker img {
+  width: 11.111111cqw;
+  height: 11.111111cqw;
+}
+.level-complete-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 2500;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 62%);
+  pointer-events: auto;
+}
+.level-complete-backdrop[hidden] {
+  display: none;
+}
+.level-complete-panel {
+  width: min(86%, 360px);
+  margin-bottom: 50px;
+  padding: 34px 28px 28px;
+  border: 2px solid rgb(255 255 255 / 75%);
+  border-radius: 22px;
+  background: linear-gradient(155deg, #17213b, #0b1020);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 60%);
+  text-align: center;
+  color: #eef6ff;
+}
+.level-complete-panel h2 {
+  margin: 0 0 12px;
+}
+.level-complete-panel p {
+  margin: 0 0 26px;
+  color: #cbd5e1;
+}
+.level-complete-continue {
+  padding: 12px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: #facc15;
+  color: #422006;
+  cursor: pointer;
+}
 
 .menu-title-text {
   font: 750 10cqw/1.05 system-ui, sans-serif;
@@ -339,13 +385,25 @@ body {
   top: calc(var(--ui-safe-top) + 4.5em);
 }
 
-.ui-layer .menu-body > .items-menu { width: 100%; }
+.ui-layer .menu-body > .items-menu {
+  width: 100%;
+}
 
-.menu-panel.items-window { transform: translateY(200px); }
-.menu-panel.settings-window { transform: translateY(200px); }
-.menu-panel.developer-window { transform: translateY(200px); }
-.menu-panel.game-window:has(.items-menu) { transform: translateY(200px); }
-.menu-panel.game-window:has(.settings-controls) { transform: translateY(200px); }
+.menu-panel.items-window {
+  transform: translateY(200px);
+}
+.menu-panel.settings-window {
+  transform: translateY(200px);
+}
+.menu-panel.developer-window {
+  transform: translateY(200px);
+}
+.menu-panel.game-window:has(.items-menu) {
+  transform: translateY(200px);
+}
+.menu-panel.game-window:has(.settings-controls) {
+  transform: translateY(200px);
+}
 
 .ui-layer .items-menu-status {
   max-width: 25rem;
@@ -363,34 +421,34 @@ body {
   margin-inline: auto;
 }
 
-.items-menu-grid[data-layout="1x1"] {
+.items-menu-grid[data-layout='1x1'] {
   grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   max-width: 220px;
   aspect-ratio: 1;
 }
 
-.items-menu-grid[data-layout="1x2"] {
+.items-menu-grid[data-layout='1x2'] {
   grid-template: repeat(2, minmax(0, 1fr)) / minmax(0, 1fr);
   max-width: 220px;
 }
 
-.items-menu-grid[data-layout="1x3"] {
+.items-menu-grid[data-layout='1x3'] {
   grid-template: repeat(3, minmax(0, 1fr)) / minmax(0, 1fr);
   max-width: 170px;
 }
 
-.items-menu-grid[data-layout="2x2"] {
+.items-menu-grid[data-layout='2x2'] {
   grid-template: repeat(2, minmax(0, 1fr)) / repeat(2, minmax(0, 1fr));
   max-width: 360px;
   aspect-ratio: 1;
 }
 
-.items-menu-grid[data-layout="2x3"] {
+.items-menu-grid[data-layout='2x3'] {
   grid-template: repeat(3, minmax(0, 1fr)) / repeat(2, minmax(0, 1fr));
   max-width: 340px;
 }
 
-.items-menu-grid[data-layout="3x3"] {
+.items-menu-grid[data-layout='3x3'] {
   grid-template: repeat(3, minmax(0, 1fr)) / repeat(3, minmax(0, 1fr));
   max-width: 396px;
   aspect-ratio: 1;
@@ -399,7 +457,7 @@ body {
 .items-menu-card {
   position: relative;
   display: grid;
-  grid-template: minmax(0, 1fr) auto / minmax(0, .95fr) minmax(0, 1.05fr);
+  grid-template: minmax(0, 1fr) auto / minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 6px;
   min-width: 0;
   aspect-ratio: 1.65;
@@ -421,7 +479,12 @@ body {
   background: #5b8395;
 }
 
-.items-menu-card img { width: 72%; height: 72%; object-fit: contain; image-rendering: pixelated; }
+.items-menu-card img {
+  width: 72%;
+  height: 72%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
 
 .items-menu-card-details {
   display: grid;
@@ -430,8 +493,14 @@ body {
   min-width: 0;
 }
 
-.items-menu-card strong { overflow-wrap: anywhere; font: 800 clamp(9px, 10cqw, 17px) / 1.05 system-ui, sans-serif; }
-.items-menu-card-details span { color: #294650; font: 800 clamp(8px, 8cqw, 14px) / 1.1 system-ui, sans-serif; }
+.items-menu-card strong {
+  overflow-wrap: anywhere;
+  font: 800 clamp(9px, 10cqw, 17px) / 1.05 system-ui, sans-serif;
+}
+.items-menu-card-details span {
+  color: #294650;
+  font: 800 clamp(8px, 8cqw, 14px) / 1.1 system-ui, sans-serif;
+}
 
 .items-menu-card-stats {
   grid-column: 1 / -1;
@@ -451,17 +520,25 @@ body {
   background: #fff;
 }
 
-.items-menu-card-stat b { font: 800 clamp(7px, 6cqw, 11px) / 1 system-ui, sans-serif; }
-.items-menu-card-stat em { color: #3f7d69; font: 800 clamp(8px, 7cqw, 13px) / 1 system-ui, sans-serif; font-style: normal; }
+.items-menu-card-stat b {
+  font: 800 clamp(7px, 6cqw, 11px) / 1 system-ui, sans-serif;
+}
+.items-menu-card-stat em {
+  color: #3f7d69;
+  font: 800 clamp(8px, 7cqw, 13px) / 1 system-ui, sans-serif;
+  font-style: normal;
+}
 
 .items-menu-card.is-selected {
   border-color: #facc15;
   background: #fff5c9;
-  box-shadow: inset 0 0 0 3px #facc15, 0 0 0 2px rgb(30 53 64 / 82%);
+  box-shadow:
+    inset 0 0 0 3px #facc15,
+    0 0 0 2px rgb(30 53 64 / 82%);
 }
 
 .items-menu-card.is-selected::after {
-  content: "✓";
+  content: '✓';
   position: absolute;
   top: 9px;
   right: 9px;
@@ -474,7 +551,7 @@ body {
   background: #1f7a57;
   color: #fff;
   font: 900 3.6cqw / 1 system-ui, sans-serif;
-  box-shadow: 0 .2rem .5rem rgb(0 0 0 / 28%);
+  box-shadow: 0 0.2rem 0.5rem rgb(0 0 0 / 28%);
 }
 
 .settings-gear {
@@ -591,7 +668,7 @@ body {
   height: 0.715cqw;
   border-radius: 0.39cqw;
   background: currentColor;
-  content: "";
+  content: '';
   transform-origin: center;
 }
 
@@ -665,7 +742,7 @@ body {
   gap: 2cqw;
 }
 
-.volume-scale input[type="range"] {
+.volume-scale input[type='range'] {
   width: 100%;
   margin: 0;
   accent-color: #60a5fa;
@@ -695,7 +772,7 @@ body {
   touch-action: manipulation;
 }
 
-.collider-control input[type="checkbox"] {
+.collider-control input[type='checkbox'] {
   width: 5cqw;
   height: 5cqw;
   margin: 0;
@@ -703,7 +780,7 @@ body {
   cursor: pointer;
 }
 
-.fullscreen-control input[type="checkbox"] {
+.fullscreen-control input[type='checkbox'] {
   width: 5cqw;
   height: 5cqw;
   margin: 0;
@@ -795,7 +872,11 @@ body {
   outline-offset: 0.55cqw;
 }
 
-.start-game-prompt-items:disabled { cursor: not-allowed; filter: saturate(.2); opacity: .48; }
+.start-game-prompt-items:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.2);
+  opacity: 0.48;
+}
 
 .developer-settings-backdrop {
   z-index: var(--z-developer-settings-backdrop);

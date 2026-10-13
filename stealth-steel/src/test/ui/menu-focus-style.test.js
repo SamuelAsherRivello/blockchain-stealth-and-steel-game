@@ -10,10 +10,10 @@ test("menu controls never draw a focus outline", async () => {
 
   assert.match(
     styles,
-    /\.ui-layer \.tiny-swords-panel input:focus-visible,[\s\S]*?\.game-window-close:focus-visible \{ outline: none; \}/,
+    /\.ui-layer \.menu-surface input:focus-visible,[\s\S]*?\.game-window-close:focus-visible\s*\{[^}]*outline:\s*none;/,
   );
   assert.match(
     styles,
-    /\.ui-layer \.tiny-swords-button:focus-visible \{ outline: none; \}/,
+    /\.ui-layer \.menu-action-button:focus-visible\s*\{[^}]*outline:\s*none;/,
   );
 });

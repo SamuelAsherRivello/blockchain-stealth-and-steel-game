@@ -23,7 +23,7 @@ const read=()=>page.evaluate(()=>{
   const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height,right:r.right,bottom:r.bottom};};
   const canvas=document.querySelector('#renderCanvas'), debug=document.querySelector('#debugCanvas');
   return {dpr:devicePixelRatio,frame:rect('.game-frame'),ui:rect('#uiLayer'),menu:rect('.start-game-prompt-panel'),
-    paper:rect('.start-game-prompt-panel > .tiny-swords-slices'),start:rect('.start-game-prompt-start'),
+    paper:rect('.start-game-prompt-panel > .framed-slices'),start:rect('.start-game-prompt-start'),
     settings:rect('.settings-gear'),joystick:rect('#movement-joystick'),action:rect('#attack-action'),metadata:rect('.release-metadata'),
     render:[canvas.width,canvas.height],debug:[debug.width,debug.height],uiZoom:document.querySelector('#uiLayer').dataset.uiZoom};
 });

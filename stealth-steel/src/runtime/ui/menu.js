@@ -99,7 +99,7 @@ function createMenuLayoutDebugLayer({ overlayRoot, targets, documentRef }) {
 export function createMenuButton({ displayText, icon = null, variant = "primary", className = "", documentRef = globalThis.document }) {
   const button = documentRef.createElement("button");
   button.type = "button";
-  button.className = `menu-button menu-button-${variant} menu-button-text tiny-swords-button ${className}`.trim();
+  button.className = `menu-button menu-button-${variant} menu-button-text menu-action-button ${className}`.trim();
   const label = documentRef.createElement("menu-button-label");
   label.textContent = displayText;
   button.menuLabel = label;
@@ -122,7 +122,7 @@ export function createMenuButton({ displayText, icon = null, variant = "primary"
     }
     button.className += ' has-menu-icon'; button.append(symbol);
   }
-  button.append(label, createPanelArt(documentRef, "tiny-swords-button-art"));
+  button.append(label, createPanelArt(documentRef, "menu-action-art"));
   return button;
 }
 
@@ -146,7 +146,7 @@ export function createMenu({
   documentRef = globalThis.document,
 }) {
   const backdrop = documentRef.createElement("div");
-  backdrop.className = `menu-backdrop tiny-swords-menu-backdrop${showLogo ? " has-logo" : ""}`;
+  backdrop.className = `menu-backdrop menu-backdrop-surface${showLogo ? " has-logo" : ""}`;
   const coordinateRoot = frameElement?.ownerDocument?.querySelector('.ui-layer[data-ui-reference="logical"]');
   const disposeFrameBounds = bindToGameFrame({ overlay: backdrop, frameElement, coordinateRoot });
   if (buttonClicksOnly) {
@@ -159,9 +159,9 @@ export function createMenu({
     backdrop.addEventListener("keyup", containKeyboard);
   }
   const composition = documentRef.createElement("div");
-  composition.className = "tiny-swords-menu-composition";
+  composition.className = "menu-composition";
   const panel = documentRef.createElement("section");
-  panel.className = "menu-panel tiny-swords-panel";
+  panel.className = "menu-panel menu-surface";
   panel.setAttribute("role", "dialog");
   panel.setAttribute("aria-modal", "true");
   if (showHeader) panel.setAttribute("aria-labelledby", titleId);
@@ -176,7 +176,7 @@ export function createMenu({
   titleContainer.className = "title-container";
   if (showHeader) {
     title = documentRef.createElement("div");
-    title.className = "title-text menu-header-text menu-title-text tiny-swords-title-text";
+    title.className = "title-text menu-header-text menu-title-text menu-title-content";
     const label = documentRef.createElement("menu-title-label");
     label.textContent = titleText;
     title.menuTitleLabel = label;
@@ -202,7 +202,7 @@ export function createMenu({
   let body = null;
   if (bodyText != null) {
     body = documentRef.createElement("p");
-    body.className = "menu-subtitle-text tiny-swords-body-text";
+    body.className = "menu-subtitle-text menu-prose";
     body.textContent = bodyText;
     body.id = `${titleId}-body`;
     panel.setAttribute("aria-describedby", body.id);
@@ -229,7 +229,7 @@ export function createMenu({
   let logoElement = null;
   if (showLogo) {
     logoElement = documentRef.createElement("img");
-    logoElement.className = "tiny-swords-menu-logo";
+    logoElement.className = "menu-logo";
     logoElement.src = logoSrc;
     logoElement.alt = logoAlt;
     composition.append(logoElement);

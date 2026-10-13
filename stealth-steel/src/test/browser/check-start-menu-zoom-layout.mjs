@@ -82,11 +82,11 @@ try {
       };
       return {
         frame: bounds(".game-frame"),
-        composition: bounds(".tiny-swords-menu-composition"),
-        logo: bounds(".tiny-swords-menu-logo"),
+        composition: bounds(".menu-composition"),
+        logo: bounds(".menu-logo"),
         ribbon: bounds(".start-game-prompt-panel .game-window-header"),
         panel: bounds(".start-game-prompt-panel"),
-        paper: bounds(".start-game-prompt-panel > .tiny-swords-slices"),
+        paper: bounds(".start-game-prompt-panel > .framed-slices"),
         start: bounds(".start-game-prompt-start"),
         items: bounds(".start-game-prompt-items"),
       };

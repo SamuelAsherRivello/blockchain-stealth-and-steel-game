@@ -13,13 +13,13 @@ async page => {
       await page.setViewportSize({ width: Math.round(1280 / zoom), height: Math.round(800 / zoom) });
       const separator = surface.path.includes('?') ? '&' : '?';
       await page.goto(`${base}/src/test/browser/${surface.path}${separator}muteMusic=true&muteSFX=true`);
-      await page.locator(`${surface.selector} .tiny-swords-button`).first().waitFor();
+      await page.locator(`${surface.selector} .menu-action-button`).first().waitFor();
       const result = await page.evaluate(surfaceSelector => {
         const panel = document.querySelector(surfaceSelector);
-        const paper = panel?.querySelector(':scope > .tiny-swords-slices');
+        const paper = panel?.querySelector(':scope > .framed-slices');
         if (!panel || !paper) throw new Error(`Missing menu paper for ${surfaceSelector}`);
         const center = rect => ({ x: (rect.left + rect.right) / 2, y: (rect.top + rect.bottom) / 2 });
-        const buttons = [...panel.querySelectorAll('.tiny-swords-button:not([hidden])')];
+        const buttons = [...panel.querySelectorAll('.menu-action-button:not([hidden])')];
         if (!buttons.length) throw new Error(`No visible game-menu buttons for ${surfaceSelector}`);
         return buttons.map(button => {
           const buttonRect = button.getBoundingClientRect();

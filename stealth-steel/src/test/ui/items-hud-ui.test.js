@@ -38,7 +38,7 @@ test("HUD can move from mixed to full slots without changing its Shoes, Dagger, 
 
 test("startup applies the completed equipment refresh to the HUD", async () => {
   const main = await readFile(new URL("../../runtime/main.js", import.meta.url), "utf8");
-  assert.match(main, /void initialEquipmentState\.then\(applyEquipmentState\)\.catch\(\(\) => \{\}\);/);
+  assert.match(main, /initialEquipmentState\.then\(state\s*=>\s*\{[\s\S]*?applyEquipmentState\(state\)/);
 });
 
 test("HUD item slots use icon-sized, low-opacity item-label yellow squares", async () => {

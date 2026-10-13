@@ -45,7 +45,7 @@ test("world crop and viewport-safe UI use independent sibling layers", async () 
 
 test("menu backdrops stay inside the portrait game frame instead of covering desktop gutters", async () => {
   const styles = await readFile(new URL("../../runtime/ui/tiny-swords-menu.css", import.meta.url), "utf8");
-  const backdrop = styles.match(/\.ui-layer \.tiny-swords-menu-backdrop\s*\{([^}]*)\}/s)?.[1] ?? "";
+  const backdrop = styles.match(/\.ui-layer \.menu-backdrop-surface\s*\{([^}]*)\}/s)?.[1] ?? "";
 
   assert.match(backdrop, /position:\s*fixed;/);
   assert.doesNotMatch(backdrop, /inset:\s*0;/);

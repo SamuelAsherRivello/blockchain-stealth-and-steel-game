@@ -384,7 +384,7 @@ test("developer settings opens both related GitHub projects above local storage 
 test("developer action grid keeps the two top buttons at equal row geometry", async () => {
   const styles = await readFile(new URL("../../runtime/ui/tiny-swords-menu.css", import.meta.url), "utf8");
   assert.match(styles, /\.developer-settings-actions\s*\{[^}]*width:\s*calc-size\(fit-content, size \* 1\.5\);[^}]*grid-template-columns:\s*minmax\(0, 1fr\);[^}]*padding-inline:\s*4px;/s);
-  assert.match(styles, /\.developer-settings-actions\s*>\s*\.tiny-swords-button\.has-menu-icon\s*\{[^}]*display:\s*flex;[^}]*justify-content:\s*center;[^}]*gap:\s*10px;/s);
+  assert.match(styles, /\.developer-settings-actions\s*>\s*\.menu-action-button\.has-menu-icon\s*\{[^}]*display:\s*flex;[^}]*justify-content:\s*center;[^}]*gap:\s*10px;/s);
   assert.doesNotMatch(styles, /\.developer-settings-actions\s*\{[^}]*padding-top:/s);
   assert.match(styles, /\.developer-settings-actions\s*\{[^}]*row-gap:\s*var\(--menu-action-gap\);/s);
   assert.match(styles, /\.developer-settings-actions\s*>\s*\.settings-reset\s*\{[^}]*grid-column:\s*1 \/ -1;/s);
@@ -419,7 +419,7 @@ test("settings chrome follows inspiration frame-relative measurements", async ()
 
 test("Clear Settings and Developer use red button artwork", async () => {
   const styles = await readFile(new URL("../../runtime/ui/tiny-swords-menu.css", import.meta.url), "utf8");
-  assert.match(styles, /\.settings-reset \.tiny-swords-button-art i,\s*\.developer-settings-button \.tiny-swords-button-art i\s*\{[^}]*filter:\s*hue-rotate\(175deg\) saturate\(2\) brightness\(\.8\);/s);
+  assert.match(styles, /\.settings-reset \.menu-action-art i,\s*\.developer-settings-button \.menu-action-art i\s*\{[^}]*filter:\s*hue-rotate\(175deg\) saturate\(2\) brightness\(0?\.8\);/s);
 });
 
 test("gear icon is transparent vector artwork", async () => {
@@ -439,7 +439,7 @@ test("Account is styled and placed immediately before Developer", () => {
   assert.equal(content.children.length, 3);
   assert.equal(accountButton.textContent, '⚡ Account');
   assert.equal(developerButton.textContent, 'Developer');
-  assert.ok(accountButton.className.split(' ').includes('tiny-swords-button'));
+  assert.ok(accountButton.className.split(' ').includes('menu-action-button'));
   assert.ok(content.children[0].className.split(' ').includes('slider-control'));
   settings.close();
 });
