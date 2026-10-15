@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><base href="/"><title>C045 perception diagnostics verification</title>
+<style>body{margin:20px;background:#132019;color:#edf5ee;font:15px system-ui}.scene{position:relative;width:1200px;max-width:100%}canvas{display:block;width:100%}#labels{position:absolute;inset:0;pointer-events:none}pre{white-space:pre-wrap}button,label{margin-right:16px;padding:8px;display:inline-block}</style></head>
+<body><h1>Perception diagnostics</h1><p>Production Goblin, Archer and Warrior. Purple squares: Visual and Audio. White target dots activate both channels. The checks turn, move, stop detection, and switch each debug setting.</p>
+<button onclick="location.reload()">Replay checks</button><label><input id="perceptions" type="checkbox"> Enemy Perceptions</label><label><input id="colliders" type="checkbox"> Physics Colliders</label>
+<p id="phase">Loading sprites…</p><div class="scene"><canvas id="game" width="1728" height="768"></canvas><canvas id="labels" width="1728" height="768"></canvas></div>
+<pre id="result"></pre><script type="module" src="/src/test/browser/perception-diagnostics.js"></script></body></html>

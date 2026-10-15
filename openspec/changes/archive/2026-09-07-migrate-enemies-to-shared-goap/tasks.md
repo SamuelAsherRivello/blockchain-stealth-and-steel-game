@@ -1,0 +1,45 @@
+## 1. Compatibility baseline
+
+- [x] 1.1 C063-T001 Capture a five-enemy behavior matrix from the current factories, controllers, tests, and active deltas, including C055 entry stops, C056 adjacency as refined by C060 concealment, C057 centering, and the defense discrepancies in design.md; verify a checked-in implementation note identifies preserved behavior and the two permitted improvements without silently changing unrelated specs.
+- [x] 1.2 C063-T002 Add or extend baseline regressions for Archer facing/range/release/recovery, Goblin target priority/bush selection/recovery, Warrior and Lancer current defense integration, and non-combatant Monk; run focused tests before migration and distinguish pre-existing failures from new regressions.
+
+## 2. Planner and execution foundation
+
+- [x] 2.1 C063-T003 Define immutable fact/action/goal contracts and a profile validator with explicit parameter units and capability checks; verify tests reject invalid ranges/costs, unknown actions, and unsupported capabilities while accepting valid profile overrides.
+- [x] 2.2 C063-T004 Implement the pure bounded uniform-cost planner with stable ties and dominated-state pruning; verify tests for multi-step composition, cheaper multi-step alternatives, already-satisfied goals, unreachable goals, cycles, caps, binding identity, and unchanged input/live state.
+- [x] 2.3 C063-T005 Implement the single-action executor with per-instance state, generation-safe callbacks, explicit outcomes, cancellation, and commitment; verify exactly-once completion, no cross-agent state leakage, protected lifecycle handling, and stale callback rejection.
+- [x] 2.4 C063-T006 Add the planning scheduler and bounded diagnostic snapshots; verify per-request/per-update limits, fair service of deferred requests, no incomplete-plan execution, finite diagnostic retention, and stable results under deterministic inputs.
+
+## 3. Knowledge and reusable actions
+
+- [x] 3.1 C063-T007 Implement per-enemy fact/context projection and reaction-intent integration using current perception and GridSpot contracts; verify independent hidden tracking, timer expiry, evidence refresh, local adjacency without ongoing knowledge, and no forbidden current player coordinates in plans or diagnostics.
+- [x] 3.2 C063-T008 Extract or adapt shared navigation and destination binding with separately bounded reachability work, compatible collision checks, stable candidate selection, and existing movement recovery; verify blocker invalidation, one-second stall detection, safe escape, three-second enclosure retry, and completion of a deferred nearest-bush scan without false unreachable results.
+- [x] 3.3 C063-T009 Implement reusable wait and patrol actions supporting timed patrol and Goblin route-distance/home-radius parameters; verify deterministic injected randomness, preserved default timing/units, route completion, and different profiles using the same implementation.
+- [x] 3.4 C063-T010 Implement generic move-to, facing, and search actions with bound targets/destinations and existing awareness timing; verify evidence movement, directional observation, awareness-entry stops, no repeated freezes on same-state detection, and no duplicate investigation clock.
+- [x] 3.5 C063-T011 Implement the actor execution adapter and shared player-attack preparation contract for melee/ranged actions; verify captured own-cell centering, immediate already-centered commitment, live pre-commit eligibility, collision-aware cancellation, and one preparation owner.
+- [x] 3.6 C063-T012 Implement the reusable melee action using configurable actor attack variants, target policy, and existing recovery; verify actual impact lifecycle, exactly-once sound/damage, player versus non-player preparation differences, and reuse by compatible enemy profiles.
+- [x] 3.7 C063-T013 Implement the reusable ranged action and attack-position selection; verify inclusive Euclidean range checks, legitimate target knowledge, current-position preference, predicted move-then-shoot composition, actual release observation, captured target, and 0.75-second Archer recovery.
+- [x] 3.8 C063-T014 Implement reusable bush burning with Goblin fire reach/damage and bound living bush validation; verify cardinal-only interaction, one 50-damage event per accepted burn, no stale destroyed-target attack, and unchanged bush death/effect timing.
+
+## 4. Brain and complete roster migration
+
+- [x] 4.1 C063-T015 Implement shared goal arbitration and brain lifecycle, including validated immediate one-step adjacent attack plans, stable current-action retention, and bounded fallback; verify adjacent combat preempts navigation/alternate targets even with exhausted ordinary planning budget, while concealment and protected actions remain authoritative.
+- [x] 4.2 C063-T016 Create the Archer profile and replace its two autonomous shot-selection paths with the shared brain/executor; verify the real factory produces GOAP plans, no old path also shoots, existing Archer regressions pass, and a browser fixture visibly releases one arrow per accepted shot.
+- [x] 4.3 C063-T017 Create the Warrior profile and integrate shared melee plus immediate defense coordination; verify frontal defense, rear/vertical baseline outcomes, attack-impact cancellation, protected guard timing, and no stale post-defense action from the executor.
+- [x] 4.4 C063-T018 Create the Lancer profile and integrate shared melee through its directional actor capability; verify all cardinal attack headings, centering, recovery/locks, current unwired auto-defense boundary, and one active decision owner.
+- [x] 4.5 C063-T019 Create the Monk profile using shared movement and observation actions; verify patrol and all four awareness states through the real spawn factory, with no attack or healing on player adjacency and independent instance state.
+- [x] 4.6 C063-T020 Create the Goblin profile and replace specialized autonomous decisions with shared actions and configured target policies; verify player-over-alternate priority, nearby Sheep handling without new distant pursuit, one 0.25 roll per eligible normal decision, map-wide nearest reachable bush selection, existing home limits, and recovery/repeat-target behavior.
+- [x] 4.7 C063-T021 Complete main-loop creation/update/disposal integration for every enemy and define exactly-once reaction/actor/action clocks; verify mixed-roster spawn, pause/resume, forced displacement, death, removal, respawn, and evidence-expiry order through integration tests.
+- [x] 4.8 C063-T022 Retire obsolete autonomous controller wiring and any temporary migration switch while preserving still-used actor/demo APIs and diagnostic fields; verify import/reference inspection and factory integration tests show all five enemies default exclusively to GOAP with no duplicate voluntary decision writers.
+
+## 5. Documentation and end-to-end acceptance
+
+- [x] 5.1 C063-T023 Document the reusable action contract, profile parameters/units, capability validation, folder layout, lifecycle, and a two-profile reuse example; verify the example uses existing implementations and introduces no character-name condition into the planner.
+- [x] 5.2 C063-T024 Run roster-wide perception/combat/navigation regressions including configured grid sizes, exact-halfway occupancy behavior through the existing GridSpot service, blocked centering, two-enemy concealment differences, urgent adjacency, and committed attacks across goal changes; verify no change-specific failures and record any unrelated baseline failures separately.
+- [x] 5.3 C063-T025 Run real-browser acceptance on the current game and a controlled five-enemy fixture; verify unchanged controls/HUD/presentation, actual Archer arrows, repeated eligible melee, Goblin bush damage, passive Monk, awareness stops, hidden tracking expiry, blocked recovery, and pause/disposal, recording a live URL and evidence; also verify labels on all five types, independent toggling, persistence/reset, resize alignment and cleanup.
+- [x] 5.4 C063-T026 Exercise at least 20 mixed enemies under ordinary movement and repeated blocked-plan conditions; measure planning and navigation work and frame timing, verify configured work bounds/fairness/no retry storm, and tune documented limits without changing behavior contracts.
+- [x] 5.5 C063-T027 Run `npm test`, `npm run build`, `git diff --check`, and `npm run openspec -- validate migrate-enemies-to-shared-goap --strict`; verify results, record the deliberate Archer positioning/stability differences, and leave unrelated UI, spatial, metadata, and spec-sync work unchanged.
+
+- [x] 5.6 C063-T028 Add the Enemy AI Labels developer toggle and passive two-line labels using existing settings persistence/reset and debug canvas; verify independent toggling, default-off behavior, per-enemy goal/action phases, resize alignment, death/disposal cleanup, and browser rendering for all five types.
+
+Acceptance evidence: `verification.md`. Full-suite and global whitespace exceptions are recorded there; no change-specific failure remains.

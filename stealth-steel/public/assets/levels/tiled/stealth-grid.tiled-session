@@ -1,0 +1,152 @@
+{
+    "activeFile": "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/foozle-lab-level.tmj",
+    "expandedProjectPaths": [
+        ".",
+        "maps",
+        "tilesets"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/foozle-lab-level.tmj": {
+            "scale": 0.1960841049382716,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 940.9227742252829,
+                "y": 815.976389572061
+            }
+        },
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/tilesets/foozle-lab-control-panel.tsj": {
+            "scaleInDock": 1
+        },
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/tilesets/foozle-lab-decor.tsj": {
+            "scaleInDock": 1
+        },
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/tilesets/foozle-lab-laser-spikes.tsj": {
+            "scaleInDock": 1
+        },
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/tilesets/foozle-lab-saw.tsj": {
+            "scaleInDock": 1
+        },
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/tilesets/foozle-lab-structure.tsj": {
+            "scaleInDock": 1
+        },
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/tilesets/foozle-lab-wall-blades.tsj": {
+            "scaleInDock": 1
+        },
+        "maps/Level01.tmj": {
+            "expandedObjectLayers": [
+                6,
+                5
+            ],
+            "scale": 0.25,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -134,
+                "y": 1244
+            }
+        },
+        "maps/Level01.tmj.bak.tmj": {
+            "scale": 0.609521484375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 402.7749739645919,
+                "y": 515.9785308018907
+            }
+        },
+        "maps/Level02.tmj": {
+            "scale": 0.33,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1224.242424242424,
+                "y": 530.3030303030304
+            }
+        },
+        "tilesets/Bridge.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "tilesets/Bridge_All.tsj": {
+            "scaleInDock": 1
+        },
+        "tilesets/GoldStoneObjects.tsj": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "tilesets/SpawnerTypes.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "tilesets/Tilemap_Elevation.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "tilesets/Tilemap_color1.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/Tilemap_color2.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/Tilemap_color3.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 0.5
+        },
+        "tilesets/Tilemap_color4.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/Tilemap_color5.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/TinySwordsBushDecorations.tsj": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/TinySwordsTerrain.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "tilesets/TreasureChestSpawner.tsj": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "tilesets/Water (Animated).tsj": {
+            "scaleInDock": 1
+        },
+        "tilesets/Water (Static).tsj": {
+            "scaleInDock": 1
+        },
+        "tilesets/Water.tsj": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        }
+    },
+    "map.lastUsedFormat": "json",
+    "openFiles": [
+        "maps/Level01.tmj",
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/foozle-lab-level.tmj",
+        "tilesets/Tilemap_color1.tsj"
+    ],
+    "project": "stealth-grid.tiled-project",
+    "recentFiles": [
+        "maps/Level01.tmj",
+        "tilesets/Tilemap_color1.tsj",
+        "D:/Documents/Projects/VC/Phaser/phraser4-platformer-demo/phaser4-platformer/assets/tiled/foozle-lab-level.tmj",
+        "tilesets/Tilemap_color2.tsj",
+        "tilesets/Tilemap_color4.tsj",
+        "tilesets/Tilemap_color3.tsj",
+        "tilesets/Tilemap_color5.tsj",
+        "tilesets/TinySwordsBushDecorations.tsj",
+        "maps/Level01.tmj.bak.tmj",
+        "tilesets/TinySwordsTerrain.tsj",
+        "maps/Level02.tmj"
+    ]
+}

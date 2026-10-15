@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><base href="/"><title>Shared character health bars</title>
+<style>
+body{margin:20px;background:#17221d;color:#e7eee8;font:14px system-ui}h1{font-size:22px}
+.scene{position:relative;width:1008px;max-width:100%}canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+#overlay{position:absolute;inset:0;pointer-events:none}.controls{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+button{padding:9px 12px;background:#304e3b;color:white;border:1px solid #7e9b85;border-radius:5px;cursor:pointer}
+pre{white-space:pre-wrap}#status{color:#99e4a5}
+</style></head>
+<body><h1>Shared health bars: all seven character types</h1>
+<div hidden><div id="movement-joystick"><div id="movement-puck"></div></div><button id="attack-action">Attack</button></div>
+<p>Gameplay starts paused for precise visual inspection. Use Damage, then Step. Icons and bars use the production renderer.</p>
+<div class="scene"><canvas id="game" width="1008" height="420"></canvas><canvas id="overlay" width="1008" height="420"></canvas></div>
+<div class="controls">
+<button id="damage">Damage all 25</button><button id="step">Step 0.05 seconds</button><button id="settle">Step 0.2 seconds</button>
+<button id="timeout">Step 1 second</button><button id="icons">Toggle perception icons</button><button id="move">Move characters</button>
+<button id="jump">Toggle jump</button><button id="camera">Move camera</button><button id="lethal">Lethal damage</button>
+<button id="checks">Run browser checks</button><button id="reset">Reset fixture</button>
+</div><p id="status">Loading sprites…</p><pre id="result"></pre>
+<script type="module" src="/src/test/browser/health-bars.js"></script></body></html>
