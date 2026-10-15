@@ -12,12 +12,12 @@
 
 # Stealth and Steel
 
-[![Bitcoin](https://img.shields.io/badge/Bitcoin-F7931A?style=flat-square&logo=bitcoin&logoColor=white)](https://bitcoin.org/)
-[![Lightning Labs](https://img.shields.io/badge/Lightning%20Labs-792EE5?style=flat-square)](https://lightning.engineering/)
 [![Arkade](https://img.shields.io/badge/Arkade-381993?style=flat-square)](https://arkadeos.com/)
 [![Babylon.js](https://img.shields.io/badge/Babylon.js-BB464B?style=flat-square&logo=babylondotjs&logoColor=white)](https://www.babylonjs.com/)
-[![WebGPU](https://img.shields.io/badge/WebGPU-005A9C?style=flat-square)](https://www.w3.org/TR/webgpu/)
+[![Bitcoin](https://img.shields.io/badge/Bitcoin-F7931A?style=flat-square&logo=bitcoin&logoColor=white)](https://bitcoin.org/)
+[![Lightning Labs](https://img.shields.io/badge/Lightning%20Labs-792EE5?style=flat-square)](https://lightning.engineering/)
 [![Tiled](https://img.shields.io/badge/Tiled-5D9FBF?style=flat-square)](https://www.mapeditor.org/)
+[![WebGPU](https://img.shields.io/badge/WebGPU-005A9C?style=flat-square)](https://www.w3.org/TR/webgpu/)
 
 <!-- AI: Use the requested project display name and keep the introduction to one short sentence describing the implemented project and its audience. -->
 This is a proof-of-concept (POC) demonstrating Blockchain use cases for gaming.
