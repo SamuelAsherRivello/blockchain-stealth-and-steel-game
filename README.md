@@ -124,6 +124,8 @@ Babylon Lite does not ship the full engine's default loading UI.
 
 <!-- AI: Link to documentation that exists in this repository using relative Markdown links and a short purpose for each. -->
 - [README.md](README.md): Primary documentation for this repo.
+- [Arkade features overview](docs/arkade-features-overview.md): Capability and approval notes for Arkade-backed game features.
+- [Arkade wallet workflows](docs/arkade-wallet-workflows.md): Wallet workflow reference for future Arkade integration work.
 - [Tile Map Editing](stealth-steel/documentation/tile-map.md): Tiled map editing workflow.
 - [Grid and UI Contract](stealth-steel/documentation/grid-and-ui-contract.md): Logical grid and UI placement contract.
 - [Render Depth Order](stealth-steel/documentation/render-depth-order.md): Babylon Lite sprite and DOM overlay depth bands.
@@ -142,6 +144,7 @@ Babylon Lite does not ship the full engine's default loading UI.
 |   |-- cli.mjs
 |   `-- config.yaml
 |-- .gitignore
+|-- docs/
 |-- LICENSE
 |-- README.md
 |-- package.json
