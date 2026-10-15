@@ -1,0 +1,82 @@
+{
+  "name": "Water",
+  "type": "tileset",
+  "version": "1.11",
+  "columns": 0,
+  "tilecount": 3,
+  "tilewidth": 64,
+  "tileheight": 64,
+  "grid": {
+    "orientation": "orthogonal",
+    "width": 64,
+    "height": 64
+  },
+  "tiles": [
+    {
+      "id": 0,
+      "type": "Water (Static)",
+      "image": "../../../images/terrain/Water (Blocker).svg",
+      "imagewidth": 64,
+      "imageheight": 64,
+      "properties": [
+        {
+          "name": "runtimeImage",
+          "type": "string",
+          "value": "../../../images/terrain/Water (Static).png"
+        }
+      ],
+      "objectgroup": {
+        "type": "objectgroup",
+        "objects": [
+          { "id": 1, "x": 0, "y": 0, "width": 64, "height": 64, "rotation": 0 }
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "type": "Water (Animated)",
+      "image": "../../../images/terrain/Water (Animated).svg",
+      "imagewidth": 64,
+      "imageheight": 64,
+      "properties": [
+        {
+          "name": "runtimeImage",
+          "type": "string",
+          "value": "../../../images/terrain/Water (Animated).png"
+        },
+        {
+          "name": "frameWidth",
+          "type": "int",
+          "value": 192
+        },
+        {
+          "name": "frameHeight",
+          "type": "int",
+          "value": 192
+        },
+        {
+          "name": "frameCount",
+          "type": "int",
+          "value": 16
+        },
+        {
+          "name": "frameDurationMs",
+          "type": "int",
+          "value": 100
+        },
+        {
+          "name": "displayScale",
+          "type": "float",
+          "value": 0.9
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "Water (Walkable)",
+      "image": "../../../images/terrain/Water (Static).png",
+      "imagewidth": 64,
+      "imageheight": 64
+    }
+  ]
+}

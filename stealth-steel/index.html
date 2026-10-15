@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=2" />
+    <link rel="alternate icon" href="./favicon.ico?v=2" />
+    <title>BIS Stealth &amp; Steel</title>
+    <style>
+      * { -webkit-user-select: none; user-select: none; }
+      #startup-preloader { position: fixed; inset: 0; z-index: 10000; display: grid; place-content: center; justify-items: center; gap: 1rem; padding: 2rem; background: #090c16; color: #fff; font: 1rem system-ui, sans-serif; text-align: center; }
+      #startup-preloader[hidden], #startup-preloader [hidden] { display: none; }
+      #startup-preloader p { max-width: 36rem; margin: 0; }
+      #startup-spinner { width: 3rem; height: 3rem; border: .25rem solid #30384e; border-top-color: #ffcc00; border-radius: 50%; animation: startup-spin 1s linear infinite; }
+      #startup-retry { padding: .75rem 1.5rem; border: 0; border-radius: .5rem; background: #ffcc00; color: #151a29; font: inherit; cursor: pointer; }
+      @keyframes startup-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { #startup-spinner { animation: none; } }
+    </style>
+    <link rel="stylesheet" href="./src/runtime/ui/style.css" />
+    <link rel="stylesheet" href="./plugins/virtual-controller-babylon-lite/virtual-controller.css" />
+    <link rel="stylesheet" href="./src/runtime/ui/tiny-swords-hud.css" />
+    <link rel="stylesheet" href="./src/runtime/ui/tiny-swords-menu.css" />
+  </head>
+  <body>
+    <div id="startup-preloader" role="status" aria-live="polite" aria-busy="true">
+      <span id="startup-spinner" aria-hidden="true"></span>
+      <p id="startup-message">Loading...</p>
+      <button id="startup-retry" type="button" hidden>Retry</button>
+      <noscript>This game requires JavaScript. Enable it and reload the page.</noscript>
+    </div>
+    <main class="stage" aria-label="Babylon Light Stealth Grid game">
+      <div class="letterbox-presentation" aria-hidden="true">
+        <span class="letterbox-presentation__rail letterbox-presentation__rail--left"></span>
+        <span class="letterbox-presentation__rail letterbox-presentation__rail--right"></span>
+      </div>
+      <div class="game-frame">
+        <canvas
+          id="renderCanvas"
+          width="576"
+          height="1024"
+          aria-label="Tiny Swords movement demo"
+        ></canvas>
+        <canvas
+          id="debugCanvas"
+          width="576"
+          height="1024"
+          data-terrain-frame-count="54"
+          aria-hidden="true"
+        ></canvas>
+      </div>
+    <div id="uiLayer" class="ui-layer">
+      <div class="dom-screen">
+        <div class="dom-hud">
+          <header class="dom-slice dom-header">
+            <section id="gameUi" class="game-ui" aria-live="polite"></section>
+            <div id="coordinates-ui" class="coordinates-ui" aria-label="Archer coordinates" hidden>
+              <output id="coordinates-ui-pixel">Pos:  (288,512)</output>
+              <output id="coordinates-ui-grid">Grid: (7,3)</output>
+            </div>
+          </header>
+          <section id="dom-body" class="dom-slice dom-body" aria-label="DOM layer body"></section>
+          <footer class="dom-slice dom-footer">
+            <div class="virtual-controller" aria-label="Virtual controller">
+          <div class="movement-control action-control-layout">
+            <button
+              id="movement-joystick"
+              class="joystick"
+              type="button"
+              aria-label="Move joystick"
+            >
+              <span id="movement-puck" class="control-puck" aria-hidden="true"></span>
+            </button>
+            <span class="control-label">Move (Keys)</span>
+          </div>
+          <div class="action-controls" aria-label="Player actions">
+            <button id="attack-action" class="action-control" type="button">
+              <span class="action-symbol" aria-hidden="true">&#10148;</span>
+              <span class="control-label">Action (V)</span>
+            </button>
+          </div>
+            </div>
+          </footer>
+        </div>
+        <p id="error" class="error" role="alert"></p>
+      </div>
+    </div>
+    </main>
+    <svg id="fullscreen-transition" class="fullscreen-transition" aria-hidden="true" focusable="false">
+      <path id="fullscreen-transition-blackout" fill="#000" fill-rule="evenodd"></path>
+      <circle id="fullscreen-transition-circle" cx="50%" cy="50%" r="0" fill="none"></circle>
+      <rect width="100%" height="100%" fill="transparent" pointer-events="all"></rect>
+    </svg>
+    <script type="module" src="./src/runtime/bootstrap.js"></script>
+  </body>
+</html>

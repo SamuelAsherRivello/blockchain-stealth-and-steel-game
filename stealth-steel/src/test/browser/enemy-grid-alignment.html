@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><base href="/"><title>C052 enemy movement verification</title>
+<style>body{margin:20px;background:#132019;color:#edf5ee;font:15px system-ui}.scene{position:relative;width:1152px;max-width:100%}canvas{display:block;width:100%}#labels{position:absolute;inset:0;pointer-events:none}pre{white-space:pre-wrap}button{padding:10px}</style></head>
+<body><h1>Enemy centerline movement</h1><p>Goblin · Warrior · Lancer · Archer · Monk. Smooth cardinal movement, stop, then blocked movement. Green circles: movement colliders. White X: occupied grid cell.</p>
+<button onclick="location.reload()">Replay</button><p id="phase">Loading production sprites…</p>
+<div class="scene"><canvas id="game" width="1152" height="640"></canvas><canvas id="labels" width="1152" height="640"></canvas></div>
+<pre id="result"></pre><script type="module" src="/src/test/browser/enemy-grid-alignment.js"></script></body></html>

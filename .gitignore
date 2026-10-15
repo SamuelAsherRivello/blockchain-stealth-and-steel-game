@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.playwright-cli/
+# Keep durable triage packets under version control. Other generated output remains local.
+/output/**
+!/output/reports/
+!/output/reports/triage-analyze/
+!/output/reports/triage-analyze/**
+stealth-steel/public/assets/images/enemies/goblin/Torch_Red.aseprite
+# Generated root-level test/build logs and diagnostic capture.
+/*.log
+/vision-check.png
+/.cache

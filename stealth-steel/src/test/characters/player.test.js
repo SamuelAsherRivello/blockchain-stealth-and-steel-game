@@ -1,0 +1,94 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+import {
+  PLAYER_MOVEMENT_COLLIDER,
+  PLAYER_FRAME,
+  PLAYER_PIVOT,
+  getArrowSpawnPosition,
+} from "../../runtime/characters/player/player.js";
+
+test("equipment refresh synchronizes existing player movement and combat stats", async () => {
+  const source = await readFile(new URL("../../runtime/main.js", import.meta.url), "utf8");
+  const apply = source.slice(source.indexOf("const applyEquipmentState = state =>"), source.indexOf("const openItems ="));
+  assert.match(apply, /for \(const record of getRecordsByType\(SpawnerType\.PLAYER\)\)/);
+  assert.match(apply, /record\.equipment = equipmentSnapshot/);
+  assert.match(apply, /record\.actor\.setMovementMultiplier\(equipmentSnapshot\.movementMultiplier\)/);
+});
+
+test("player uses a 70%-size circle collider with its body center unchanged", () => {
+  assert.deepEqual(PLAYER_FRAME, { width: 192, height: 192 });
+  assert.deepEqual(PLAYER_PIVOT, { x: 0.5, y: 0.78 });
+  assert.deepEqual(PLAYER_MOVEMENT_COLLIDER, {
+    type: "circle",
+    x: 96,
+    y: 149.76,
+    radius: 18.2,
+  });
+});
+
+test("player position synchronization has a sprite update helper", async () => {
+  const playerSource = await readFile(new URL("../../runtime/characters/player/player.js", import.meta.url), "utf8");
+  assert.match(playerSource, /function updateSprites\(\)/);
+});
+
+test("arrow spawns close to the bow on the right", () => {
+  assert.deepEqual(getArrowSpawnPosition({ x: 200, y: 300 }, { x: 1, y: 0 }), {
+    x: 264,
+    y: 355,
+  });
+});
+
+test("arrow spawn mirrors horizontally without changing its height", () => {
+  const playerPosition = { x: 200, y: 300 };
+  const right = getArrowSpawnPosition(playerPosition, { x: 1, y: 0 });
+  const left = getArrowSpawnPosition(playerPosition, { x: -1, y: 0 });
+
+  assert.deepEqual(left, { x: 136, y: 355 });
+  assert.equal(right.x - playerPosition.x, playerPosition.x - left.x);
+  assert.equal(right.y, left.y);
+});
+
+test("arrow spawn positions cover straight up and down", () => {
+  const playerPosition = { x: 200, y: 300 };
+  assert.deepEqual(getArrowSpawnPosition(playerPosition, { x: 0, y: 1 }), {
+    x: 200,
+    y: 364,
+  });
+  assert.deepEqual(getArrowSpawnPosition(playerPosition, { x: 0, y: -1 }), {
+    x: 200,
+    y: 300,
+  });
+});
+
+test("player module owns pawn input and animation", async () => {
+  const [mainSource, playerSource] = await Promise.all([
+    readFile(new URL("../../runtime/main.js", import.meta.url), "utf8"),
+    readFile(new URL("../../runtime/characters/player/player.js", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(playerSource, /createVirtualController/);
+  assert.match(playerSource, /playSprite2DAnimation/);
+  assert.match(playerSource, /window\.addEventListener\("keydown"/);
+  assert.doesNotMatch(playerSource, /KeyC/);
+  assert.match(playerSource, /KeyV/);
+  assert.match(playerSource, /onAttackImpact/);
+  assert.match(playerSource, /ARROW_SPAWN_OFFSETS/);
+  assert.match(playerSource, /Pawn_Idle\.png/);
+  assert.match(playerSource, /Pawn_Run\.png/);
+  assert.match(playerSource, /Pawn_Interact Knife\.png/);
+  assert.match(playerSource, /createPlayerStateMachine/);
+  assert.match(playerSource, /createGridAlignedMovementController/);
+  assert.match(playerSource, /const ENABLE_QUANTIZE_MOVEMENT = false;/);
+  assert.match(playerSource, /else if \(ENABLE_QUANTIZE_MOVEMENT\)/);
+  assert.match(playerSource, /GRID\.tileSizePx/);
+  assert.match(playerSource, /gridAlignedMovement\.reset\(\)/);
+  assert.match(playerSource, /gridAlignedMovement\.move\(/);
+  assert.match(playerSource, /getPosition\(\)/);
+  assert.match(playerSource, /PlayerState\.ATTACKING/);
+  assert.match(playerSource, /knifeSwing\.advance/);
+  assert.match(mainSource, /spawner\.actors\.flatMap\(\(record\) => record\.actor\.layers\)/);
+  assert.doesNotMatch(mainSource, /createVirtualController/);
+  assert.doesNotMatch(mainSource, /playSprite2DAnimation\(animationManager, archer/);
+});

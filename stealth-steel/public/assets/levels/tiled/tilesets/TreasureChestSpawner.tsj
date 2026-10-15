@@ -1,0 +1,33 @@
+{
+  "type": "tileset",
+  "version": "1.11",
+  "name": "Treasure Chest Spawner",
+  "columns": 0,
+  "objectalignment": "bottomleft",
+  "tilecount": 1,
+  "tilewidth": 64,
+  "tileheight": 64,
+  "tiles": [
+    {
+      "id": 0,
+      "class": "TreasureChestSpawner",
+      "name": "Treasure Chest Spawner",
+      "image": "../../../images/ui/spawners/treasure-chest.svg",
+      "imagewidth": 64,
+      "imageheight": 64,
+      "objectgroup": {
+        "type": "objectgroup",
+        "objects": [
+          {
+            "id": 1,
+            "class": "Sensor",
+            "x": 8,
+            "y": 12,
+            "width": 48,
+            "height": 40
+          }
+        ]
+      }
+    }
+  ]
+}

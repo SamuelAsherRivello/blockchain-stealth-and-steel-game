@@ -1,0 +1,3 @@
+interface:
+  display_name: "AI Skills Library Pull"
+  short_description: "Copy library skills into global skills"
