@@ -1,5 +1,10 @@
 # Repository Agent Instructions
 
+## Commit quality
+
+- Make only purposeful commits. Each commit must be atomic: include one coherent, well-designed change and every file required for it.
+- Write a concise commit message that accurately describes the change's purpose and outcome.
+
 ## UI Adjustments
 
 - Prefer hardcoded UI values for sizing and spacing. Use CSS `calc()` only when the user explicitly requests it.
