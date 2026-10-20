@@ -36,12 +36,12 @@ try {
   assert.equal((await page.locator('.release-metadata').textContent()).split(' ')[0],`v${version}`);
   assert.equal(await page.getByRole('dialog',{name:'Treasure Chest',exact:true}).count(),0);
   await page.waitForTimeout(600); // Let the normal player spawn animation finish.
-  if(capture)await page.screenshot({path:'stealth-steel/documentation/images/stealth-and-steel-gameplay.png'});
+  if(capture)await page.screenshot({path:'docs/images/stealth-and-steel-gameplay.png'});
   await page.getByRole('button',{name:'Open settings',exact:true}).click();
   await page.getByRole('button',{name:'⚡ Account',exact:true}).click();
   await page.getByRole('button',{name:'⚡ Create Account',exact:true}).waitFor();
   assert.equal(await page.locator('.bis-version-label').textContent(),`BIS: v${version}`);
-  if(capture)await page.screenshot({path:'stealth-steel/documentation/images/stealth-and-steel-bis-hud.png'});
+  if(capture)await page.screenshot({path:'docs/images/stealth-and-steel-bis-hud.png'});
   await page.getByRole('button',{name:'Back',exact:true}).click();
   await page.getByRole('button',{name:'Developer',exact:true}).click();
   await page.getByRole('button',{name:'Clear Settings',exact:true}).click();
