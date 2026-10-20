@@ -102,7 +102,7 @@ The `0.0.19` game release is being prepared from the imported archive; browser a
 - No public API changes in the packed source compared with the prior 0.0.11 snapshot. The `BisService`, `IBisGame`, and `./style.css` exports remain available.
 - The game can continue using the existing account and host integration without a contract adaptation.
 
-This archive is a verified local BIS export for deterministic game builds. It is not a published GitHub package or release and does not authorize wallet operations. See [play and setup instructions](../documentation/treasure-lto.md).
+This archive is a verified local BIS export for deterministic game builds. It is not a published GitHub package or release and does not authorize wallet operations. See [play and setup instructions](../../docs/treasure-lto.md).
 
 ## Historical package records
 
@@ -120,7 +120,7 @@ This archive is a verified local BIS export for deterministic game builds. It is
 This release adds the paid-continuation, trophy-collection, and queued toast APIs used by the game. BIS mounts at native 100%; the game owns restart after confirmed logout.
 
 Run `node stealth-steel/tools/verify-bis-package.mjs` from the game root after installation.
-See the [coordinating runbook](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/BIS/documentation/SMOKE_TEST_BIS_TO_GAME.md)
+See the [coordinating runbook](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/docs/SMOKE_TEST_BIS_TO_GAME.md)
 for setup and remaining live/device acceptance.
 
 F1 local development snapshot: bis-integration-0.14.1-f1-c70c2adcabe1.tgz. SHA-256: c70c2adcabe1fdceadaf34a8a6a15478e70db9051b6c14d12795503b085e5e1a. Includes independent Admin wallet API and public Continue recipient configuration; live payment verification pending.
@@ -133,7 +133,7 @@ Final F1 snapshot: bis-integration-0.14.1-f1-c70c2adcabe1.tgz. SHA-256: c70c2adc
 
 Current artifact: bis-integration-0.14.1-g1-g2-1b31a54a68a9.tgz. SHA-256: 1b31a54a68a9fe777de6db6e4b84ea8058a179e5563053a53a3a17ca2642f505. Supersedes earlier F1 snapshots for this checkout. All 93 installed files verified against the current inventory. React and React DOM remain deduplicated at 19.2.8.
 
-Includes generic contracts, encrypted recovery, Item List/Item List Detail, and the client LTO controller. New creation is gated pending live race/preservation evidence; query/refund/recovery remain available. See [treasure integration setup and acceptance](../documentation/treasure-lto.md). This is an unreleased local package, not a published release.
+Includes generic contracts, encrypted recovery, Item List/Item List Detail, and the client LTO controller. New creation is gated pending live race/preservation evidence; query/refund/recovery remain available. See [treasure integration setup and acceptance](../../docs/treasure-lto.md). This is an unreleased local package, not a published release.
 
 Autonomous verification update: bis-integration-0.14.1-g1-g2-3fb9421ed7bb.tgz; SHA-256 3fb9421ed7bb6c11230e219943fbc14d76948ce9e73779b6c7528d3d7b6b0e56. All 93 files verified. Includes game-role refund toasts and scoped disposal recovery. BIS 52 focused tests and isolated browser acceptance pass; live creation gate remains unchanged.
 

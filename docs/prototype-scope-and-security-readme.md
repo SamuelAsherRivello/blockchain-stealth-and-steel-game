@@ -27,4 +27,4 @@ Bitcoin mainnet, real funds, or production wallets.
 - Independently verify any transaction or asset behavior before relying on it.
 - Production games require their own server-side authority and security model.
 
-Return to the [Stealth and Steel README](../../README.md).
+Return to the [Stealth and Steel README](../README.md).

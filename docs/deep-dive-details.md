@@ -2,11 +2,11 @@
 
 # Deep Dive Details
 
-This is the detailed companion to [Deep Dive Overview](deep-dive-overview.md). Stealth & Steel is a JavaScript/Babylon Lite game with focused JSDoc/TypeScript boundary checks. BIS is the separate TypeScript/React library for Signet and Mutinynet workflows. Read the companion [BIS Deep Dive Overview](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/BIS/documentation/deep-dive-overview.md).
+This is the detailed companion to [Deep Dive Overview](deep-dive-overview.md). Stealth & Steel is a JavaScript/Babylon Lite game with focused JSDoc/TypeScript boundary checks. BIS is the separate TypeScript/React library for Signet and Mutinynet workflows. Read the companion [BIS Deep Dive Overview](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/docs/deep-dive-overview.md).
 
 ## Contracts
 
-The [installed artifact/provenance](../vendor/BIS_PROVENANCE.md) and public exports are authoritative. The [communication analysis](BIS_GAME_COMMUNICATION_EXPLORATION.md) contains the full type inventory and responsibility table.
+The [installed artifact/provenance](../stealth-steel/vendor/BIS_PROVENANCE.md) and public exports are authoritative. The [communication analysis](BIS_GAME_COMMUNICATION_EXPLORATION.md) contains the full type inventory and responsibility table.
 
 | Surface | Owner and purpose |
 | --- | --- |
@@ -17,11 +17,11 @@ The [installed artifact/provenance](../vendor/BIS_PROVENANCE.md) and public expo
 | `BisSnapshot`, `BisCapabilities`, `BisEvent` | Copied readonly projection, capability reasons, state/Account/restart/operation notifications. |
 | `BisGame…Request/State`, `BisContract…`, `BisResetResult` | Workflow inputs/progress, financial offers and safe reset outcomes, not controller handles. |
 
-The [public-type fixture](../src/test/integration/fixtures/bis-contract-types.ts) checks every facade command and rejects missing host callbacks, private member access, and mutable projections. BIS-published system types use `IBis`/`Bis`; game-integration types use `IBisGame`/`BisGame`. Unrelated game code needs no renaming.
+The [public-type fixture](../stealth-steel/src/test/integration/fixtures/bis-contract-types.ts) checks every facade command and rejects missing host callbacks, private member access, and mutable projections. BIS-published system types use `IBis`/`Bis`; game-integration types use `IBisGame`/`BisGame`. Unrelated game code needs no renaming.
 
 ## 1. `BisService`
 
-[`createBisAccount()`](../src/runtime/integration/bis-account.js) imports only the package root and public stylesheet. It holds a typed `IBis`, awaits `readyAsync()`, and mounts into the game-owned frame. There is no `getSession()` or low-level factory fallback. An unavailable import shows Back/retry; guest gameplay and baseline equipment still work. Initial equipment readiness is bounded by the existing 1.5-second fallback.
+[`createBisAccount()`](../stealth-steel/src/runtime/integration/bis-account.js) imports only the package root and public stylesheet. It holds a typed `IBis`, awaits `readyAsync()`, and mounts into the game-owned frame. There is no `getSession()` or low-level factory fallback. An unavailable import shows Back/retry; guest gameplay and baseline equipment still work. Initial equipment readiness is bounded by the existing 1.5-second fallback.
 
 This canonical public example is compiled by the fixture:
 
@@ -37,17 +37,17 @@ export async function mountBis(game: IBisGame, container: HTMLElement): Promise<
 }
 ```
 
-[`main.js`](../src/runtime/main.js) supplies the lazy current host getter, and `IBisGame.onBisEvent` routes to the private game Account handler. Game-local listeners distribute snapshots to views; those listeners are not BIS subscriptions or a third cross-component contract.
+[`main.js`](../stealth-steel/src/runtime/main.js) supplies the lazy current host getter, and `IBisGame.onBisEvent` routes to the private game Account handler. Game-local listeners distribute snapshots to views; those listeners are not BIS subscriptions or a third cross-component contract.
 
 `stateChanged` supplies safe state. `accountClosed` explicitly returns to Settings; the host no longer infers closure from context views. Closure is queued so a same-turn stable `restartRequested.logoutId` takes precedence and is deduplicated. Account preserves pause reasons, native geometry, fullscreen relocation, inert controls, and focus trapping. The passive mount keeps BIS toasts available after Account closes. `operationChanged` is a typed notification; views obtain receipts from workflow snapshots.
 
 ## 2. `IBisGame`
 
-[`createBisGame()`](../src/runtime/integration/bis-host-game.js) implements all five callbacks. A continuation target is captured only in `LEVEL_LOST`. BIS captures the originating host, run, and target before financial work; it never substitutes the run current at confirmation.
+[`createBisGame()`](../stealth-steel/src/runtime/integration/bis-host-game.js) implements all five callbacks. A continuation target is captured only in `LEVEL_LOST`. BIS captures the originating host, run, and target before financial work; it never substitutes the run current at confirmation.
 
 The game keeps applied and in-flight entries keyed by application/session/operation. It reserves before yielding, waits for overlapping duplicates, then revalidates the run immediately before a synchronous mutation. Optional asynchronous preparation cannot mutate gameplay. An applied duplicate returns `already-applied`; stale, ended, disposed, failed, or mismatched-target work returns `not-applicable`. Preparation failure releases the in-flight entry without authorizing another financial operation.
 
-The paid-revival commit uses [the existing revival path](../src/runtime/gameplay/paid-revival.js): replace the dead player through the initial spawn factory, clear nearby enemies, and resume only the loss pause. Confirmed rewards use [game-owned feedback](../src/runtime/integration/bis-game-reward-feedback.js), visibly distinguishing asset quantity/name from a sats payout. The game chooses copy and placement; BIS does not manipulate scenes.
+The paid-revival commit uses [the existing revival path](../stealth-steel/src/runtime/gameplay/paid-revival.js): replace the dead player through the initial spawn factory, clear nearby enemies, and resume only the loss pause. Confirmed rewards use [game-owned feedback](../stealth-steel/src/runtime/integration/bis-game-reward-feedback.js), visibly distinguishing asset quantity/name from a sats payout. The game chooses copy and placement; BIS does not manipulate scenes.
 
 ## 3. `BisGameSession`
 
@@ -57,11 +57,11 @@ The game invalidates the session before restart/level-transition animation, loca
 
 | Game consumer | Commands and projection | Preserved policy |
 | --- | --- | --- |
-| [Loss flow](../src/runtime/integration/pay-to-continue.js) | `beginContinuation`, `payContinuationAsync`, `checkContinuationAsync`, `endContinuation`; `snapshot.continuations` | BIS's 1,000-sat price; pending navigation guard; close only on applicable effect receipt. |
-| [Trophy flow](../src/runtime/integration/level-reward.js) | `beginReward`, `refreshRewardAsync`, `collectRewardAsync`, `checkRewardAsync`, `acknowledgeRewardAsync`, `endReward`; `snapshot.rewards` | Level 1–3 metadata, quantity one, ownership/uncertainty/recheck/acknowledgement and navigation guards. |
-| [Items](../src/runtime/ui/items-ui.js) | `refreshEquipmentAsync`, `selectEquipmentAsync`, `clearEquipmentAsync`; `snapshot.equipment` | Player-only ownership/selection, nine-item catalog; movement/combat interpretation remains game-owned. |
-| [Treasure bridge](../src/runtime/integration/treasure-runtime.js) | `startContractAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync`, `endContractSessionAsync`; `snapshot.contracts` | Exact offer/purpose/reference/wallet scope; 1,000 sats and original 90-second wall-clock deadline. See [treasure guide](treasure-lto.md). |
-| [Settings](../src/runtime/ui/settings-ui.js) | No BIS reset command. | Reset only the game settings store and refresh the controls from its defaults. |
+| [Loss flow](../stealth-steel/src/runtime/integration/pay-to-continue.js) | `beginContinuation`, `payContinuationAsync`, `checkContinuationAsync`, `endContinuation`; `snapshot.continuations` | BIS's 1,000-sat price; pending navigation guard; close only on applicable effect receipt. |
+| [Trophy flow](../stealth-steel/src/runtime/integration/level-reward.js) | `beginReward`, `refreshRewardAsync`, `collectRewardAsync`, `checkRewardAsync`, `acknowledgeRewardAsync`, `endReward`; `snapshot.rewards` | Level 1–3 metadata, quantity one, ownership/uncertainty/recheck/acknowledgement and navigation guards. |
+| [Items](../stealth-steel/src/runtime/ui/items-ui.js) | `refreshEquipmentAsync`, `selectEquipmentAsync`, `clearEquipmentAsync`; `snapshot.equipment` | Player-only ownership/selection, nine-item catalog; movement/combat interpretation remains game-owned. |
+| [Treasure bridge](../stealth-steel/src/runtime/integration/treasure-runtime.js) | `startContractAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync`, `endContractSessionAsync`; `snapshot.contracts` | Exact offer/purpose/reference/wallet scope; 1,000 sats and original 90-second wall-clock deadline. See [treasure guide](treasure-lto.md). |
+| [Settings](../stealth-steel/src/runtime/ui/settings-ui.js) | No BIS reset command. | Reset only the game settings store and refresh the controls from its defaults. |
 
 `queryContractsAsync` is available for non-reconciling reads; the game uses the recovery-aware check command for explicit inspection. `getSnapshot`, capability queries, and lifecycle/loading commands are available without exposing mutable BIS services. Begin commands allocate workflows; they do not themselves charge or mint. Showing a completion screen can read ownership, but only Collect initiates collection.
 
@@ -75,6 +75,6 @@ The public stylesheet and mount container are supported presentation inputs. Exi
 
 ## Release and evidence
 
-BIS releases first. The game imports its exact versioned archive, verifies archive/all installed file hashes and provenance, then publishes the identical complete version. Each repository publishes independently on its own `main` push: BIS Admin/Marketplace together, game at its single stable Pages route. No tag, GitHub Release, or manual dispatch is required. See [release instructions](../../README.md#-release-version).
+BIS releases first. The game imports its exact versioned archive, verifies archive/all installed file hashes and provenance, then publishes the identical complete version. Each repository publishes independently on its own `main` push: BIS Admin/Marketplace together, game at its single stable Pages route. No tag, GitHub Release, or manual dispatch is required. See [release instructions](../README.md#-release-version).
 
 Automated fixtures cover stale/concurrent delivery, actual public types, Account ordering, workflow states, and reset. Credential-free browser acceptance uses the imported runtime with both `muteMusic=true&muteSFX=true`; it never creates accounts or fabricates financial confirmation. Full-game live payment/mint/claim and physical-device acceptance are distinct, unperformed gates.

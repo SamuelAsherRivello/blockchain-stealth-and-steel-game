@@ -388,23 +388,23 @@ The probes exercised the existing adapter in memory and made no wallet calls. No
 
 Game sources:
 
-- **[G1]** [Account host adapter](../src/runtime/integration/bis-account.js), especially initialization/events at lines 72–105 and public wrappers at lines 127–165.
-- **[G2]** [Main runtime](../src/runtime/main.js), Account/equipment composition at 942–958, treasure/Items wiring at 1157–1223, host callback creation at 1250–1266, disposal at 1841 onward.
-- **[G3]** [Paid-continuation lifecycle](../src/runtime/integration/pay-to-continue.js).
-- **[G4]** [Level trophy metadata and workflow](../src/runtime/integration/level-reward.js).
-- **[G5]** [Treasure session policy](../src/runtime/integration/treasure-session.js), identity matching, state projection, offer request and persistence restoration.
-- **[G6]** [Game callback adapter](../src/runtime/integration/bis-host-game.js), delivery logic at 28–35 and four public callbacks at 39–52; [paid revival](../src/runtime/gameplay/paid-revival.js).
-- **[G7]** [Equipment effects](../src/runtime/gameplay/equipment-effects.js) and [Items UI](../src/runtime/ui/items-ui.js).
-- **[G8]** [Treasure runtime bridge](../src/runtime/integration/treasure-runtime.js) and [Treasure UI](../src/runtime/ui/treasure-ui.js).
-- **[G9]** [Equipment tests](../src/test/gameplay/equipment-effects.test.js) and [Items tests](../src/test/ui/items-ui.test.js).
-- **[G10]** [Settings/reset handler](../src/runtime/ui/settings-ui.js), lines 155–162.
-- **[G11]** [BIS host CSS overrides](../src/runtime/integration/bis-account.css) and [unreferenced public wallet configuration](../src/runtime/integration/game-wallet-public.json).
+- **[G1]** [Account host adapter](../stealth-steel/src/runtime/integration/bis-account.js), especially initialization/events at lines 72–105 and public wrappers at lines 127–165.
+- **[G2]** [Main runtime](../stealth-steel/src/runtime/main.js), Account/equipment composition at 942–958, treasure/Items wiring at 1157–1223, host callback creation at 1250–1266, disposal at 1841 onward.
+- **[G3]** [Paid-continuation lifecycle](../stealth-steel/src/runtime/integration/pay-to-continue.js).
+- **[G4]** [Level trophy metadata and workflow](../stealth-steel/src/runtime/integration/level-reward.js).
+- **[G5]** [Treasure session policy](../stealth-steel/src/runtime/integration/treasure-session.js), identity matching, state projection, offer request and persistence restoration.
+- **[G6]** [Game callback adapter](../stealth-steel/src/runtime/integration/bis-host-game.js), delivery logic at 28–35 and four public callbacks at 39–52; [paid revival](../stealth-steel/src/runtime/gameplay/paid-revival.js).
+- **[G7]** [Equipment effects](../stealth-steel/src/runtime/gameplay/equipment-effects.js) and [Items UI](../stealth-steel/src/runtime/ui/items-ui.js).
+- **[G8]** [Treasure runtime bridge](../stealth-steel/src/runtime/integration/treasure-runtime.js) and [Treasure UI](../stealth-steel/src/runtime/ui/treasure-ui.js).
+- **[G9]** [Equipment tests](../stealth-steel/src/test/gameplay/equipment-effects.test.js) and [Items tests](../stealth-steel/src/test/ui/items-ui.test.js).
+- **[G10]** [Settings/reset handler](../stealth-steel/src/runtime/ui/settings-ui.js), lines 155–162.
+- **[G11]** [BIS host CSS overrides](../stealth-steel/src/runtime/integration/bis-account.css) and [unreferenced public wallet configuration](../stealth-steel/src/runtime/integration/game-wallet-public.json).
 
 Package and type evidence:
 
 - **[P1]** [Game package manifest](../../package.json) and [lockfile](../../package-lock.json).
-- **[P2]** [BIS provenance](../vendor/BIS_PROVENANCE.md) and [installed-file inventory](../vendor/bis-package-inventory.json).
-- **[P3]** [Artifact verifier](../tools/verify-bis-package.mjs).
+- **[P2]** [BIS provenance](../stealth-steel/vendor/BIS_PROVENANCE.md) and [installed-file inventory](../stealth-steel/vendor/bis-package-inventory.json).
+- **[P3]** [Artifact verifier](../stealth-steel/tools/verify-bis-package.mjs).
 - **[P4]** [Focused typecheck configuration](../../tsconfig.bis-contract.json) and the removed local declaration mirror (historical).
 
 BIS sources below refer to the adjacent checkout. Corresponding shipped source files were compared with the installed package as described in Section 3:
@@ -423,7 +423,7 @@ BIS sources below refer to the adjacent checkout. Corresponding shipped source f
 
 Specifications and cross-project acceptance:
 
-- **[D1]** [Game host contract specification](../../openspec/specs/bis-host-game-contract/spec.md).
+- **[D1]** [Game host contract specification](../openspec/specs/bis-host-game-contract/spec.md).
 - **[D2]** [BIS game contract specification](../../../blockchain-integration-service/openspec/specs/bis-game-contract/spec.md).
-- **[D3]** [Account integration specification](../../../blockchain-integration-service/openspec/specs/game-account-smoke-test/spec.md) and [cross-project smoke runbook](../../../blockchain-integration-service/BIS/documentation/SMOKE_TEST_BIS_TO_GAME.md).
-- Existing [callback tests](../src/test/integration/bis-host-game.test.js), [Account host tests](../src/test/ui/bis-account.test.js), [continue tests](../src/test/ui/pay-to-continue.test.js), [trophy tests](../src/test/ui/level-reward.test.js) and [treasure runtime tests](../src/test/ui/treasure-runtime.test.js).
+- **[D3]** [Account integration specification](../../../blockchain-integration-service/openspec/specs/game-account-smoke-test/spec.md) and [cross-project smoke runbook](../../../blockchain-integration-service/docs/SMOKE_TEST_BIS_TO_GAME.md).
+- Existing [callback tests](../stealth-steel/src/test/integration/bis-host-game.test.js), [Account host tests](../stealth-steel/src/test/ui/bis-account.test.js), [continue tests](../stealth-steel/src/test/ui/pay-to-continue.test.js), [trophy tests](../stealth-steel/src/test/ui/level-reward.test.js) and [treasure runtime tests](../stealth-steel/src/test/ui/treasure-runtime.test.js).

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create YouTube README thumb"
+  short_description: "Replace a README image with a linked YouTube thumbnail"
+  default_prompt: "Use $ai-skills-create-youtube-thumbnail with the public README URL and public YouTube video URL."

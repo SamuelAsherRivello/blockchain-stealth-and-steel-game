@@ -1,6 +1,6 @@
 # LTO treasure integration
 
-Current contract migration: BIS/game 0.0.18. The exact archive, hash, released source and history are in [provenance](../vendor/BIS_PROVENANCE.md). Read [Deep Dive Overview](deep-dive-overview.md) for the three-part boundary and [Deep Dive Details](deep-dive-details.md) for the complete workflow reference.
+Current contract migration: BIS/game 0.0.18. The exact archive, hash, released source and history are in [provenance](../stealth-steel/vendor/BIS_PROVENANCE.md). Read [Deep Dive Overview](deep-dive-overview.md) for the three-part boundary and [Deep Dive Details](deep-dive-details.md) for the complete workflow reference.
 
 ## Setup and availability
 
@@ -10,7 +10,7 @@ The game consumes `IBis.hasContractSupport()` rather than reconstructing readine
 
 ## Commands and scope
 
-[`treasure-runtime.js`](../src/runtime/integration/treasure-runtime.js) calls `startContractAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync` and `endContractSessionAsync` on `IBis`. Safe `BisSnapshot.contracts` updates arrive through `IBisGame.onBisEvent` and the game-owned Account dispatcher. There is no `.lto`, `getSession()` or direct wallet/controller access.
+[`treasure-runtime.js`](../stealth-steel/src/runtime/integration/treasure-runtime.js) calls `startContractAsync`, `checkContractsAsync`, `claimContractAsync`, `rejectContractAsync` and `endContractSessionAsync` on `IBis`. Safe `BisSnapshot.contracts` updates arrive through `IBisGame.onBisEvent` and the game-owned Account dispatcher. There is no `.lto`, `getSession()` or direct wallet/controller access.
 
 Explicit Start requests one 1,000-sat offer with a 90-second wall-clock lifetime, `purpose: 'treasureLTO'`, `exclusivityKey: 'treasure'` and a stable host reference. `BisContractRequest.offerSessionId` is financial eligibility identity, not application ID or gameplay run ID. For compatibility, query `sessionId` means offer session and query/contract `gameId` means Game wallet profile. The game matches offer, purpose, reference and both wallet identities; stored bindings include networks.
 
@@ -28,10 +28,10 @@ Claim/Reject uses public actions and closes only its originating window after du
 
 Confirmed sats presentation is bound to the gameplay run captured before financial work. An offer may outlive a level runtime, but its old effect cannot mutate or celebrate a replacement run. Game feedback and `BisGameEffectReceipt` never determine financial truth or retry a claim.
 
-The palette is [`TreasureChestSpawner.tsj`](../public/assets/levels/tiled/tilesets/TreasureChestSpawner.tsj); runtime artwork remains its PNG, not an AI-generated replacement. Issued BIS achievement/equipment URLs remain unchanged.
+The palette is [`TreasureChestSpawner.tsj`](../stealth-steel/public/assets/levels/tiled/tilesets/TreasureChestSpawner.tsj); runtime artwork remains its PNG, not an AI-generated replacement. Issued BIS achievement/equipment URLs remain unchanged.
 
 ## Verification and limits
 
-Node coverage verifies guest skip, fixed lifetime/persistence, exact offer identity, closed-window funding events, wrong scope, claim/reject, network replacement, pending navigation and late-window protection. The archive verifier checks127 installed files and the immutable archive. Full suite/build/public-type and development/production/live browser gates are recorded in [C088](../../openspec/changes/archive/2026-10-11-formalize-bis-game-contracts/tasks.md), not implied by this guide.
+Node coverage verifies guest skip, fixed lifetime/persistence, exact offer identity, closed-window funding events, wrong scope, claim/reject, network replacement, pending navigation and late-window protection. The archive verifier checks127 installed files and the immutable archive. Full suite/build/public-type and development/production/live browser gates are recorded in [C088](../openspec/changes/archive/2026-10-11-formalize-bis-game-contracts/tasks.md), not implied by this guide.
 
 AI-created game URLs must contain both `muteMusic=true&muteSFX=true`; use fresh browser storage and no wallet credentials/account creation/signing. Credential-free acceptance cannot prove a live funded claim/refund. Historical isolated-operator/hosted-wallet evidence in archived plans concerns prior implementations, not acceptance of this release. Physical-device touch and actual Tiled-editor save/reload remain separate unperformed checks.

@@ -27,5 +27,5 @@ Here, *roles* means the ten main jobs Arkade can perform for an application. The
 ## Local evidence and scope
 
 - Adjacent BIS checkout: `BIS/packages/integration/src/client/wallet-layer-arkade/` implements wallet adapters; `BIS/packages/integration/src/client/state-layer-core/` implements operation state; `BIS/packages/integration/src/client/ui-layer-react/` contains Account review and confirmation screens.
-- Adjacent BIS `README.md` and `BIS/documentation/User Story Diagrams.md` distinguish implemented flows from live acceptance and unavailable invoice receiving. `invoice-receiving.ts` returns an unavailable state for Signet.
+- Adjacent BIS `README.md` and `docs/User Story Diagrams.md` distinguish implemented flows from live acceptance and unavailable invoice receiving. `invoice-receiving.ts` returns an unavailable state for Signet.
 - This game's [`bis-account.js`](stealth-steel/src/runtime/integration/bis-account.js) and [`bis-host-game.js`](stealth-steel/src/runtime/integration/bis-host-game.js) show how the pinned BIS package is mounted and how confirmed effects reach gameplay. [`BIS_PROVENANCE.md`](stealth-steel/vendor/BIS_PROVENANCE.md) identifies the local package snapshot. Changes in the adjacent BIS source are not automatically changes in that pinned package.

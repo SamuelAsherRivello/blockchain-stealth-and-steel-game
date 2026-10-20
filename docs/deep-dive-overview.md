@@ -1,5 +1,5 @@
 <!-- AI: This follows the Deep Dive Overview format: always show a diagram with a legend, one overview paragraph with Related Projects, and the three most important concepts. Each concept has a paragraph, a code embed, and a Learn More sentence linking to Deep Dive Details. For every documentation page, format code embeds consistently: introduce the example with a concise explanatory paragraph, leave a blank line, use the correct language fence (`ts` for TypeScript or `js` for JavaScript), keep the example focused on the public API and runnable shape, add short comments inside the code when they clarify intent, and leave a blank line before the closing fence and following prose. Use TypeScript terminology for BIS's public integration boundary and distinguish the game's JavaScript runtime. Keep this structure stable for future BIS/game overview updates. -->
-![BIS sequence diagram](https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/diagrams/bis-sequence-diagram-2.png)
+![BIS sequence diagram](https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/docs/diagrams/bis-sequence-diagram-2.png)
 
 ### Legend
 
@@ -86,7 +86,7 @@ Learn more about the public commands, copied projections, and cleanup policy in 
 
 ### 3. `IBisGame`
 
-The game implements [`IBisGame`](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/BIS/packages/integration/src/client/state-layer-core/bis-game.ts) through the [`createBisGame()` factory](../src/runtime/integration/bis-host-game.js). It supplies the active session, captures an opaque continuation target, applies confirmed continuation and reward effects, and receives `onBisEvent` notifications. The game chooses how an effect changes scenes or player state; BIS never manipulates gameplay.
+The game implements [`IBisGame`](https://github.com/SamuelAsherRivello/blockchain-integration-service/blob/main/BIS/packages/integration/src/client/state-layer-core/bis-game.ts) through the [`createBisGame()` factory](../stealth-steel/src/runtime/integration/bis-host-game.js). It supplies the active session, captures an opaque continuation target, applies confirmed continuation and reward effects, and receives `onBisEvent` notifications. The game chooses how an effect changes scenes or player state; BIS never manipulates gameplay.
 
 ```ts
 interface IBisGame {

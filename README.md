@@ -1,7 +1,7 @@
 <!-- AI: Customize this README from the repository's actual files, configuration, and user instructions. Preserve the section order, heading styles, and concise format unless asked to change them. Replace placeholders only with verified information; do not invent features, commands, URLs, contributors, or deployment behavior. Use TypeScript terminology for BIS's public integration boundary and distinguish the game's JavaScript runtime. Keep these instructions hidden as HTML comments. -->
 <!-- AI: Preserve the creator banner unless a replacement is requested. Update its relative path if assets move and verify the file exists with matching filename capitalization. -->
 <p>
-<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/samuel-asher-rivello-banner.png?v=20261010" alt="Samuel Asher Rivello" width="600" /><br /><br />
+<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/docs/samuel-asher-rivello-banner.png?v=20261010" alt="Samuel Asher Rivello" width="600" /><br /><br />
 </p>
 
 # YouTube
@@ -23,7 +23,7 @@
 This is a proof-of-concept (POC) demonstrating Blockchain use cases for gaming.
 
 > [!WARNING]
-> Prototype only, not a production-ready project. See the [Prototype scope and security](stealth-steel/documentation/prototype-scope-and-security-readme.md).
+> Prototype only, not a production-ready project. See the [Prototype scope and security](docs/prototype-scope-and-security-readme.md).
 
 The Stealth and Steel game uses the Blockchain Integration Service (BIS); a Blockchain enabled ui and service layer to your games for Signet and Mutinynet networks for Bitcoin.
 
@@ -44,11 +44,11 @@ The Stealth and Steel game uses the Blockchain Integration Service (BIS); a Bloc
 <!-- AI: Use existing project screenshots with relative paths, matching link href and image src, and a 400-pixel preview width. Preserve image order and use descriptive alt text. -->
 ### Gameplay
 
-<a href="stealth-steel/documentation/images/stealth-and-steel-gameplay.png"><img src="stealth-steel/documentation/images/stealth-and-steel-gameplay.png" width="400" alt="Stealth and Steel gameplay with the updated HUD and virtual controller" /></a>
+<a href="docs/images/stealth-and-steel-gameplay.png"><img src="docs/images/stealth-and-steel-gameplay.png" width="400" alt="Stealth and Steel gameplay with the updated HUD and virtual controller" /></a>
 
 ### BIS HUD
 
-<a href="stealth-steel/documentation/images/stealth-and-steel-bis-hud.png"><img src="stealth-steel/documentation/images/stealth-and-steel-bis-hud.png" width="400" alt="Stealth and Steel BIS account HUD" /></a>
+<a href="docs/images/stealth-and-steel-bis-hud.png"><img src="docs/images/stealth-and-steel-bis-hud.png" width="400" alt="Stealth and Steel BIS account HUD" /></a>
 
 ## Live Demo
 
@@ -126,9 +126,9 @@ Babylon Lite does not ship the full engine's default loading UI.
 - [README.md](README.md): Primary documentation for this repo.
 - [Arkade features overview](docs/arkade-features-overview.md): Capability and approval notes for Arkade-backed game features.
 - [Arkade wallet workflows](docs/arkade-wallet-workflows.md): Wallet workflow reference for future Arkade integration work.
-- [Tile Map Editing](stealth-steel/documentation/tile-map.md): Tiled map editing workflow.
-- [Grid and UI Contract](stealth-steel/documentation/grid-and-ui-contract.md): Logical grid and UI placement contract.
-- [Render Depth Order](stealth-steel/documentation/render-depth-order.md): Babylon Lite sprite and DOM overlay depth bands.
+- [Tile Map Editing](docs/tile-map.md): Tiled map editing workflow.
+- [Grid and UI Contract](docs/grid-and-ui-contract.md): Logical grid and UI placement contract.
+- [Render Depth Order](docs/render-depth-order.md): Babylon Lite sprite and DOM overlay depth bands.
 
 ### 📝 Structure
 
@@ -211,7 +211,7 @@ Levels are authored with Tiled. The AI prepares the Tiled project, map,
 tilesets, grid, origin marker, layers, properties, and runtime integration; the
 human edits content only on the existing layers.
 
-See [Tile Map Editing](stealth-steel/documentation/tile-map.md) for the open, edit, save,
+See [Tile Map Editing](docs/tile-map.md) for the open, edit, save,
 close, and play workflow.
 
 <!-- AI: Keep this tile-map section brief; do not add lengthy completion, progress,
@@ -243,11 +243,11 @@ Third-party references:
 
 ## Deep Dive
 
-<a href="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/bis-concept-diagram-1.png"><img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/bis-concept-diagram-1.png" width="400" alt="BIS concept diagram" /></a>
+<a href="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/docs/bis-concept-diagram-1.png"><img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/docs/bis-concept-diagram-1.png" width="400" alt="BIS concept diagram" /></a>
 
 Deep Dive takes a closer look at a few representative files and the cross-repository contract that connects them. 
 
-To learn more about the technical details see the [Deep Dive Overview](stealth-steel/documentation/deep-dive-overview.md).
+To learn more about the technical details see the [Deep Dive Overview](docs/deep-dive-overview.md).
 
 ## Resources
 
