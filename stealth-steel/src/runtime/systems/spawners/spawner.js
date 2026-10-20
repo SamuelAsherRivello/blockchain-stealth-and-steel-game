@@ -1,4 +1,5 @@
 export const DEFAULT_SPAWN_CHECK_INTERVAL_SECONDS = 1;
+export const DEFAULT_RESPAWN_DELAY_SECONDS = 0;
 export const SPAWN_MODE_NEARBY = "nearby";
 export const SPAWN_MODE_ANYWHERE_WALKABLE = "anywhere-walkable";
 
@@ -26,6 +27,7 @@ export function createSpawner({
   minimumCount,
   maximumCount,
   checkIntervalSeconds = DEFAULT_SPAWN_CHECK_INTERVAL_SECONDS,
+  respawnDelaySeconds = DEFAULT_RESPAWN_DELAY_SECONDS,
   guaranteeInitialPopulation = false,
   random = Math.random,
   tileSize = null,
@@ -55,6 +57,9 @@ export function createSpawner({
   }
   if (!Number.isFinite(checkIntervalSeconds) || checkIntervalSeconds <= 0) {
     throw new RangeError("checkIntervalSeconds must be a positive number");
+  }
+  if (!Number.isFinite(respawnDelaySeconds) || respawnDelaySeconds < 0) {
+    throw new RangeError("respawnDelaySeconds must be a non-negative number");
   }
   if (typeof random !== "function") {
     throw new TypeError("random must be a function");
@@ -88,6 +93,7 @@ export function createSpawner({
   let initialized = false;
   let disposed = false;
   let elapsedSeconds = 0;
+  let respawnCooldownSeconds = 0;
 
   const config = Object.freeze({
     type,
@@ -96,6 +102,7 @@ export function createSpawner({
     minimumCount,
     maximumCount,
     checkIntervalSeconds,
+    respawnDelaySeconds,
     guaranteeInitialPopulation: Boolean(guaranteeInitialPopulation),
     spawnMode,
     spawnMaxDistance,
@@ -223,6 +230,11 @@ export function createSpawner({
       if (!initialized) {
         this.initialize();
       }
+      if (respawnCooldownSeconds > 0) {
+        respawnCooldownSeconds = Math.max(0, respawnCooldownSeconds - deltaSeconds);
+        if (respawnCooldownSeconds > 0) return 0;
+        return evaluate();
+      }
       elapsedSeconds += deltaSeconds;
       let created = 0;
       while (elapsedSeconds >= checkIntervalSeconds) {
@@ -248,6 +260,7 @@ export function createSpawner({
       }
       actors.splice(index, 1);
       disposeActor(actor);
+      respawnCooldownSeconds = config.respawnDelaySeconds;
       return true;
     },
     dispose() {

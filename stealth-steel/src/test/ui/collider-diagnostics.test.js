@@ -6,6 +6,7 @@ import {
   MOVEMENT_COLLIDER_STYLE,
   TERRAIN_COLLIDER_STYLE,
   createCharacterCenterDrawCommands,
+  createCharacterCenterDotCommands,
   createCharacterColliderDrawCommands,
   AUDIO_PERCEPTION_STYLE,
   VISUAL_PERCEPTION_STYLE,
@@ -21,6 +22,8 @@ import {
   drawGridSpotMarker,
   PLAYER_CENTER_MARKER_STYLE,
   createPlayerCenterMarkerCommands,
+  CHARACTER_CENTER_DOT_STYLE,
+  drawCharacterCenterDot,
 } from "../../runtime/ui/collider-diagnostics.js";
 import { GridSpot } from "../../runtime/systems/environment/grid-spot.js";
 
@@ -117,6 +120,20 @@ test("diagnostics place center markers at movement collider centers", () => {
     { x: 35, y: 42 },
     { x: 16, y: 28 },
   ]);
+});
+
+test("collider mode creates filled black dots for every live character center", () => {
+  const dots = createCharacterCenterDotCommands([
+    { rotationCenter: { x: 31, y: 39 }, movementCollider: { type: "circle", x: 35, y: 42, radius: 8 } },
+    { movementCollider: { x: 10, y: 20, width: 12, height: 16 } },
+  ]);
+  assert.deepEqual(dots.map(({ x, y }) => ({ x, y })), [{ x: 31, y: 39 }, { x: 16, y: 28 }]);
+  assert.equal(dots[0].style, CHARACTER_CENTER_DOT_STYLE);
+  const calls = [];
+  const context = { beginPath: () => calls.push("begin"), arc: (...args) => calls.push(["arc", ...args]), fill: () => calls.push("fill") };
+  drawCharacterCenterDot(context, dots[0], 1024);
+  assert.deepEqual(calls, ["begin", ["arc", 31, 985, 3, 0, Math.PI * 2], "fill"]);
+  assert.equal(context.fillStyle, "#000000");
 });
 
 test("visual squares fill cells and audio squares are centered at half size", () => {

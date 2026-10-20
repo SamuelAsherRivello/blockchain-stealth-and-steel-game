@@ -42,7 +42,8 @@ export function uiPresentation(visible, frame, reference, zoom = 1) {
 }
 
 export function createUiViewport({ element, frameElement, reference,
-  windowRef = window, documentRef = document, ResizeObserverRef = globalThis.ResizeObserver }) {
+  windowRef = window, documentRef = document, ResizeObserverRef = globalThis.ResizeObserver,
+  enableWheelZoom = false }) {
   let zoomStep = 10;
   const coordinator = createViewportSafeArea({ element, frameElement, windowRef, documentRef, ResizeObserverRef,
     onUpdate(visible, frame) {
@@ -71,11 +72,11 @@ export function createUiViewport({ element, frameElement, reference,
     zoomStep = Math.max(5, Math.min(15, zoomStep + (event.deltaY < 0 ? 1 : -1)));
     coordinator.update();
   };
-  windowRef.addEventListener('wheel', wheel, { passive: false });
+  if (enableWheelZoom) windowRef.addEventListener('wheel', wheel, { passive: false });
   return {
     update: coordinator.update,
     dispose() {
-      windowRef.removeEventListener('wheel', wheel);
+      if (enableWheelZoom) windowRef.removeEventListener('wheel', wheel);
       coordinator.dispose();
     },
   };

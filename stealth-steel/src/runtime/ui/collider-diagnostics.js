@@ -18,6 +18,7 @@ export const AUDIO_PERCEPTION_STYLE = Object.freeze({ fillStyle: "rgb(160 80 255
 export const ACTIVE_PERCEPTION_MARKER_STYLE = Object.freeze({ strokeStyle: "#ff3030", lineWidth: 3, size: 20 });
 export const GRID_SPOT_MARKER_STYLE = Object.freeze({ strokeStyle: "#ffffff", lineWidth: 1, size: 2.5 });
 export const PLAYER_CENTER_MARKER_STYLE = Object.freeze({ strokeStyle: "#000000", lineWidth: 1, size: 3.5 });
+export const CHARACTER_CENTER_DOT_STYLE = Object.freeze({ fillStyle: "#000000", radius: 3 });
 const activeStartByKey = new Map();
 
 function hasValidVisualGeometry(actor) {
@@ -182,6 +183,21 @@ export function createCharacterCenterDrawCommands(characters) {
     });
 }
 
+export function createCharacterCenterDotCommands(characters) {
+  return characters
+    .filter(({ rotationCenter, centerCollider, movementCollider }) => Boolean(
+      rotationCenter ?? centerCollider ?? movementCollider,
+    ))
+    .map(({ rotationCenter, centerCollider, movementCollider }) => {
+      const center = centerCollider ?? movementCollider;
+      return {
+        x: rotationCenter?.x ?? (center.type === "circle" ? center.x : center.x + center.width / 2),
+        y: rotationCenter?.y ?? (center.type === "circle" ? center.y : center.y + center.height / 2),
+        style: CHARACTER_CENTER_DOT_STYLE,
+      };
+    });
+}
+
 export function createGridSpotMarkerCommands(entities) {
   return entities
     .filter(({ active = true, gridSpot }) => active && gridSpot)
@@ -208,5 +224,13 @@ export function drawGridSpotMarker(context, marker, screenHeight) {
   context.strokeStyle = marker.style?.strokeStyle ?? GRID_SPOT_MARKER_STYLE.strokeStyle;
   context.lineWidth = marker.style?.lineWidth ?? GRID_SPOT_MARKER_STYLE.lineWidth;
   context.stroke();
+}
+
+export function drawCharacterCenterDot(context, center, screenHeight) {
+  if (!context || !center || !Number.isFinite(screenHeight)) return;
+  context.beginPath();
+  context.arc(center.x, screenHeight - center.y, center.style?.radius ?? CHARACTER_CENTER_DOT_STYLE.radius, 0, Math.PI * 2);
+  context.fillStyle = center.style?.fillStyle ?? CHARACTER_CENTER_DOT_STYLE.fillStyle;
+  context.fill();
 }
 import { getAudioCells, getVisualCells, getVisualStrength } from "../systems/perception/character-perception.js";

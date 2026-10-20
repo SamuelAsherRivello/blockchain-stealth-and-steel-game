@@ -29,7 +29,7 @@ test("warrior catalog preserves every supplied animation", () => {
     );
     assert.deepEqual(descriptor.gridSize, [192, 192]);
     assert.deepEqual(descriptor.displaySize, [192, 192]);
-    assert.deepEqual(descriptor.pivot, [0.5, 136 / 192]);
+    assert.deepEqual(descriptor.pivot, [0.5, 0.5]);
     assert.equal(descriptor.frameCount, expected.frameCount);
     assert.equal(descriptor.frameDurationMs, 100);
     assert.equal(descriptor.loop, expected.loop);

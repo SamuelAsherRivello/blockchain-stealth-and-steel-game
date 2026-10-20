@@ -2,14 +2,17 @@ const SPAWN_ANIMATION_DURATION_SECONDS = 0.25;
 const DEATH_ANIMATION_DURATION_SECONDS = 0.25;
 const DAMAGE_FLASH_DURATION_SECONDS = 0.6;
 const DEATH_ROTATION_DEGREES = 20;
-export const STEALTH_DEATH_DURATION_SECONDS = 0.8;
-export const STEALTH_DEATH_ROTATION_DEGREES = 1080;
+export const STEALTH_DEATH_DURATION_SECONDS = 0.5;
+export const STEALTH_DEATH_ROTATION_DEGREES = 360;
 export const STEALTH_KNOCKBACK_DURATION_SECONDS = 0.8;
 const STEALTH_KNOCKBACK_SPEED_PIXELS_PER_SECOND = 450;
 const MAX_HEALTH = 100;
 const KNOCKBACK_DURATION_SECONDS = 0.2;
 const KNOCKBACK_SPEED_PIXELS_PER_SECOND = 17.28;
 const DEGREES_TO_RADIANS = Math.PI / 180;
+export const ENEMY_DEATH_DURATION_SECONDS = 0.5;
+export const ENEMY_DEATH_ROTATION_DEGREES = 360;
+export const ENEMY_DEATH_SCALE_END = 0.5;
 
 export function createCombatActorState({
   label,
@@ -22,6 +25,9 @@ export function createCombatActorState({
   onHitFlashStart,
   onKnockback,
   onHealthChange,
+  deathDurationSeconds = DEATH_ANIMATION_DURATION_SECONDS,
+  deathRotationDegrees = DEATH_ROTATION_DEGREES,
+  deathScaleEnd = 0,
 }) {
   let health = MAX_HEALTH;
   const healthListeners = new Set();
@@ -39,20 +45,20 @@ export function createCombatActorState({
   let spawnElapsedSeconds = SPAWN_ANIMATION_DURATION_SECONDS;
   let deathElapsedSeconds = 0;
   let deathRotation = 0;
-  let deathDurationSeconds = DEATH_ANIMATION_DURATION_SECONDS;
+  let activeDeathDurationSeconds = deathDurationSeconds;
   let hitFlashRemainingSeconds = 0;
 
   if (onSpawnProgress) {
     onSpawnProgress(1);
   }
 
-  function startDeath({ duration = DEATH_ANIMATION_DURATION_SECONDS, rotationDegrees = DEATH_ROTATION_DEGREES } = {}) {
+  function startDeath({ duration = deathDurationSeconds, rotationDegrees = deathRotationDegrees } = {}) {
     if (isDying || isDead) {
       return;
     }
     isDying = true;
     deathElapsedSeconds = 0;
-    deathDurationSeconds = duration;
+    activeDeathDurationSeconds = duration;
     deathRotation = (Math.random() < 0.5 ? -1 : 1) * rotationDegrees;
     if (onDeathStart) {
       onDeathStart();
@@ -101,7 +107,7 @@ export function createCombatActorState({
       const previousHealth = health;
       health = MAX_HEALTH; isDead = false; isDying = false;
       deathElapsedSeconds = 0; hitFlashRemainingSeconds = 0;
-      deathDurationSeconds = DEATH_ANIMATION_DURATION_SECONDS;
+      activeDeathDurationSeconds = deathDurationSeconds;
       spawnElapsedSeconds = SPAWN_ANIMATION_DURATION_SECONDS;
       onDeathProgress?.(1);
       setVisualTransform({scaleX:1,scaleY:1,alpha:1,rotation:0,color:[1,1,1,1]});
@@ -196,16 +202,17 @@ export function createCombatActorState({
       deathElapsedSeconds += Math.max(0, deltaSeconds);
       const progress = Math.min(
         1,
-        deathElapsedSeconds / deathDurationSeconds,
+        deathElapsedSeconds / activeDeathDurationSeconds,
       );
       const value = 1 - progress;
       if (onDeathProgress) {
         onDeathProgress(value);
       }
       const rotation = (deathRotation * DEGREES_TO_RADIANS) * progress;
+      const scale = 1 - (1 - deathScaleEnd) * progress;
       setVisualTransform({
-        scaleX: value,
-        scaleY: value,
+        scaleX: scale,
+        scaleY: scale,
         alpha: value,
         rotation,
       });

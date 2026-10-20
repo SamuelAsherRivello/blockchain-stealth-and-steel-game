@@ -2,19 +2,12 @@ import { createEnemyKnockback } from '../../../gameplay/enemy-knockback.js';
 import { createAttackImpactQueue } from "../../../gameplay/attack-impact.js";
 import { updatePlayerAttackPreparation, cancelPlayerAttackPreparation } from '../player-attack-preparation.js';
 import {
-  addSprite2D,
-  createSprite2DLayer,
   loadSpriteAtlas,
-  playSprite2DAnimation,
-  removeSprite2D,
-  stopSpriteAnimation,
-  updateSprite2D,
 } from "@babylonjs/lite";
 
 import {
   getCharacterCollider,
   createGridAlignedMovementController,
-  worldToScreen,
 } from "../../../gameplay/game-logic.js";
 import { getCharacterGridCell, getCharacterLayerOrder } from "../../character-spatial.js";
 import {
@@ -26,12 +19,13 @@ import {
   GOBLIN_ANIMATION_NAMES,
 } from "./goblin-animation-catalog.js";
 import { selectGoblinAttackAnimation } from "./goblin-state.js";
+import { createSharedCharacterVisual } from "../../shared-character-visual.js";
 
 export const GOBLIN_FRAME = Object.freeze({ width: 192, height: 192 });
 export const GOBLIN_PIVOT = Object.freeze({ x: 0.5, y: 0.84 });
-// Sprite coordinates use a screen-down Y offset; this asset's visible body
-// sits one cell above the shared logical anchor inside its frame.
-export const GOBLIN_ART_OFFSET = Object.freeze({ x: 0, y: -64 });
+export const GOBLIN_ART_PIVOT = Object.freeze({ x: 0.5, y: 0.5 });
+// Keep the centered artwork pivot on the logical grid/collider center.
+export const GOBLIN_ART_OFFSET = Object.freeze({ x: 0, y: 0 });
 export const GOBLIN_MOVEMENT_COLLIDER = Object.freeze({
   type: "circle",
   x: 96,
@@ -46,13 +40,17 @@ export const GOBLIN_COMBAT_COLLIDER = Object.freeze({
 });
 
 const DEFAULT_API = Object.freeze({
-  addSprite2D,
-  createSprite2DLayer,
   loadSpriteAtlas,
-  playSprite2DAnimation,
-  removeSprite2D,
-  stopSpriteAnimation,
-  updateSprite2D,
+});
+
+const GOBLIN_VISUAL_DEFINITION = Object.freeze({
+  id: "goblin",
+  frame: GOBLIN_FRAME,
+  displaySize: GOBLIN_FRAME,
+  artPivot: GOBLIN_ART_PIVOT,
+  artOffset: Object.freeze({ x: -GOBLIN_ART_OFFSET.x, y: -GOBLIN_ART_OFFSET.y }),
+  movementCollider: GOBLIN_MOVEMENT_COLLIDER,
+  animations: Object.freeze(Object.fromEntries(GOBLIN_ANIMATION_NAMES.map(name => [name, Object.freeze({ ...GOBLIN_ANIMATION_CATALOG[name], displaySize: GOBLIN_ANIMATION_CATALOG[name].displaySize ?? [192, 192] })]))),
 });
 
 export async function loadGoblinAtlases(engine, api = DEFAULT_API) {
@@ -97,78 +95,27 @@ export function createGoblin({
   const gridMovement = createGridAlignedMovementController(character, 64);
   const stateMachine = createEnemyStateMachine();
   let position = { ...initialPosition };
-  let artYOffset = 0;
   let movementIntent = { x: 0, y: 0 };
   let facing = 1;
   let heading = "right";
   let currentFlipX = false;
   let animationManager = null;
-  let activeAnimation = null;
   let disposed = false;
   const knockback = createEnemyKnockback({ character, bounds, obstacles });
   const attackImpacts = createAttackImpactQueue();
 
-  const layers = {};
-  const sprites = {};
-  const getArtScreenPosition = (worldPosition) => worldToScreen({ x: worldPosition.x + GOBLIN_ART_OFFSET.x, y: worldPosition.y + GOBLIN_ART_OFFSET.y }, 1, (bounds.renderHeight ?? bounds.height));
-  const initialScreenPosition = getArtScreenPosition(position);
-  const initialOrder = getCharacterLayerOrder(
-    getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
-  );
-  for (const name of GOBLIN_ANIMATION_NAMES) {
-    const descriptor = GOBLIN_ANIMATION_CATALOG[name];
-    const layer = api.createSprite2DLayer(atlases[name], {
-      capacity: 1,
-      order: initialOrder,
-      pivot: [...descriptor.pivot],
-      visible: name === "idle",
-    });
-    layers[name] = layer;
-    sprites[name] = api.addSprite2D(layer, {
-      positionPx: [initialScreenPosition.x, initialScreenPosition.y],
-      sizePx: [...descriptor.displaySize],
-      frame: 0,
-    });
-  }
+  const visual = createSharedCharacterVisual({ definition: GOBLIN_VISUAL_DEFINITION, atlases, initialPosition, bounds, tileSize: 64, api });
 
   function updateSprites() {
-    const screenPosition = getArtScreenPosition(position);
-    const order = getCharacterLayerOrder(
-      getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
-    );
-    for (const layer of Object.values(layers)) {
-      layer.order = order;
-    }
-    for (const sprite of Object.values(sprites)) {
-      api.updateSprite2D(sprite, {
-        positionPx: [screenPosition.x, screenPosition.y + artYOffset],
-        flipX: currentFlipX,
-      });
-    }
+    visual.setPosition(position);
+    visual.setVisualTransform({ flipX: currentFlipX });
   }
 
   function playStateAnimation(name) {
     if (!animationManager || disposed) {
       return;
     }
-    if (activeAnimation) {
-      api.stopSpriteAnimation(activeAnimation);
-    }
-    for (const [layerName, layer] of Object.entries(layers)) {
-      layer.visible = layerName === name;
-    }
-    const descriptor = GOBLIN_ANIMATION_CATALOG[name];
-    activeAnimation = api.playSprite2DAnimation(
-      animationManager,
-      sprites[name],
-      0,
-      descriptor.frameCount - 1,
-      descriptor.loop,
-      descriptor.frameDurationMs,
-      descriptor.loop
-        ? undefined
-        : {
-            onEnd: () => {
+    visual.playAnimation(name, { onEnd: GOBLIN_ANIMATION_CATALOG[name].loop ? undefined : () => {
               if (disposed) {
                 return;
               }
@@ -178,10 +125,8 @@ export function createGoblin({
               if (transition.changed) {
                 playStateAnimation(transition.state);
               }
-            },
-          },
-    );
-    updateSprites();
+            } });
+    visual.setVisualTransform({ flipX: currentFlipX });
   }
 
   function setVisualTransform({
@@ -210,15 +155,8 @@ export function createGoblin({
     }
     if (sizePx !== undefined) {
       patch.sizePx = sizePx;
-      const screenPosition = getArtScreenPosition(position);
-      patch.positionPx = [
-        screenPosition.x + (0.5 - 0.5) * (GOBLIN_FRAME.width - sizePx[0]),
-        screenPosition.y + (0.5 - 0.84) * (GOBLIN_FRAME.height - sizePx[1]),
-      ];
     }
-    for (const sprite of Object.values(sprites)) {
-      api.updateSprite2D(sprite, patch);
-    }
+    visual.setVisualTransform(patch);
   }
 
   function applyKnockback(direction, options) {
@@ -226,7 +164,7 @@ export function createGoblin({
   }
 
   return {
-    layers: Object.values(layers),
+    layers: visual.layers,
     get isKnockedBack() { return knockback.active; },
     drainAttackImpacts() { return attackImpacts.drain(); },
     isMovementLocked() { return stateMachine.movementLocked || knockback.active; },
@@ -256,16 +194,7 @@ export function createGoblin({
         return;
       }
       disposed = true;
-      if (activeAnimation) {
-        api.stopSpriteAnimation(activeAnimation);
-        activeAnimation = null;
-      }
-      for (const sprite of Object.values(sprites)) {
-        api.removeSprite2D(sprite);
-      }
-      for (const layer of Object.values(layers)) {
-        layer.visible = false;
-      }
+      visual.dispose();
     },
     getMovementCollider() {
       return getCharacterCollider(
@@ -292,13 +221,15 @@ export function createGoblin({
     getPosition() {
       return { ...position };
     },
+    getRotationCenter: visual.getRotationCenter,
     setPosition(next) { cancelPlayerAttackPreparation(this); position = { ...next }; updateSprites(); },
     playAnimation(manager) {
       animationManager = manager;
+      visual.setAnimationManager(manager);
       playStateAnimation("idle");
     },
     setVisualTransform,
-    setArtYOffset(value) { artYOffset = Number.isFinite(value) ? value : 0; updateSprites(); },
+    setArtYOffset: visual.setArtYOffset,
     faceDirection(direction) {
       if (disposed || this.isMovementLocked()) return;
       if (direction.x !== 0) { facing = Math.sign(direction.x); currentFlipX = facing < 0; }

@@ -7,7 +7,7 @@ import {
   createStealthExecution,
 } from '../../runtime/gameplay/stealth-attack.js';
 import { createStealthAttackShadowDrawCommands } from '../../runtime/ui/collider-diagnostics.js';
-import { createCombatActorState, STEALTH_DEATH_DURATION_SECONDS } from '../../runtime/gameplay/combat-actor.js';
+import { createCombatActorState, STEALTH_KNOCKBACK_DURATION_SECONDS } from '../../runtime/gameplay/combat-actor.js';
 
 const enemy = (overrides = {}) => ({
   id: 'goblin-1', isAlive: true, cell: { x: 4, y: 5 },
@@ -61,11 +61,11 @@ test('a stealth takedown is a one-shot with a longer spinning death and forceful
   combat.applyStealthKill({ x: -1, y: 0 });
   assert.equal(combat.health, 0);
   assert.equal(combat.isDying, true);
-  assert.equal(knockbacks[0].options.duration, STEALTH_DEATH_DURATION_SECONDS);
-  combat.updateDeath(.4);
+  assert.equal(knockbacks[0].options.duration, STEALTH_KNOCKBACK_DURATION_SECONDS);
+  combat.updateDeath(.3);
   assert.ok(Math.abs(transforms.at(-1).rotation) > Math.PI, 'death should visibly spin before completing');
   assert.equal(combat.isDying, true);
-  combat.updateDeath(.4);
+  combat.updateDeath(.2);
   assert.equal(combat.isDead, true);
 });
 

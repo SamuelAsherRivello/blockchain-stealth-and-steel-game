@@ -107,7 +107,7 @@ test("warrior renders every action and disposes completely", () => {
   assert.equal(api.calls.updated.length, updateCount);
 });
 
-test("warrior death rotation is anchored at the bottom center of the body art", () => {
+test("warrior death rotation is anchored at the center of the main artwork", () => {
   const api = createFakeApi();
   const warrior = createWarrior({
     atlases: {},
@@ -117,15 +117,14 @@ test("warrior death rotation is anchored at the bottom center of the body art", 
     api,
   });
 
-  // The opaque Warrior body reaches y=136 in every idle 192px frame.
   assert.ok(api.calls.layers.every((layer) => layer.pivot[0] === 0.5));
-  assert.ok(api.calls.layers.every((layer) => layer.pivot[1] === 136 / 192));
+  assert.ok(api.calls.layers.every((layer) => layer.pivot[1] === 106 / 192));
   const originalPositions = api.calls.added.map((sprite) => [...sprite.positionPx]);
   warrior.setVisualTransform({ sizePx: [96, 96], anchor: "body-bottom" });
   assert.deepEqual(
     api.calls.added.map((sprite) => sprite.positionPx),
     originalPositions,
-    "shrinking for death keeps the body-art bottom at the rotation point",
+    "shrinking for death keeps the artwork center at the rotation point",
   );
   warrior.dispose();
 });

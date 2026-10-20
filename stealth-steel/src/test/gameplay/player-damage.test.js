@@ -14,9 +14,12 @@ test('player routing excludes own and unowned arrows and stops damage after deat
   const player={combat:createCombatActorState({label:'player',getCombatCollider:()=>collider,setVisualTransform:()=>{}})};
   for (const ownerId of [null,'player']) assert.equal(resolveEnemyArrowPlayerHit({ownerId,collider,direction:{x:1,y:0}},player),false);
   assert.equal(player.combat.health,100);
-  for (const health of [75,50,25,0]) {
+  for (const health of [87.5,75,62.5,50]) {
     assert.equal(resolveEnemyArrowPlayerHit({ownerId:'removed-archer',collider,direction:{x:1,y:0}},player),true);
     assert.equal(player.combat.health,health);
+  }
+  for (let hit = 0; hit < 4; hit++) {
+    assert.equal(resolveEnemyArrowPlayerHit({ownerId:'removed-archer',collider,direction:{x:1,y:0}},player),true);
   }
   assert.equal(resolveEnemyArrowPlayerHit({ownerId:'removed-archer',collider,direction:{x:1,y:0}},player),false);
 });
@@ -26,9 +29,9 @@ test('the spawned player snapshot applies the selected Shield reduction to each 
   const player={combat:createCombatActorState({label:'player',getCombatCollider:()=>collider,setVisualTransform:()=>{}}),
     equipment:createEquipmentSnapshot({status:'ready',effective:{Shield:{attributeDeltas:[{bisAttribute:'damageTaken',bisAttributeDelta:-20}]}}})};
   assert.equal(damagePlayer(player,'goblin',{x:1,y:0}),true);
-  assert.equal(player.combat.health,80);
+  assert.equal(player.combat.health,90);
   assert.equal(resolveEnemyArrowPlayerHit({ownerId:'archer',collider,direction:{x:1,y:0}},player),true);
-  assert.equal(player.combat.health,60);
+  assert.equal(player.combat.health,80);
 });
 
 test('execution immunity consumes arrow and melee hits without changing health, then expires immediately', () => {
@@ -43,7 +46,7 @@ test('execution immunity consumes arrow and melee hits without changing health, 
   assert.equal(player.combat.health,100);
   actor.isExecuting=false;
   assert.equal(resolveEnemyArrowPlayerHit({ownerId:'archer',collider,direction:{x:1,y:0}},player),true);
-  assert.equal(player.combat.health,75);
+  assert.equal(player.combat.health,87.5);
 });
 
 test('adjacent melee misses outside its committed direction and counts independent swings', () => {
@@ -52,14 +55,14 @@ test('adjacent melee misses outside its committed direction and counts independe
   const player={combat,actor:{getPosition:()=>position}};
   let events=[{id:1,direction:{x:1,y:0}}];
   const enemy={character:'goblin',combat:{isAlive:true},actor:{getGridPosition:()=>({x:3,y:3}),getPosition:()=>({x:224,y:224}),drainAttackImpacts:()=>events.splice(0)}};
-  resolveMeleeImpacts([enemy],player); assert.equal(combat.health,75);
-  resolveMeleeImpacts([enemy],player); assert.equal(combat.health,75);
+  resolveMeleeImpacts([enemy],player); assert.equal(combat.health,87.5);
+  resolveMeleeImpacts([enemy],player); assert.equal(combat.health,87.5);
   position={x:160,y:224}; events.push({id:2,direction:{x:1,y:0}});
-  resolveMeleeImpacts([enemy],player); assert.equal(combat.health,75);
+  resolveMeleeImpacts([enemy],player); assert.equal(combat.health,87.5);
   position={x:288,y:224}; events.push({id:3,direction:{x:1,y:0}});
   resolveMeleeImpacts([enemy],player); damagePlayer(player,'archer',{x:1,y:0}); damagePlayer(player,'lancer',{x:1,y:0});
-  assert.equal(combat.health,0); assert.deepEqual(pushes,[16,16,32,64]);
-  assert.equal(damagePlayer(player,'warrior',{x:1,y:0}),false);
+  assert.equal(combat.health,50); assert.deepEqual(pushes,[16,16,32,64]);
+  assert.equal(damagePlayer(player,'monk',{x:1,y:0}),false);
 });
 
 for (const [name, factory] of Object.entries({ goblin: createGoblin, warrior: createWarrior, lancer: createLancer })) {

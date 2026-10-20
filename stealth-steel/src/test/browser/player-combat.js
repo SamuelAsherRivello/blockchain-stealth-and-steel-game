@@ -34,7 +34,7 @@ async function setup() {
   playerActor.playAnimation(manager);
   const player={actor:playerActor,combat:createCombatActorState({label:'player',getCombatCollider:()=>playerActor.getCombatCollider(),
     setVisualTransform:t=>playerActor.setVisualTransform(t), onKnockback:(d,o)=>playerActor.applyKnockback(d,o),
-    onDeathProgress:v=>playerActor.setVisualTransform({sizePx:[PLAYER_FRAME.width*v,PLAYER_FRAME.height*v]}),
+    deathScaleEnd:.5,
     onDeathStart:()=>{playerActor.setInputEnabled(false);machine.playerDefeated();},
     onDeathComplete:()=>{deathCompleted++;machine.deathCompleted();loss.show();}})};
   const arrows=createProjectileRenderer({atlas:arrowAtlas,bounds,obstacles:[],onPickup:()=>{pickups++;if(audio.play('bush'))sounds++;}});

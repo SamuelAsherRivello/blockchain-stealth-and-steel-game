@@ -93,7 +93,7 @@ test("goblin starts idle, switches locomotion, and mirrors left", () => {
 
   assert.equal(goblin.state, "idle");
   assert.equal(api.calls.layers.find((layer) => layer.atlas.name === "idle").visible, true);
-  assert.deepEqual(api.calls.added[0].options.positionPx, [200, 564]);
+  assert.deepEqual(api.calls.added[0].options.positionPx, [200, 500]);
 
   goblin.playAnimation({});
   assert.ok(

@@ -36,6 +36,7 @@ import {
   CardinalDirection,
   createCardinalDirectionMemory,
 } from "../../gameplay/cardinal-direction.js";
+import { getRenderedArtPivot } from "../character-art-offsets.js";
 
 export function getLoadoutCycleType(event) {
   if (event.code === "Digit1" || event.code === "Numpad1" || event.key === "1") {
@@ -49,9 +50,9 @@ export function getLoadoutCycleType(event) {
 
 export const PLAYER_FRAME = PLAYER_PAWN_FRAME;
 export const PLAYER_PIVOT = { x: 0.5, y: 0.78 };
-// Artwork offset within the character's grid cell. Colliders stay anchored
-// to the gameplay position so this can be tuned independently later.
-export const PLAYER_ART_OFFSET = Object.freeze({ x: 0, y: -40 });
+export const PLAYER_ART_PIVOT = Object.freeze(getRenderedArtPivot("player", { x: 0.5, y: 0.5 }, PLAYER_FRAME));
+// Keep the centered artwork pivot on the logical grid/collider center.
+export const PLAYER_ART_OFFSET = Object.freeze({ x: 0, y: 0 });
 export const PLAYER_MOVEMENT_COLLIDER = {
   type: "circle",
   x: PLAYER_FRAME.width * PLAYER_PIVOT.x,
@@ -141,18 +142,29 @@ export function createPlayer({
     x: worldPosition.x + PLAYER_ART_OFFSET.x,
     y: worldPosition.y + PLAYER_ART_OFFSET.y,
   }, 1, (bounds.renderHeight ?? bounds.height));
+  const getRotationCenter = () => {
+    const screenPosition = getArtScreenPosition(position);
+    const pivotScreenPosition = {
+      x: screenPosition.x + (visualPivot.x - PLAYER_PIVOT.x) * PLAYER_FRAME.width,
+      y: screenPosition.y + (visualPivot.y - PLAYER_ART_PIVOT.y) * PLAYER_FRAME.height,
+    };
+    return {
+      x: pivotScreenPosition.x,
+      y: (bounds.renderHeight ?? bounds.height) - pivotScreenPosition.y,
+    };
+  };
   const initialScreenPosition = getArtScreenPosition(position);
   const initialOrder = getCharacterLayerOrder(
     getCharacterCollider(position, PLAYER_FRAME, PLAYER_PIVOT, PLAYER_MOVEMENT_COLLIDER), bounds,
   );
   const layers = {};
   const sprites = {};
-  let visualPivot = PLAYER_PIVOT;
+  let visualPivot = PLAYER_ART_PIVOT;
   for (const animation of Object.keys(atlases)) {
     const layer = createSprite2DLayer(atlases[animation], {
       capacity: 1,
       order: initialOrder,
-      pivot: [PLAYER_PIVOT.x, PLAYER_PIVOT.y],
+      pivot: [PLAYER_ART_PIVOT.x, PLAYER_ART_PIVOT.y],
       visible: animation === "idle",
     });
     layers[animation] = layer;
@@ -286,16 +298,18 @@ export function createPlayer({
     sizePx,
   }) {
     const patch = {};
+    const scaledSize = sizePx ?? (
+      scaleX !== undefined || scaleY !== undefined
+        ? [
+          PLAYER_FRAME.width * (scaleX ?? 1),
+          PLAYER_FRAME.height * (scaleY ?? 1),
+        ]
+        : null
+    );
     if (pivot !== undefined) {
       visualPivot = { x: pivot[0], y: pivot[1] };
       for (const layer of Object.values(layers)) layer.pivot = [...pivot];
       updateSprites();
-    }
-    if (scaleX !== undefined) {
-      patch.scaleX = scaleX;
-    }
-    if (scaleY !== undefined) {
-      patch.scaleY = scaleY;
     }
     if (alpha !== undefined) {
       visualAlpha = alpha;
@@ -309,12 +323,12 @@ export function createPlayer({
     if (color !== undefined) {
       patch.color = color;
     }
-    if (sizePx !== undefined) {
-      patch.sizePx = sizePx;
+    if (scaledSize !== null) {
+      patch.sizePx = scaledSize;
       const screenPosition = getArtScreenPosition(position);
       patch.positionPx = [
-        screenPosition.x + (0.5 - PLAYER_PIVOT.x) * (PLAYER_FRAME.width - sizePx[0]),
-        screenPosition.y + (0.5 - PLAYER_PIVOT.y) * (PLAYER_FRAME.height - sizePx[1]),
+        screenPosition.x + (0.5 - PLAYER_PIVOT.x) * (PLAYER_FRAME.width - scaledSize[0]),
+        screenPosition.y + (0.5 - PLAYER_PIVOT.y) * (PLAYER_FRAME.height - scaledSize[1]),
       ];
     }
     for (const sprite of Object.values(sprites)) {
@@ -331,8 +345,8 @@ export function createPlayer({
     for (const sprite of Object.values(sprites)) {
       updateSprite2D(sprite, {
         positionPx: [
-          screenPosition.x + (visualPivot.x - PLAYER_PIVOT.x) * PLAYER_FRAME.width,
-          screenPosition.y + (visualPivot.y - PLAYER_PIVOT.y) * PLAYER_FRAME.height,
+          screenPosition.x + (visualPivot.x - PLAYER_ART_PIVOT.x) * PLAYER_FRAME.width,
+          screenPosition.y + (visualPivot.y - PLAYER_ART_PIVOT.y) * PLAYER_FRAME.height,
         ],
       });
     }
@@ -494,6 +508,7 @@ export function createPlayer({
     getPosition() {
       return { ...position };
     },
+    getRotationCenter,
     setPosition(next) { position = { ...next }; gridSpot.update(position); updateSprites(); },
     getLoadout() {
       return { weapon: weaponSlot, item: itemSlot };

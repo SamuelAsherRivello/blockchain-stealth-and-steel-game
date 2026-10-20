@@ -10,7 +10,12 @@ import { lancerProfile } from "./characters/enemies/lancer/lancer-goap.js";
 import { archerProfile } from "./characters/enemies/archer/archer-goap.js";
 import { monkProfile } from "./characters/enemies/monk/monk-goap.js";
 import { resolveEnemyArrowPlayerHit, resolveMeleeImpacts } from "./gameplay/player-damage.js";
-import { createCombatActorState } from "./gameplay/combat-actor.js";
+import {
+  createCombatActorState,
+  ENEMY_DEATH_DURATION_SECONDS,
+  ENEMY_DEATH_ROTATION_DEGREES,
+  ENEMY_DEATH_SCALE_END,
+} from "./gameplay/combat-actor.js";
 import { getColliderCenter } from "./characters/character-spatial.js";
 import { GridSpot, getQuantizedGridCell } from "./systems/environment/grid-spot.js";
 import { GrassDecorationsEnabled, GRASS_SET, planDecorationSet, collectDecorationGroundCells } from "./systems/environment/decorations/decoration-object-sets.js";
@@ -163,9 +168,11 @@ import {
 } from "./systems/environment/decorations/reactive-decoration.js";
 import {
   createCharacterCenterDrawCommands,
+  createCharacterCenterDotCommands,
   createPlayerCenterMarkerCommands,
   createGridSpotMarkerCommands,
   drawGridSpotMarker,
+  drawCharacterCenterDot,
   createCharacterColliderDrawCommands,
   createActivePerceptionMarkerCommands,
   drawPerceptionDiagnostics,
@@ -774,9 +781,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
         PLAYER_FRAME.width,
         progress,
       ),
-      onDeathProgress: (value) => actor.setVisualTransform({
-        sizePx: [PLAYER_FRAME.width * value, PLAYER_FRAME.height * value],
-      }),
+      deathScaleEnd: ENEMY_DEATH_SCALE_END,
       onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }),
       onKnockback: (direction, options) => actor.applyKnockback(direction, options),
       onDeathStart: () => { actor.setInputEnabled(false); gameStateMachine.playerDefeated(); playSfx("lose"); },
@@ -854,7 +859,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
       const length = Math.hypot(dx, dy) || 1;
       return projectiles.shoot(spawnPosition, options.initialVelocityDirection ?? { x: dx / length, y: dy / length }, ownerId, { target, speedMultiplier: 0.5, collisionEnabled: true, rotationEnabled: true, ...options });
     } });
-    const combat = createCombatActorState({ label: ownerId, getCombatCollider: () => actor.getCombatCollider(), setVisualTransform: (transform) => actor.setVisualTransform(transform), onSpawnProgress: (progress) => setCharacterSpawnProgress(actor, ARCHER_FRAME.width, progress), onDeathProgress: (value) => actor.setVisualTransform({ sizePx: [ARCHER_FRAME.width * value, ARCHER_FRAME.height * value] }), onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }), onKnockback: (direction, options) => actor.applyKnockback(direction, options) });
+    const combat = createCombatActorState({ label: ownerId, deathDurationSeconds: ENEMY_DEATH_DURATION_SECONDS, deathRotationDegrees: ENEMY_DEATH_ROTATION_DEGREES, deathScaleEnd: ENEMY_DEATH_SCALE_END, getCombatCollider: () => actor.getCombatCollider(), setVisualTransform: (transform) => actor.setVisualTransform(transform), onSpawnProgress: (progress) => setCharacterSpawnProgress(actor, ARCHER_FRAME.width, progress), onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }), onKnockback: (direction, options) => actor.applyKnockback(direction, options) });
     return attachActor({ type: SpawnerType.ENEMY, character: SpawnerCharacter.ARCHER, actor, combat, controller: null });
   }
 
@@ -868,6 +873,9 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     });
     const combat = createCombatActorState({
       label: `goblin-${nextActorId++}`,
+      deathDurationSeconds: ENEMY_DEATH_DURATION_SECONDS,
+      deathRotationDegrees: ENEMY_DEATH_ROTATION_DEGREES,
+      deathScaleEnd: ENEMY_DEATH_SCALE_END,
       getCombatCollider: () => actor.getCombatCollider(),
       setVisualTransform: (transform) => actor.setVisualTransform(transform),
       onSpawnProgress: (progress) => setCharacterSpawnProgress(
@@ -875,9 +883,6 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
         GOBLIN_FRAME.width,
         progress,
       ),
-      onDeathProgress: (value) => actor.setVisualTransform({
-        sizePx: [GOBLIN_FRAME.width * value, GOBLIN_FRAME.height * value],
-      }),
       onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }),
       onKnockback: (direction, options) => actor.applyKnockback(direction, options),
     });
@@ -901,6 +906,9 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     });
     const combat = createCombatActorState({
       label: `warrior-${nextActorId++}`,
+      deathDurationSeconds: ENEMY_DEATH_DURATION_SECONDS,
+      deathRotationDegrees: ENEMY_DEATH_ROTATION_DEGREES,
+      deathScaleEnd: ENEMY_DEATH_SCALE_END,
       getCombatCollider: () => actor.getCombatCollider(),
       setVisualTransform: (transform) => actor.setVisualTransform(transform),
       onSpawnProgress: (progress) => setCharacterSpawnProgress(
@@ -908,10 +916,6 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
         WARRIOR_FRAME.width,
         progress,
       ),
-      onDeathProgress: (value) => actor.setVisualTransform({
-        sizePx: [WARRIOR_FRAME.width * value, WARRIOR_FRAME.height * value],
-        anchor: "body-bottom",
-      }),
       onHitFlashStart: () => actor.setVisualTransform({
         color: [1.6, 1.6, 1.6, 1],
       }),
@@ -930,13 +934,13 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
 
   function createLancerRecord(position) {
     const actor = createLancer({ onAttack: () => playSfx("lancer"), atlases: lancerAtlases, initialPosition: position, bounds: worldBounds, obstacles: obstacleColliders });
-    const combat = createCombatActorState({ label: `lancer-${nextActorId++}`, getCombatCollider: () => actor.getCombatCollider(), setVisualTransform: (transform) => actor.setVisualTransform(transform), onSpawnProgress: (progress) => setCharacterSpawnProgress(actor, LANCER_FRAME.width, progress), onDeathProgress: (value) => actor.setVisualTransform({ sizePx: [LANCER_FRAME.width * value, LANCER_FRAME.height * value], anchor: "artwork-bottom" }), onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }), onKnockback: (direction, options) => actor.applyKnockback(direction, options) });
+    const combat = createCombatActorState({ label: `lancer-${nextActorId++}`, deathDurationSeconds: ENEMY_DEATH_DURATION_SECONDS, deathRotationDegrees: ENEMY_DEATH_ROTATION_DEGREES, deathScaleEnd: ENEMY_DEATH_SCALE_END, getCombatCollider: () => actor.getCombatCollider(), setVisualTransform: (transform) => actor.setVisualTransform(transform), onSpawnProgress: (progress) => setCharacterSpawnProgress(actor, LANCER_FRAME.width, progress), onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }), onKnockback: (direction, options) => actor.applyKnockback(direction, options) });
     return attachActor({ type: SpawnerType.ENEMY, character: SpawnerCharacter.LANCER, actor, combat, controller: null });
   }
 
   function createMonkRecord(position) {
     const actor = createMonk({ onHeal: () => playSfx("monk"), atlases: monkAtlases, initialPosition: position, bounds: worldBounds, obstacles: obstacleColliders });
-    const combat = createCombatActorState({ label: `monk-${nextActorId++}`, getCombatCollider: () => actor.getCombatCollider(), setVisualTransform: (transform) => actor.setVisualTransform(transform), onSpawnProgress: (progress) => setCharacterSpawnProgress(actor, MONK_FRAME.width, progress), onDeathProgress: (value) => actor.setVisualTransform({ sizePx: [MONK_FRAME.width * value, MONK_FRAME.height * value] }), onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }), onKnockback: (direction, options) => actor.applyKnockback(direction, options) });
+    const combat = createCombatActorState({ label: `monk-${nextActorId++}`, deathDurationSeconds: ENEMY_DEATH_DURATION_SECONDS, deathRotationDegrees: ENEMY_DEATH_ROTATION_DEGREES, deathScaleEnd: ENEMY_DEATH_SCALE_END, getCombatCollider: () => actor.getCombatCollider(), setVisualTransform: (transform) => actor.setVisualTransform(transform), onSpawnProgress: (progress) => setCharacterSpawnProgress(actor, MONK_FRAME.width, progress), onHitFlashStart: () => actor.setVisualTransform({ color: [1.6, 1.6, 1.6, 1] }), onKnockback: (direction, options) => actor.applyKnockback(direction, options) });
     return attachActor({ type: SpawnerType.ENEMY, character: SpawnerCharacter.MONK, actor, combat, controller: null });
   }
 
@@ -1047,6 +1051,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   }));
   const spawners = spawnerConfigs.map((config) => createSpawner({
     ...config,
+    respawnDelaySeconds: progress.file === "Level01.tmj" && config.type === SpawnerType.ENEMY ? 5 : 0,
     minimumCount: config.character === SpawnerCharacter.SHEEP ? 1 : config.minimumCount,
     maximumCount: config.character === SpawnerCharacter.SHEEP ? 1 : config.maximumCount,
     tileSize: TILE_SIZE,
@@ -1852,6 +1857,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     })).filter(({ combat }) => combat.isAlive).map((record) => ({
       combatCollider: record.combat.getCombatCollider(),
       movementCollider: record.movementCollider,
+      rotationCenter: record.actor.getRotationCenter?.(),
       character: record.character,
       expressionJumpOffset: record.expressionJumpOffset,
       expression: record.expression,
@@ -2161,6 +2167,9 @@ function drawDiagnostics(
       style.fillStyle,
       style.strokeStyle,
     );
+  }
+  if (enabled) for (const marker of createCharacterCenterDotCommands(diagnosticCharacters)) {
+    drawCharacterCenterDot(debugContext, marker, SCREEN_HEIGHT);
   }
   // Draw the black live-center marker first so the white logical marker
   // remains visually closer to the camera when both occupy the same area.

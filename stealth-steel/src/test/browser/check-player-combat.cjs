@@ -6,11 +6,11 @@ async (page) => {
     await page.waitForFunction(()=>!!window.combatQA);
     await page.getByRole('button',{name:'Enable sound'}).click();
     const distances=[];
-    for(let hit=1;hit<=4;hit++) {
+    for(let hit=1;hit<=8;hit++) {
       await page.evaluate(()=>{combatQA.setPlayer({x:352,y:288});combatQA.attack();});
-      const impact=await page.evaluate((hit)=>{let state;for(let i=0;i<300;i++){combatQA.step(1/120);state=combatQA.snapshot();if(state.health===100-25*hit)break;}return state;},hit);
-      check(impact.health===100-25*hit,`${source} hit ${hit}: ${JSON.stringify(impact)}`);
-      if(hit<4) {
+      const impact=await page.evaluate((hit)=>{let state;for(let i=0;i<300;i++){combatQA.step(1/120);state=combatQA.snapshot();if(state.health===100-12.5*hit)break;}return state;},hit);
+      check(impact.health===100-12.5*hit,`${source} hit ${hit}: ${JSON.stringify(impact)}`);
+      if(hit<8) {
         const result=await page.evaluate(()=>combatQA.advance(1.5));
         const distance=Math.hypot(result.position.x-352,result.position.y-288);
         check(Math.abs(distance-({goblin:16,archer:32,warrior:48,lancer:64}[source]))<.01,`${source} distance ${distance}`);distances.push(distance);

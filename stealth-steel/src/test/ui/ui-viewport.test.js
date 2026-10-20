@@ -41,7 +41,7 @@ test('zoom-equivalent frame changes keep UI geometry and pointer coordinates pro
   assert.equal(narrow.width*narrow.scale,320);
 });
 
-test('plain wheel zooms only the centered UI, clamps in tenths, and releases all listeners', () => {
+test('plain wheel does not zoom the UI by default and releases all listeners', () => {
   const windowRef=target({innerWidth:1440,innerHeight:900});
   const documentRef=target({documentElement:{}});
   const frame={left:466.875,top:0,width:506.25,height:900,right:973.125,bottom:900};
@@ -53,15 +53,9 @@ test('plain wheel zooms only the centered UI, clamps in tenths, and releases all
   assert.equal(element.style.width,'576px');
   let prevented=0;
   const wheel=overrides=>windowRef.emit('wheel',{clientX:720,clientY:450,deltaY:-100,preventDefault(){prevented++;},...overrides});
-  wheel({ctrlKey:true}); wheel({metaKey:true}); wheel({altKey:true}); wheel({clientX:0}); wheel({deltaY:0});
-  assert.equal(prevented,0);
   for(let i=0;i<10;i++) wheel({});
-  assert.equal(element.dataset.uiZoom,'1.5');
-  const scale=Number(element.dataset.uiScale);
-  assert.equal(parseFloat(element.style.left)+576*scale/2,720);
-  assert.equal(parseFloat(element.style.top)+1024*scale/2,450);
-  for(let i=0;i<20;i++) wheel({deltaY:100});
-  assert.equal(element.dataset.uiZoom,'0.5');
+  assert.equal(prevented,0);
+  assert.equal(element.dataset.uiZoom,'1');
   assert.deepEqual(frame,{left:466.875,top:0,width:506.25,height:900,right:973.125,bottom:900});
   ui.dispose();
   assert.equal(windowRef.count('wheel'),0);

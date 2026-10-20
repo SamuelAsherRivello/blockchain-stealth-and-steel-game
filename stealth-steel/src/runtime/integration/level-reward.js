@@ -29,7 +29,7 @@ export function createLevelReward({accountHost,ui,progress,gold,showTrophyAction
     finally{initializing=false;}
   }
   return {
-    show(){if(visible||disposed)return;visible=true;const trophyVisible=Boolean(showTrophyActions?.());ui.setCompletion({levelNumber:progress.current,levelsCompleted:progress.completed+1,totalLevels:progress.total,hasNext:progress.hasNext,collected:gold.collected,total:gold.total});ui.show();if(trophyVisible)void initialize();},
+    show(){if(visible||disposed)return;visible=true;const trophyVisible=Boolean(showTrophyActions?.()) && progress.hasNext;ui.setCompletion({levelNumber:progress.current,levelsCompleted:progress.completed+1,totalLevels:progress.total,hasNext:progress.hasNext,collected:gold.collected,total:gold.total});ui.show();if(trophyVisible)void initialize();},
     collect:()=>workflowId?bis.collectRewardAsync(workflowId):undefined,
     check:()=>workflowId?bis.checkRewardAsync(workflowId):initialize(),
     acknowledge(){if(workflowId)return bis.acknowledgeRewardAsync(workflowId);ui.setState({needsAcknowledgment:false,message:''});},

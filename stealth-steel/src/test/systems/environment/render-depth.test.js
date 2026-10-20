@@ -39,11 +39,13 @@ test("every moving character recalculates layer order from its movement collider
     "../../../runtime/characters/enemies/warrior/warrior.js",
     "../../../runtime/characters/npc/sheep/sheep.js",
   ];
+  const sharedVisual = await readFile(new URL("../../../runtime/characters/shared-character-visual.js", import.meta.url), "utf8");
+  assert.match(sharedVisual, /getCharacterLayerOrder\(/);
+  assert.match(sharedVisual, /layer\.order = order/);
 
   for (const modulePath of characterModules) {
     const source = await readFile(new URL(modulePath, import.meta.url), "utf8");
-    assert.match(source, /getCharacterLayerOrder\(/, modulePath);
     assert.match(source, /getMovementCollider\(\)/, modulePath);
-    assert.match(source, /layer\.order = order/, modulePath);
+    assert.match(source, /createSharedCharacterVisual|createSharedCharacterActor|getCharacterLayerOrder\(/, modulePath);
   }
 });

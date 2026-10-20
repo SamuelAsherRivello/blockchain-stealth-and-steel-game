@@ -60,14 +60,14 @@ export function createLevelCompleteUi({host, onContinue, onRestart = onContinue,
     const gold=`${pad(completion.collected)}/${pad(completion.total)}`;
     body.textContent=final?`Great Job. You completed ${completion.levelsCompleted}/${completion.totalLevels} levels. You collected ${gold} gold in the final level and reached the exit.`:`Great Job. You collected ${gold} gold and reached the exit.`;
     const message=state.status==='owned'?'You already own this trophy.':state.status==='guest'?'Log in to collect this trophy.':state.message;
-    if(trophyVisible && message)body.textContent+=` ${message}`;
+    if(!final && trophyVisible && message)body.textContent+=` ${message}`;
     collectButton.menuLabel.textContent='Collect Trophy';
-    collectButton.hidden=!trophyVisible; collectButton.disabled=!trophyVisible || !state.canCollect || state.busy || state.needsAcknowledgment;
+    collectButton.hidden=final || !trophyVisible; collectButton.disabled=final || !trophyVisible || !state.canCollect || state.busy || state.needsAcknowledgment;
     continueButton.hidden=final; continueButton.disabled=state.busy || state.needsAcknowledgment;
-    restartButton.disabled=state.busy || state.needsAcknowledgment;
-    checkButton.hidden=!trophyVisible || !state.canCheck; checkButton.disabled=!trophyVisible || state.busy;
+    restartButton.disabled=state.busy || (!final && state.needsAcknowledgment);
+    checkButton.hidden=final || !trophyVisible || !state.canCheck; checkButton.disabled=final || !trophyVisible || state.busy;
     checkButton.menuLabel.textContent=state.status==='uncertain'?'Check Trophy Status':'Check Trophy Ownership';
-    acknowledgeButton.hidden=!state.needsAcknowledgment; acknowledgeButton.disabled=state.busy;
+    acknowledgeButton.hidden=final || !state.needsAcknowledgment; acknowledgeButton.disabled=final || state.busy;
     panel.setAttribute('aria-busy',String(state.busy));
   }
   const actionHandlers=[[collectButton,onCollect],[continueButton,onContinue],[restartButton,onRestart],[checkButton,onCheck],[acknowledgeButton,onAcknowledge]].map(([button,callback])=>{

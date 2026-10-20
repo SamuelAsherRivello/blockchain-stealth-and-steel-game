@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   DEFAULT_SPAWN_CHECK_INTERVAL_SECONDS,
+  DEFAULT_RESPAWN_DELAY_SECONDS,
   createSpawner,
   selectWeightedSpawnCount,
   SPAWN_MODE_ANYWHERE_WALKABLE,
@@ -45,6 +46,7 @@ test("spawner validates population, interval, position, and callbacks", () => {
     /minimumCount.*maximumCount/,
   );
   assert.throws(() => createSpawner({ ...base, checkIntervalSeconds: 0 }), /checkIntervalSeconds/);
+  assert.throws(() => createSpawner({ ...base, respawnDelaySeconds: -1 }), /respawnDelaySeconds/);
   assert.throws(() => createSpawner({ ...base, position: { x: NaN, y: 0 } }), /position/);
   assert.throws(() => createSpawner({ ...base, createActor: null }), /createActor/);
   assert.throws(() => createSpawner({ ...base, spawnMode: "invalid" }), /spawnMode/);
@@ -55,6 +57,7 @@ test("spawner defaults to a one-second evaluation interval", () => {
   const { spawner } = createHarness();
   assert.equal(spawner.config.checkIntervalSeconds, DEFAULT_SPAWN_CHECK_INTERVAL_SECONDS);
   assert.equal(DEFAULT_SPAWN_CHECK_INTERVAL_SECONDS, 1);
+  assert.equal(DEFAULT_RESPAWN_DELAY_SECONDS, 0);
 });
 
 test("weighted spawn selection includes zero and remaining capacity", () => {
@@ -183,6 +186,22 @@ test("removing an owned actor disposes once and allows later replenishment", () 
   assert.deepEqual(disposed, [actor.id]);
   assert.equal(spawner.actors.length, 0);
   assert.equal(spawner.update(1), 1);
+  assert.equal(spawner.actors.length, 1);
+});
+
+test("respawn delay starts after removal while initial population remains immediate", () => {
+  const { spawner } = createHarness({
+    minimumCount: 1,
+    maximumCount: 1,
+    guaranteeInitialPopulation: true,
+    respawnDelaySeconds: 5,
+  });
+  assert.equal(spawner.initialize(), 1);
+  const actor = spawner.actors[0];
+  assert.equal(spawner.remove(actor), true);
+  assert.equal(spawner.update(4.99), 0);
+  assert.equal(spawner.actors.length, 0);
+  assert.equal(spawner.update(0.01), 1);
   assert.equal(spawner.actors.length, 1);
 });
 

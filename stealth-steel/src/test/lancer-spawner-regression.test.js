@@ -56,22 +56,21 @@ test("Lancer artwork and death rotation share the movement-collider center", () 
     },
   });
 
-  // The painted Lancer artwork ends at y=197 in the 320px PNG frame. Its
-  // bottom center must coincide with the logical physics/perception center.
+  // The main Lancer PNG frame uses its geometric center as the visual pivot.
   assert.ok(layers.every((layer) => layer.pivot[0] === 0.5));
-  assert.ok(layers.every((layer) => layer.pivot[1] === 197 / 320));
+  assert.ok(layers.every((layer) => layer.pivot[1] === 0.5));
   const originalPositions = sprites.map((sprite) => [...sprite.positionPx]);
   const collider = actor.getMovementCollider();
   assert.deepEqual(
     originalPositions,
     sprites.map(() => [collider.x, 1024 - collider.y]),
-    "the painted artwork bottom is at the physics/perception center",
+    "the artwork anchor remains at the physics/perception center",
   );
-  actor.setVisualTransform({ sizePx: [160, 160], anchor: "artwork-bottom" });
+  actor.setVisualTransform({ sizePx: [160, 160], anchor: "artwork-center" });
   assert.deepEqual(
     sprites.map((sprite) => sprite.positionPx),
     originalPositions,
-    "shrinking for death keeps the artwork bottom at the physics center",
+    "shrinking for death keeps the artwork center at the physics center",
   );
   actor.dispose();
 });

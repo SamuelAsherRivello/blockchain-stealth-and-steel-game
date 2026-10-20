@@ -2,21 +2,14 @@ import { createEnemyKnockback } from '../../../gameplay/enemy-knockback.js';
 import { createAttackImpactQueue } from "../../../gameplay/attack-impact.js";
 import { updatePlayerAttackPreparation, cancelPlayerAttackPreparation } from '../player-attack-preparation.js';
 import {
-  addSprite2D,
-  createSprite2DLayer,
   loadSpriteAtlas,
-  playSprite2DAnimation,
-  removeSprite2D,
-  stopSpriteAnimation,
-  updateSprite2D,
 } from "@babylonjs/lite";
 
 import {
   getCharacterCollider,
   createGridAlignedMovementController,
-  worldToScreen,
 } from "../../../gameplay/game-logic.js";
-import { getCharacterGridCell, getCharacterLayerOrder } from "../../character-spatial.js";
+import { getCharacterGridCell } from "../../character-spatial.js";
 import {
   WARRIOR_ANIMATION_CATALOG,
   WARRIOR_ANIMATION_NAMES,
@@ -31,6 +24,7 @@ import {
   createWarriorDefenseConfig,
   selectIncomingProjectile,
 } from "./warrior-defense.js";
+import { createSharedCharacterVisual } from "../../shared-character-visual.js";
 
 export const WARRIOR_FRAME = Object.freeze({ width: 192, height: 192 });
 export const WARRIOR_PIVOT = Object.freeze({ x: 0.5, y: 0.84 });
@@ -54,13 +48,20 @@ export const WARRIOR_COMBAT_COLLIDER = Object.freeze({
 });
 
 const DEFAULT_API = Object.freeze({
-  addSprite2D,
-  createSprite2DLayer,
   loadSpriteAtlas,
-  playSprite2DAnimation,
-  removeSprite2D,
-  stopSpriteAnimation,
-  updateSprite2D,
+});
+
+const WARRIOR_VISUAL_DEFINITION = Object.freeze({
+  id: "warrior",
+  frame: WARRIOR_FRAME,
+  displaySize: WARRIOR_FRAME,
+  artPivot: Object.freeze({ x: WARRIOR_BODY_ART_PIVOT[0], y: WARRIOR_BODY_ART_PIVOT[1] }),
+  artOffset: Object.freeze({ x: -WARRIOR_ART_OFFSET.x, y: -WARRIOR_ART_OFFSET.y }),
+  movementCollider: WARRIOR_MOVEMENT_COLLIDER,
+  animations: Object.freeze(Object.fromEntries(WARRIOR_ANIMATION_NAMES.map(name => {
+    const descriptor = WARRIOR_ANIMATION_CATALOG[name];
+    return [name, Object.freeze({ ...descriptor, displaySize: [...descriptor.displaySize] })];
+  }))),
 });
 
 export async function loadWarriorAtlases(engine, api = DEFAULT_API) {
@@ -104,92 +105,36 @@ export function createWarrior({
   const defense = createWarriorDefenseConfig(defenseConfig);
   const attemptedProjectileIds = new Set();
   let position = { ...initialPosition };
-  let artYOffset = 0;
   let movementIntent = { x: 0, y: 0 };
   let facing = 1;
   let heading = "right";
   let currentFlipX = false;
   let animationManager = null;
-  let activeAnimation = null;
   let disposed = false;
   const knockback = createEnemyKnockback({ character, bounds, obstacles });
   const attackImpacts = createAttackImpactQueue();
   let defenseRemainingSeconds = 0;
 
-  const layers = {};
-  const sprites = {};
-  const getArtScreenPosition = (worldPosition) => worldToScreen({ x: worldPosition.x + WARRIOR_ART_OFFSET.x, y: worldPosition.y + WARRIOR_ART_OFFSET.y }, 1, (bounds.renderHeight ?? bounds.height));
-  const initialScreenPosition = getArtScreenPosition(position);
-  const initialOrder = getCharacterLayerOrder(
-    getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
-  );
-  for (const name of WARRIOR_ANIMATION_NAMES) {
-    const descriptor = WARRIOR_ANIMATION_CATALOG[name];
-    const layer = api.createSprite2DLayer(atlases[name], {
-      capacity: 1,
-      order: initialOrder,
-      pivot: [...descriptor.pivot],
-      visible: name === WarriorState.IDLE,
-    });
-    layers[name] = layer;
-    sprites[name] = api.addSprite2D(layer, {
-      positionPx: [initialScreenPosition.x, initialScreenPosition.y],
-      sizePx: [...descriptor.displaySize],
-      frame: 0,
-    });
-  }
+  const visual = createSharedCharacterVisual({ definition: WARRIOR_VISUAL_DEFINITION, atlases, initialPosition, bounds, tileSize: 64, api });
 
   function updateSprites() {
-    const screenPosition = getArtScreenPosition(position);
-    const order = getCharacterLayerOrder(
-      getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
-    );
-    for (const layer of Object.values(layers)) {
-      layer.order = order;
-    }
-    for (const sprite of Object.values(sprites)) {
-      api.updateSprite2D(sprite, {
-        positionPx: [screenPosition.x, screenPosition.y + artYOffset],
-        flipX: currentFlipX,
-      });
-    }
+    visual.setPosition(position);
+    visual.setVisualTransform({ flipX: currentFlipX });
   }
 
   function playStateAnimation(name) {
     if (!animationManager || disposed) {
       return;
     }
-    if (activeAnimation) {
-      api.stopSpriteAnimation(activeAnimation);
-    }
-    for (const [layerName, layer] of Object.entries(layers)) {
-      layer.visible = layerName === name;
-    }
     const descriptor = WARRIOR_ANIMATION_CATALOG[name];
-    activeAnimation = api.playSprite2DAnimation(
-      animationManager,
-      sprites[name],
-      0,
-      descriptor.frameCount - 1,
-      descriptor.loop,
-      descriptor.frameDurationMs,
-      descriptor.loop
-        ? undefined
-        : {
-            onEnd: () => {
-              if (disposed) {
-                return;
-              }
-              attackImpacts.advance(Infinity);
-              const transition = stateMachine.completeAttack(movementIntent);
-              currentFlipX = facing < 0;
-              if (transition.changed) {
-                playStateAnimation(transition.state);
-              }
-            },
-          },
-    );
-    updateSprites();
+    visual.playAnimation(name, { onEnd: descriptor.loop ? undefined : () => {
+      if (disposed) return;
+      attackImpacts.advance(Infinity);
+      const transition = stateMachine.completeAttack(movementIntent);
+      currentFlipX = facing < 0;
+      if (transition.changed) playStateAnimation(transition.state);
+    } });
+    visual.setVisualTransform({ flipX: currentFlipX });
   }
 
   function setVisualTransform({
@@ -199,7 +144,7 @@ export function createWarrior({
     rotation,
     color,
     sizePx,
-    anchor,
+    anchor: _anchor,
   }) {
     const patch = {};
     if (scaleX !== undefined) patch.scaleX = scaleX;
@@ -207,19 +152,8 @@ export function createWarrior({
     if (alpha !== undefined) patch.alpha = alpha;
     if (rotation !== undefined) patch.rotation = rotation;
     if (color !== undefined) patch.color = color;
-    if (sizePx !== undefined) {
-      patch.sizePx = sizePx;
-      const screenPosition = getArtScreenPosition(position);
-      patch.positionPx = anchor === "body-bottom"
-        ? [screenPosition.x, screenPosition.y + artYOffset]
-        : [
-            screenPosition.x + (0.5 - WARRIOR_PIVOT.x) * (WARRIOR_FRAME.width - sizePx[0]),
-            screenPosition.y + artYOffset + (0.5 - WARRIOR_PIVOT.y) * (WARRIOR_FRAME.height - sizePx[1]),
-          ];
-    }
-    for (const sprite of Object.values(sprites)) {
-      api.updateSprite2D(sprite, patch);
-    }
+    if (sizePx !== undefined) patch.sizePx = sizePx;
+    visual.setVisualTransform(patch);
   }
 
   function applyKnockback(direction, options) {
@@ -240,7 +174,7 @@ export function createWarrior({
   }
 
   return {
-    layers: Object.values(layers),
+    layers: visual.layers,
     get isKnockedBack() { return knockback.active; },
     drainAttackImpacts() { return attackImpacts.drain(); },
     isMovementLocked() { return stateMachine.movementLocked || knockback.active; },
@@ -282,12 +216,7 @@ export function createWarrior({
       cancelPlayerAttackPreparation(this);
       if (disposed) return;
       disposed = true;
-      if (activeAnimation) {
-        api.stopSpriteAnimation(activeAnimation);
-        activeAnimation = null;
-      }
-      for (const sprite of Object.values(sprites)) api.removeSprite2D(sprite);
-      for (const layer of Object.values(layers)) layer.visible = false;
+      visual.dispose();
     },
     getMovementCollider() {
       return getCharacterCollider(
@@ -314,13 +243,15 @@ export function createWarrior({
     getPosition() {
       return { ...position };
     },
+    getRotationCenter: visual.getRotationCenter,
     setPosition(next) { cancelPlayerAttackPreparation(this); position = { ...next }; updateSprites(); },
     playAnimation(manager) {
       animationManager = manager;
+      visual.setAnimationManager(manager);
       playStateAnimation(WarriorState.IDLE);
     },
     setVisualTransform,
-    setArtYOffset(value) { artYOffset = Number.isFinite(value) ? value : 0; updateSprites(); },
+    setArtYOffset: visual.setArtYOffset,
     faceDirection(direction) {
       if (disposed || this.isMovementLocked()) return;
       if (direction.x !== 0) { facing = Math.sign(direction.x); currentFlipX = facing < 0; }

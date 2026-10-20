@@ -19,6 +19,7 @@ test("debug canvas switches coordinates, perceptions, colliders, tiles and tasks
       drawGridLines: record("tiles"), formatLevelCellLabel: () => "00,00",
       drawTerrainCollider: record("colliders"), drawCharacterCollider: record("colliders"),
       createCharacterColliderDrawCommands: record("colliders"),
+      createCharacterCenterDotCommands: record("colliders"), drawCharacterCenterDot: record("colliders"),
       createPlayerCenterMarkerCommands: record("coordinates"), createGridSpotMarkerCommands: record("coordinates"),
       drawPerceptionDiagnostics: (_context, _snapshot, _size, _height, _now, { enabled }) => { if (enabled) calls.add("perceptions"); return []; },
       createActivePerceptionMarkerCommands: record("perceptions"),

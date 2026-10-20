@@ -36,13 +36,20 @@ test("spawn animation begins even when actors attach before renderer creation", 
 
 test("all character renderers keep spawn scaling centered on the sprite", async () => {
   const files = [
-    ["stealth-steel/src/runtime/characters/enemies/archer/archer.js", "ARCHER"],
-    ["stealth-steel/src/runtime/characters/enemies/warrior/warrior.js", "WARRIOR"],
+    "stealth-steel/src/runtime/characters/enemies/archer/archer.js",
+    "stealth-steel/src/runtime/characters/enemies/goblin/goblin.js",
+    "stealth-steel/src/runtime/characters/enemies/warrior/warrior.js",
+    "stealth-steel/src/runtime/characters/enemies/lancer/lancer.js",
+    "stealth-steel/src/runtime/characters/enemies/monk/monk.js",
   ];
-
-  for (const [file, prefix] of files) {
+  for (const file of files) {
     const source = await readFile(new URL(`../../../../${file}`, import.meta.url), "utf8");
-    assert.match(source, new RegExp(`screenPosition\\.x \\+ \\(0\\.5 - ${prefix}_PIVOT\\.x\\) \\* \\(${prefix}_FRAME\\.width - (?:sizePx|transform\\.sizePx)\\[0\\]\\)`));
-    assert.match(source, new RegExp(`screenPosition\\.y \\+ [^\\n]*\\(0\\.5 - ${prefix}_PIVOT\\.y\\) \\* \\(${prefix}_FRAME\\.height - (?:sizePx|transform\\.sizePx)\\[1\\]\\)`));
+    assert.match(source, /artPivot/);
+    assert.match(source, /artOffset/);
+    assert.match(source, /createSharedCharacterVisual|createSharedCharacterActor/);
   }
+  const visual = await readFile(new URL("../../../../stealth-steel/src/runtime/characters/shared-character-visual.js", import.meta.url), "utf8");
+  assert.match(visual, /pivot: \[pivot\.x, pivot\.y\]/);
+  assert.match(visual, /\.\.\.patch/);
+  assert.match(visual, /sizePx/);
 });

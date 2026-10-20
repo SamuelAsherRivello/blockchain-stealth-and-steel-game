@@ -6,15 +6,16 @@ import { createEnemyKnockback } from '../../../gameplay/enemy-knockback.js';
 
 export const MONK_FRAME = Object.freeze({ width: 192, height: 192 });
 export const MONK_PIVOT = Object.freeze({ x: 0.5, y: 0.84 });
-// Shared actor offsets are screen-space, where positive Y moves artwork down.
-export const MONK_ART_OFFSET = Object.freeze({ x: 0, y: 55 });
+export const MONK_ART_PIVOT = Object.freeze({ x: 0.5, y: 0.5 });
+// Keep the centered artwork pivot on the logical grid/collider center.
+export const MONK_ART_OFFSET = Object.freeze({ x: 0, y: 0 });
 export const MONK_MOVEMENT_COLLIDER = Object.freeze({ type: "circle", x: 96, y: 161.28, radius: 24 });
 export const MONK_COMBAT_COLLIDER = Object.freeze({ x: 64, y: 97.28, width: 64, height: 64 });
 
 const DEFAULT_API = { loadSpriteAtlas };
 const MONK_DEFINITION = createCharacterDefinition({
   id: "monk", frame: MONK_FRAME,
-  movementCollider: { radius: MONK_MOVEMENT_COLLIDER.radius }, artOffset: MONK_ART_OFFSET,
+  movementCollider: { radius: MONK_MOVEMENT_COLLIDER.radius }, artOffset: MONK_ART_OFFSET, artPivot: MONK_ART_PIVOT,
   animations: Object.fromEntries(MONK_ANIMATION_NAMES.map((name) => [name, MONK_ANIMATION_CATALOG[name]])),
 });
 

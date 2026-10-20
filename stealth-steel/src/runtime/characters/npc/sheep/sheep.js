@@ -26,6 +26,7 @@ import {
   planSeparationRoute,
 } from "./sheep-navigation.js";
 import { getCharacterGridCell, getCharacterLayerOrder } from "../../character-spatial.js";
+import { getRenderedArtPivot } from "../../character-art-offsets.js";
 
 export const SHEEP_FRAME_SIZE = 128;
 export const SHEEP_PIVOT = { x: 0.5, y: 0.84 };
@@ -126,6 +127,7 @@ export function createSheep({
   const sprites = {};
   const getArtScreenPosition = (worldPosition) => worldToScreen({ x: worldPosition.x + SHEEP_ART_OFFSET.x, y: worldPosition.y + SHEEP_ART_OFFSET.y }, 1, (bounds.renderHeight ?? bounds.height));
   const initialScreenPosition = getArtScreenPosition(position);
+  const renderPivot = getRenderedArtPivot("sheep", SHEEP_PIVOT, { width: SHEEP_FRAME_SIZE, height: SHEEP_FRAME_SIZE });
   const initialOrder = getCharacterLayerOrder(
     getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
   );
@@ -133,7 +135,7 @@ export function createSheep({
     const layer = api.createSprite2DLayer(atlases[animationName], {
       capacity: 1,
       order: initialOrder,
-      pivot: [SHEEP_PIVOT.x, SHEEP_PIVOT.y],
+      pivot: [renderPivot.x, renderPivot.y],
       visible: animationName === SheepState.IDLE,
     });
     layers[animationName] = layer;
@@ -408,6 +410,9 @@ export function createSheep({
     },
     getPosition() {
       return { ...position };
+    },
+    getRotationCenter() {
+      return { x: position.x + SHEEP_ART_OFFSET.x, y: position.y + SHEEP_ART_OFFSET.y };
     },
     getMovementCollider() {
       return getCharacterCollider(

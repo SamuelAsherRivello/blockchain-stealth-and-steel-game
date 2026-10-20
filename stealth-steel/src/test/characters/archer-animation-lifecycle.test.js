@@ -4,8 +4,9 @@ import { readFile } from "node:fs/promises";
 
 const ROOT = new URL("../../../../", import.meta.url);
 
-test("archer removes the previous animation before replaying another state", async () => {
-  const source = await readFile(new URL("stealth-steel/src/runtime/characters/enemies/archer/archer.js", ROOT), "utf8");
+test("archer shares the renderer animation lifecycle", async () => {
+  const source = await readFile(new URL("stealth-steel/src/runtime/characters/shared-character-visual.js", ROOT), "utf8");
 
-  assert.match(source, /removeSpriteAnimation\(manager, active\)/);
+  assert.match(source, /stopSpriteAnimation\(activeAnimation\)/);
+  assert.match(source, /playSprite2DAnimation\(/);
 });

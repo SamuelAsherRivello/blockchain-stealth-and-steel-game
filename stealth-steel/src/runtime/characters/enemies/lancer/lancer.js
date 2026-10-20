@@ -2,21 +2,14 @@ import { createEnemyKnockback } from '../../../gameplay/enemy-knockback.js';
 import { createAttackImpactQueue } from "../../../gameplay/attack-impact.js";
 import { updatePlayerAttackPreparation, cancelPlayerAttackPreparation } from '../player-attack-preparation.js';
 import {
-  addSprite2D,
-  createSprite2DLayer,
   loadSpriteAtlas,
-  playSprite2DAnimation,
-  removeSprite2D,
-  stopSpriteAnimation,
-  updateSprite2D,
 } from "@babylonjs/lite";
 
 import {
   getCharacterCollider,
   createGridAlignedMovementController,
-  worldToScreen,
 } from "../../../gameplay/game-logic.js";
-import { getCharacterGridCell, getCharacterLayerOrder } from "../../character-spatial.js";
+import { getCharacterGridCell } from "../../character-spatial.js";
 import {
   LANCER_ANIMATION_CATALOG,
   LANCER_ANIMATION_NAMES,
@@ -31,6 +24,7 @@ import {
   createLancerDefenseConfig,
   selectIncomingProjectile,
 } from "./lancer-defense.js";
+import { createSharedCharacterVisual } from "../../shared-character-visual.js";
 
 export const LANCER_FRAME = Object.freeze({ width: 320, height: 320 });
 export const LANCER_PIVOT = Object.freeze({ x: 0.5, y: 0.84 });
@@ -51,13 +45,20 @@ export const LANCER_COMBAT_COLLIDER = Object.freeze({
 });
 
 const DEFAULT_API = Object.freeze({
-  addSprite2D,
-  createSprite2DLayer,
   loadSpriteAtlas,
-  playSprite2DAnimation,
-  removeSprite2D,
-  stopSpriteAnimation,
-  updateSprite2D,
+});
+
+const LANCER_VISUAL_DEFINITION = Object.freeze({
+  id: "lancer",
+  frame: LANCER_FRAME,
+  displaySize: LANCER_FRAME,
+  artPivot: Object.freeze({ x: LANCER_ARTWORK_PIVOT[0], y: LANCER_ARTWORK_PIVOT[1] }),
+  artOffset: Object.freeze({ x: -LANCER_ART_OFFSET.x, y: -LANCER_ART_OFFSET.y }),
+  movementCollider: LANCER_MOVEMENT_COLLIDER,
+  animations: Object.freeze(Object.fromEntries(LANCER_ANIMATION_NAMES.map(name => {
+    const descriptor = LANCER_ANIMATION_CATALOG[name];
+    return [name, Object.freeze({ ...descriptor, displaySize: [...descriptor.displaySize] })];
+  }))),
 });
 
 export async function loadLancerAtlases(engine, api = DEFAULT_API) {
@@ -101,92 +102,36 @@ export function createLancer({
   const defense = createLancerDefenseConfig(defenseConfig);
   const attemptedProjectileIds = new Set();
   let position = { ...initialPosition };
-  let artYOffset = 0;
   let movementIntent = { x: 0, y: 0 };
   let facing = 1;
   let heading = "right";
   let currentFlipX = false;
   let animationManager = null;
-  let activeAnimation = null;
   let disposed = false;
   const knockback = createEnemyKnockback({ character, bounds, obstacles });
   const attackImpacts = createAttackImpactQueue();
   let defenseRemainingSeconds = 0;
 
-  const layers = {};
-  const sprites = {};
-  const getArtScreenPosition = (worldPosition) => worldToScreen({ x: worldPosition.x + LANCER_ART_OFFSET.x, y: worldPosition.y + LANCER_ART_OFFSET.y }, 1, (bounds.renderHeight ?? bounds.height));
-  const initialScreenPosition = getArtScreenPosition(position);
-  const initialOrder = getCharacterLayerOrder(
-    getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
-  );
-  for (const name of LANCER_ANIMATION_NAMES) {
-    const descriptor = LANCER_ANIMATION_CATALOG[name];
-    const layer = api.createSprite2DLayer(atlases[name], {
-      capacity: 1,
-      order: initialOrder,
-      pivot: [...descriptor.pivot],
-      visible: name === LancerState.IDLE,
-    });
-    layers[name] = layer;
-    sprites[name] = api.addSprite2D(layer, {
-      positionPx: [initialScreenPosition.x, initialScreenPosition.y],
-      sizePx: [...descriptor.displaySize],
-      frame: 0,
-    });
-  }
+  const visual = createSharedCharacterVisual({ definition: LANCER_VISUAL_DEFINITION, atlases, initialPosition, bounds, tileSize: 64, api });
 
   function updateSprites() {
-    const screenPosition = getArtScreenPosition(position);
-    const order = getCharacterLayerOrder(
-      getCharacterCollider(position, character.frame, character.pivot, character.collider), bounds,
-    );
-    for (const layer of Object.values(layers)) {
-      layer.order = order;
-    }
-    for (const sprite of Object.values(sprites)) {
-      api.updateSprite2D(sprite, {
-        positionPx: [screenPosition.x, screenPosition.y + artYOffset],
-        flipX: currentFlipX,
-      });
-    }
+    visual.setPosition(position);
+    visual.setVisualTransform({ flipX: currentFlipX });
   }
 
   function playStateAnimation(name) {
     if (!animationManager || disposed) {
       return;
     }
-    if (activeAnimation) {
-      api.stopSpriteAnimation(activeAnimation);
-    }
-    for (const [layerName, layer] of Object.entries(layers)) {
-      layer.visible = layerName === name;
-    }
     const descriptor = LANCER_ANIMATION_CATALOG[name];
-    activeAnimation = api.playSprite2DAnimation(
-      animationManager,
-      sprites[name],
-      0,
-      descriptor.frameCount - 1,
-      descriptor.loop,
-      descriptor.frameDurationMs,
-      descriptor.loop
-        ? undefined
-        : {
-            onEnd: () => {
-              if (disposed) {
-                return;
-              }
-              attackImpacts.advance(Infinity);
-              const transition = stateMachine.completeAttack(movementIntent);
-              currentFlipX = facing < 0;
-              if (transition.changed) {
-                playStateAnimation(transition.state);
-              }
-            },
-          },
-    );
-    updateSprites();
+    visual.playAnimation(name, { onEnd: descriptor.loop ? undefined : () => {
+      if (disposed) return;
+      attackImpacts.advance(Infinity);
+      const transition = stateMachine.completeAttack(movementIntent);
+      currentFlipX = facing < 0;
+      if (transition.changed) playStateAnimation(transition.state);
+    } });
+    visual.setVisualTransform({ flipX: currentFlipX });
   }
 
   function setVisualTransform({
@@ -196,7 +141,7 @@ export function createLancer({
     rotation,
     color,
     sizePx,
-    anchor,
+    anchor: _anchor,
   }) {
     const patch = {};
     if (scaleX !== undefined) patch.scaleX = scaleX;
@@ -204,19 +149,8 @@ export function createLancer({
     if (alpha !== undefined) patch.alpha = alpha;
     if (rotation !== undefined) patch.rotation = rotation;
     if (color !== undefined) patch.color = color;
-    if (sizePx !== undefined) {
-      patch.sizePx = sizePx;
-      const screenPosition = getArtScreenPosition(position);
-      patch.positionPx = anchor === "artwork-bottom"
-        ? [screenPosition.x, screenPosition.y + artYOffset]
-        : [
-            screenPosition.x + (0.5 - LANCER_PIVOT.x) * (LANCER_FRAME.width - sizePx[0]),
-            screenPosition.y + artYOffset + (0.5 - LANCER_PIVOT.y) * (LANCER_FRAME.height - sizePx[1]),
-          ];
-    }
-    for (const sprite of Object.values(sprites)) {
-      api.updateSprite2D(sprite, patch);
-    }
+    if (sizePx !== undefined) patch.sizePx = sizePx;
+    visual.setVisualTransform(patch);
   }
 
   function applyKnockback(direction, options) {
@@ -224,7 +158,7 @@ export function createLancer({
   }
 
   return {
-    layers: Object.values(layers),
+    layers: visual.layers,
     get isKnockedBack() { return knockback.active; },
     drainAttackImpacts() { return attackImpacts.drain(); },
     isMovementLocked() { return stateMachine.movementLocked || knockback.active; },
@@ -269,12 +203,7 @@ export function createLancer({
       cancelPlayerAttackPreparation(this);
       if (disposed) return;
       disposed = true;
-      if (activeAnimation) {
-        api.stopSpriteAnimation(activeAnimation);
-        activeAnimation = null;
-      }
-      for (const sprite of Object.values(sprites)) api.removeSprite2D(sprite);
-      for (const layer of Object.values(layers)) layer.visible = false;
+      visual.dispose();
     },
     getMovementCollider() {
       return getCharacterCollider(
@@ -301,13 +230,15 @@ export function createLancer({
     getPosition() {
       return { ...position };
     },
+    getRotationCenter: visual.getRotationCenter,
     setPosition(next) { cancelPlayerAttackPreparation(this); position = { ...next }; updateSprites(); },
     playAnimation(manager) {
       animationManager = manager;
+      visual.setAnimationManager(manager);
       playStateAnimation(LancerState.IDLE);
     },
     setVisualTransform,
-    setArtYOffset(value) { artYOffset = Number.isFinite(value) ? value : 0; updateSprites(); },
+    setArtYOffset: visual.setArtYOffset,
     faceDirection(direction) {
       if (disposed || this.isMovementLocked()) return;
       if (direction.x !== 0) { facing = Math.sign(direction.x); currentFlipX = facing < 0; }

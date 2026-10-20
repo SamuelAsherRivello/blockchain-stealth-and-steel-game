@@ -7,7 +7,7 @@ const FRAME_HEIGHT = 320;
 const FRAME_DURATION_MS = 100;
 // The painted Lancer artwork ends at y=197 in each 320px frame. This is its
 // visual bottom center, which must share the physics/perception center.
-export const LANCER_ARTWORK_PIVOT = Object.freeze([0.5, 197 / FRAME_HEIGHT]);
+export const LANCER_ARTWORK_PIVOT = Object.freeze([0.5, 0.5]);
 const EXPECTED = Object.freeze({
   idle: Object.freeze({ frameCount: 12, loop: true }),
   walking: Object.freeze({ frameCount: 6, loop: true }),

@@ -21,6 +21,7 @@ export function createCharacterDefinition({
   displaySize = frame,
   movementCollider,
   artOffset = DEFAULT_ART_OFFSET,
+  artPivot = null,
   animations = null,
 }) {
   if (typeof id !== "string" || id.length === 0) {
@@ -33,6 +34,10 @@ export function createCharacterDefinition({
   const offset = {
     x: finite(artOffset?.x, "artOffset.x"),
     y: finite(artOffset?.y, "artOffset.y"),
+  };
+  const pivot = artPivot === null ? null : {
+    x: finite(artPivot?.x, "artPivot.x"),
+    y: finite(artPivot?.y, "artPivot.y"),
   };
   if (!movementCollider || !Number.isFinite(movementCollider.radius)
     || movementCollider.radius <= 0) {
@@ -59,6 +64,7 @@ export function createCharacterDefinition({
       radius: movementCollider.radius,
     }),
     artOffset: Object.freeze(offset),
+    artPivot: pivot ? Object.freeze(pivot) : null,
     animations,
   });
 }
