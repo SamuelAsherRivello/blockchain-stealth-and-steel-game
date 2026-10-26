@@ -30,7 +30,7 @@ test("Lancer keeps a looping idle animation and participates in enemy patrol", a
   assert.match(main, /character: SpawnerCharacter\.LANCER, actor, combat, controller: null/);
 });
 
-test("Lancer artwork and death rotation share the movement-collider center", () => {
+test("Lancer retains its collider anchor and artwork pivot during death scaling", () => {
   const layers = [];
   const sprites = [];
   const actor = createLancer({
@@ -56,9 +56,10 @@ test("Lancer artwork and death rotation share the movement-collider center", () 
     },
   });
 
-  // The main Lancer PNG frame uses its geometric center as the visual pivot.
+  // Artwork offsets change the texture pivot while retaining the logical anchor.
   assert.ok(layers.every((layer) => layer.pivot[0] === 0.5));
-  assert.ok(layers.every((layer) => layer.pivot[1] === 0.5));
+  const originalPivots = layers.map((layer) => [...layer.pivot]);
+  assert.ok(originalPivots.every((pivot) => pivot[1] >= 0 && pivot[1] <= 1));
   const originalPositions = sprites.map((sprite) => [...sprite.positionPx]);
   const collider = actor.getMovementCollider();
   assert.deepEqual(
@@ -67,6 +68,9 @@ test("Lancer artwork and death rotation share the movement-collider center", () 
     "the artwork anchor remains at the physics/perception center",
   );
   actor.setVisualTransform({ sizePx: [160, 160], anchor: "artwork-center" });
+  assert.deepEqual(layers.map((layer) => layer.pivot), originalPivots);
+  assert.deepEqual(sprites.map((sprite) => sprite.pivot), originalPivots);
+  assert.deepEqual(actor.getMovementCollider(), collider);
   assert.deepEqual(
     sprites.map((sprite) => sprite.positionPx),
     originalPositions,

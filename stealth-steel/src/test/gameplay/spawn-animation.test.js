@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createCombatActorState } from "../../runtime/gameplay/combat-actor.js";
 import { createCharacterOverhead } from "../../runtime/ui/character-overhead.js";
+import { createSharedCharacterVisual } from "../../runtime/characters/shared-character-visual.js";
 
 test("characters use a quarter-second scale and opacity spawn animation", async () => {
   const source = await readFile(new URL("../../runtime/main.js", import.meta.url), "utf8") + await readFile(new URL("../../runtime/gameplay/combat-actor.js", import.meta.url), "utf8");
@@ -48,8 +49,30 @@ test("all character renderers keep spawn scaling centered on the sprite", async 
     assert.match(source, /artOffset/);
     assert.match(source, /createSharedCharacterVisual|createSharedCharacterActor/);
   }
-  const visual = await readFile(new URL("../../../../stealth-steel/src/runtime/characters/shared-character-visual.js", import.meta.url), "utf8");
-  assert.match(visual, /pivot: \[pivot\.x, pivot\.y\]/);
-  assert.match(visual, /\.\.\.patch/);
-  assert.match(visual, /sizePx/);
+  const sprites = [];
+  const visual = createSharedCharacterVisual({
+    definition: {
+      id: "lancer", frame: { width: 320, height: 320 },
+      displaySize: { width: 320, height: 320 }, artPivot: { x: 0.5, y: 0.5 },
+      artOffset: { x: 0, y: 0 }, movementCollider: { radius: 24 },
+      animations: { idle: { frameCount: 1, loop: true, frameDurationMs: 100 } },
+    },
+    atlases: {}, initialPosition: { x: 100, y: 200 },
+    bounds: { width: 1024, height: 1024 },
+    api: {
+      createSprite2DLayer: (_atlas, options) => ({ ...options }),
+      addSprite2D: (_layer, options) => { const sprite = { ...options }; sprites.push(sprite); return sprite; },
+      updateSprite2D: (sprite, patch) => Object.assign(sprite, patch),
+      removeSprite2D() {},
+    },
+  });
+  const originalPosition = [...sprites[0].positionPx];
+  const originalPivot = [...sprites[0].pivot];
+  for (const scale of [0.001, 0.5, 1]) {
+    visual.setVisualTransform({ scaleX: scale, scaleY: scale });
+    assert.deepEqual(sprites[0].positionPx, originalPosition);
+    assert.deepEqual(sprites[0].pivot, originalPivot);
+    assert.deepEqual(sprites[0].sizePx, [320 * scale, 320 * scale]);
+  }
+  visual.dispose();
 });

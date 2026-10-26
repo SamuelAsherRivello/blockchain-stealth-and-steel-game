@@ -37,6 +37,15 @@ function fixture({load,ready=Promise.resolve(),timeoutMs=100}={}) {
     counts:()=>({closes,restarts,creates,mounts,disposals}),options:()=>options};
 }
 
+test('Account remains accessible for BIS-owned recovery when contract creation is disabled',async()=>{
+  const f=fixture();await f.adapter.readyAsync();
+  f.publish({account:{playerWallet:{profileId:'player',network:'signet'},phase:'active'},capabilities:{items:{available:false},assetMinting:{available:false},contracts:{available:false},payments:{available:false}}});
+  assert.equal(f.adapter.hasContractSupport(),false);await f.adapter.open();
+  assert.equal(f.adapter.isOpen,true);assert.equal(f.counts().mounts,1);
+  assert.equal(f.adapter.getBis().getSnapshot().account.visible,true);
+  f.adapter.dispose();
+});
+
 test('hydration and safe state changes do not infer Account close; explicit close returns only to Settings',async()=>{
   let release;const f=fixture({ready:new Promise(r=>release=r)});const work=f.adapter.open();await flush();
   assert.equal(f.overlay.children[0].hidden,true);f.publish({account:{visible:false}});assert.equal(f.adapter.isOpen,true);

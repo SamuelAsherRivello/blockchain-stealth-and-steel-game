@@ -137,6 +137,7 @@ import { createBisGameRewardFeedback } from "./integration/bis-game-reward-feedb
 import { createLevelCompleteUi, createLevelLostUi } from "./ui/level-complete-ui.js";
 import {createTreasureRuntime} from './integration/treasure-runtime.js';
 import {createTreasureUi} from './ui/treasure-ui.js';
+import {createTreasureFundingConsent} from './ui/treasure-funding-consent.js';
 import {createTreasureChest} from './systems/objects/treasure-chest.js';
 import {createTreasureReveal} from './systems/objects/treasure-reveal.js';
 import {createObjectSpawner} from './systems/objects/object-spawner.js';
@@ -1174,6 +1175,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   );
   const treasure = createTreasureRuntime({accountHost,resumeRun:progress.completed>0});
   const treasureUi = createTreasureUi({host:domBody,screenLayer:domScreen,frameElement:gameFrame,pauseController,session:treasure});
+  const treasureConsent = createTreasureFundingConsent({host:domBody,screenLayer:domScreen,frameElement:gameFrame,pauseController,session:treasure});
   let startGamePrompt = null;
   settingsUi = createSettingsUi({
     host: gameUi, modalHost: domBody, screenLayer: domScreen, frameElement: gameFrame, pauseController,
@@ -1961,7 +1963,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
     grassDecorations.dispose();
     let preserveContracts=false;
     try{const next=JSON.parse(sessionStorage.getItem('stealth-steel-level-run-v1')??'null');preserveContracts=next?.pendingTransition===true&&next.completed>0;}catch{}
-    unsubscribeTreasureReveal();treasureUi.dispose();treasure.dispose({preserveSession:preserveContracts});
+    unsubscribeTreasureReveal();treasureConsent.dispose();treasureUi.dispose();treasure.dispose({preserveSession:preserveContracts});
     for(const spawner of treasureSpawners)spawner.dispose();
     for(const layer of treasureLayers)removeSpriteRendererLayer(renderer,layer);
     unsubscribeEquipment();

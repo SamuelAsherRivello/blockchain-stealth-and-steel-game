@@ -33,11 +33,19 @@ Browser storage remains useful for caching and coordination. Production recovery
 
 The current script is a legacy format. Do not retrofit it by merely adding CLTV to refund. Arkade's [contract deep dive](https://docs.arkadeos.com/contracts/deep-dive) documents CLTV for collaborative paths and CSV for unilateral exit. A minimum locktime does not establish a maximum claim time, and ordinary Bitcoin time semantics do not guarantee a precise 90-second wall-clock boundary.
 
-Build a specific executable compatibility proof using pinned SDK 0.4.79 and each intended operator. Establish the authoritative time source, rounding, boundary comparison, transaction acceptance point and behavior after delayed finalization. Evaluate supported covenant/program execution only where its independent capability check and signer pins pass. Verify the emitted program, not a JavaScript copy of its rules. No deployment or additional service is authorized by this proposal.
+Build a specific executable compatibility proof using pinned SDK 0.4.79 and each intended operator. The user approved whole-second precision rounded down on 2026-10-20. Compute deadlineSeconds = floor(startedAtMs / 1000) + 90 once from original Start, persist both terms, and commit the deadline in the program. The effective window is greater than 89 and at most 90 seconds. Rendering uses deadlineSeconds * 1000; neither funding completion nor reopening recalculates it. Claim requires emulator time strictly before deadline; expiry refund permits time equal to or later than deadline. Verify the authoritative time source, transaction acceptance point and delayed finalization independently. Evaluate supported covenant/program execution only where its independent capability check and signer pins pass. Verify emitted bytecode, not a JavaScript copy of its rules. No deployment or additional service is authorized by this proposal.
 
 The proof must establish the original deadline in an immutable commitment, a correctly authorized 1,000-sat player payout, rejection authorized by the player, expiry recovery to the game, and resistance to late claims and unauthorized early revocation through every reachable branch. Preserve the existing explicit new Start or session-end cancellation, bound to its original offer and authorized as a local user lifecycle action. A modified Game Wallet path must not silently impersonate that authorization. A claim merely persisted locally before expiry is not necessarily accepted remotely. Define the admission point from real operator evidence. A claim remotely accepted in time may finalize later without being refunded concurrently.
 
-If the existing supported infrastructure cannot provide those rules at 90-second precision, publish a feasibility result, preserve legacy recovery, and block the new production-qualified path. Do not change the amount, deadline, trust model or provider infrastructure as a workaround. That result is a valid investigation outcome, but does not complete C094's production objective. A changed product guarantee requires a subsequent user decision.
+If the existing supported infrastructure cannot provide the approved rounded-down deadline and authorization rules, publish a feasibility result, preserve legacy recovery, and block covenant-enforcement qualification. Do not change the amount or committed deadline. On 2026-10-21 the user explicitly approved the Signet browser-policy fallback below. Other changes to guarantees or provider infrastructure still require a separate decision.
+
+### Select and disclose enforcement before funding
+
+Mutinynet targets the pinned Arkade covenant path. The user's subsequent Admin/API decision on 2026-10-21 approves `browser-policy-v1` on both networks. Admin has one browser-policy option on Signet and two explicit options on Mutinynet, defaulting to Arkade co-signer there. Explicit Admin co-signer selection fails visibly rather than silently choosing another mode. The game API makes no player-facing choice and automatically selects the best path supported by pre-funding capability checks. Signet has no configured stronger option yet; a future independently trusted configuration can add it. Unavailable capability reads may select the disclosed browser-policy mode only before funding. This fallback uses the real legacy script, contract funding and spends; browser time controls eligibility and does not prove network-enforced expiry or destination covenants. Its limitations must appear in public descriptors, Account contract details, the Admin selector and documentation. Never call it simulated execution or covenant-enforced timing.
+
+Persist the selected format and enforcement mode with the immutable original terms before any funding submission. A provider or wallet failure after a durable prepared/submitted operation does not select another mode. Unknown acknowledgements retain the original journal and reservations. Reopening, network changes and upgrade cannot change a funded script. Recovery dispatches by its original format, not current capability. No automatic second funding or reward payment follows an error. Real financial success still requires exact receipt evidence in either mode.
+
+Browser-policy qualification is separate from covenant qualification on each network. It accepts the disclosed browser trust limitation, but not fabricated identifiers, cached balances as payment proof, ordinary wallet transfers presented as contracts, or fake funding/success. An unverified network or incompatible fee policy may still make both modes unavailable.
 
 ### Keep financial ownership in BIS
 
@@ -53,6 +61,22 @@ Restored `active` state becomes an unverified presentation state. Reveal/action 
 
 Retain an already revealed chest if status later becomes pending or unavailable, but disable financial actions. Session replacement invalidates old callbacks and reward feedback. The countdown can tick locally using a monotonic rendering clock anchored to verified terms; it never authorizes a spend. Local timer expiry must not replace an unresolved pre-deadline claim's financial status with a final expired/refunded result.
 
+### Keep the player experience responsive under slow networks
+
+Prepare package imports and reusable non-mutating reads in the background. Treasure adds no startup barrier and never funds an offer before explicit Start. Preserve the current rule that an unready Start is skipped; do not silently queue it when wallets later become ready. A short, nonblocking explanation is appropriate for a connected user expecting treasure. Guests receive no wallet error or treasure setup interruption.
+
+Open the chest synchronously from its current scoped projection. Keep artwork, message area, countdown area and button positions stable. Pending state disables only the actions it conflicts with. Back/Escape and focus navigation remain usable. Retain a revealed chest through uncertainty; never show a restored game cache as freshly verified funding.
+
+Use one in-flight inspection per offer and wallet/network generation. Reopening adopts that request; concurrent subscribers and the recovery monitor share its work. Ordinary rendering and countdown ticks perform no provider requests. Use a fresh matching BIS projection immediately; inspect when evidence is invalidated or its validity cannot be established, rather than imposing a new full-account scan at every opening. Explicit Check status targets the original offer. Bound read observation without treating its timeout as cancellation of any financial operation.
+
+Claim/Reject immediately enter a local busy state. Close only the originating window after the action is durably accepted. Do not wait for an unrelated account-wide contract refresh before returning that acceptance. This requires an upstream public-contract change if the installed facade cannot expose it. Pending acceptance is not success. Completion arrives through the existing event channel after exact receipt verification. Older projections cannot regress a newer operation, and late callbacks cannot mutate a replacement window, wallet or run.
+
+Delay a dedicated loading indicator until 300 ms to avoid flashes; keep action acknowledgement immediate. After ten seconds without a result, show a concise delayed-status message and retain Back plus a coalesced Check status action. These are presentation thresholds, not deadlines for cancellation, automatic resubmission or refunds. Retrying inspection never retries a spend. Explicit actions take priority over speculative reads without cancelling already submitted work or bypassing locks.
+
+On a documented reference device and controlled browser profile, target a p95 of at most 100 ms from input to visible local acknowledgement or chest presentation. Record cold and warm runs separately, including package load, first funded projection, durable acceptance and verified confirmation. Test delayed reads, offline transitions, rapid reopen, repeated clicks and hidden tabs. Do not impose the local UI budget on provider execution or certify it with mocked financial success. Funding latency still consumes the original 90-second window.
+
+Recovery export belongs in explicit setup/recovery and destructive-cleanup safeguards; it must not add a download or confirmation at every Start, chest open or claim.
+
 ### Model recovery as a financial operation
 
 Maintain separate eligibility, submission, finalization and evidence states. Reserve before signing/submission and durably persist material before each irreversible provider call. A local UI acceptance or toast never establishes a terminal result. Resume only the original signed submission/finalization where supported; reconcile exact original inputs and outputs first. Missing receipts retain uncertainty and block conflicting spends.
@@ -67,6 +91,48 @@ The acceptance matrix covers Signet and Mutinynet independently: fund/claim, rej
 
 ## Risks / Trade-offs
 
+### Bounded BIS acceptance and stop conditions
+
+The user approved freezing this pass on 2026-10-21. No new feature, onboarding,
+dependency upgrade, server-wallet adoption, game import or release belongs to
+this milestone. Preserve existing servers, wallet storage and concurrent edits.
+Existing security, financial and game requirements are not weakened by the
+smaller immediate work boundary.
+
+1. Inventory each case for Signet browser validation and both Mutinynet modes.
+   Reuse exact matching receipts, artifact identity and test evidence. Record
+   deterministic safeguards separately from live operator behavior.
+2. Verify session cancellation, duplicate/competing operations, identity/network
+   changes, insufficient funds, asset preservation and creation-disable recovery.
+   Fix and rerun reproducible BIS defects only. Unsupported cases stay explicit.
+3. Allow at most one new funded attempt per missing case/configuration. Observe
+   at most 120 seconds, then perform one reconciliation of the original operation.
+   Unknown outcomes retain journals/reservations and stop competing spends.
+   These runner limits do not cancel a submitted financial operation or promise
+   a network completion time. Later original-operation recovery is a separate
+   safety action, never a replacement funding attempt.
+4. Do not retry the existing generic-code-13 co-signer negative probes or remote
+   admission/delayed-finalization proof. Reopen only after new operator diagnostics
+   or a supported observable admission interface. Record missing evidence and its
+   effect on qualification. The isolated VM cannot substitute for remote proof.
+5. Review consent, public DTO/log secrecy, dependency risks and host CSP without
+   adopting unrelated architecture. Missing deployed-host protections remain
+   blockers, not a reason to claim browser signing isolation.
+6. Measure BIS/Admin local acknowledgement/navigation on a named reference setup,
+   cold and warm, including slow/offline conditions. Retain the 100 ms p95 local
+   target and report provider time separately. The game chest target remains a
+   later game acceptance gate, not a BIS measurement claim.
+7. After the final fix, run the full BIS suite, typecheck and builds. Deliver a
+   matrix with passed/failed/blocked/unperformed statuses, exact evidence links,
+   outstanding reservations, blocker owners and concrete reopening conditions.
+
+Stop the bounded pass after its checks have a documented disposition. Stop a
+specific upstream-blocked check immediately rather than rerunning it. A check
+with missing evidence is not passed. Production-qualified creation stays gated
+by the existing qualification requirement; Admin test availability is not a
+claim of production enforcement. The game runtime, vendored archive, lockfile
+and import/release workflow remain untouched. Do not archive C094 as complete.
+
 - Exact expiry may be unsupported by current cooperative scripts. The proof blocks production qualification before exposing replacement funding.
 - Local compromise controls both wallets. Use restrictive content policy, dependency review, minimal signing permissions and explicit local-custody disclosure; do not claim isolation that same-origin code lacks.
 - Browser loss can strand recovery material. Require encrypted export/restore and verifiable targeted recovery; mnemonic-only recovery is not assumed sufficient.
@@ -77,7 +143,7 @@ The acceptance matrix covers Signet and Mutinynet independently: fund/claim, rej
 ## Migration Plan
 
 1. Record baseline artifact hashes and sanitized evidence; retain all legacy descriptors and unresolved operations.
-2. Complete the enforcement proof and upstream handoff. Failure blocks replacement funding, not legacy reads or recovery.
+2. Complete the enforcement proof and upstream handoff. Failure blocks production-qualified replacement rollout, not the approved disclosed browser-policy testing or original-contract reads/recovery. Stop already inconclusive remote probes under the frozen BIS acceptance rules.
 3. Implement and verify the upstream versioned format under its separately scoped change. Never rewrite the script or deadline of an already funded legacy output. Label legacy timing as application-enforced.
 4. Export/import a verified BIS package using established workflows, preserve matched full game/BIS versions for a coordinated release, then adapt the game through public contracts only.
 5. Complete deterministic, package, build and protected live acceptance, including real game UI claim/reject. Review the result before any production qualification.
@@ -85,4 +151,16 @@ The acceptance matrix covers Signet and Mutinynet independently: fund/claim, rej
 
 ## Open Questions
 
-The proof will determine supported enforcement mechanism, authoritative clock precision and executable acceptance point. These are bounded technical deliverables with a stop condition, not approved changes to the user experience. No server or treasury architecture decision remains open. Hosting, new networks, mainnet, and replacement guarantees after an infeasible proof require a separate decision and are outside implementation scope.
+The separately authorized BIS phase on 2026-10-22 supersedes the previous
+pass's prohibition on targeted dependency fixes and new acceptance fixtures.
+Apply CSP at the BIS host entry boundary, including built static HTML; preserve
+required wallet/operator connections and same-origin resources without allowing
+arbitrary inline JavaScript. Upgrade only the affected documentation dependency
+chain, preserving unrelated lockfile changes. Verify in an independent browser
+and protected real-wallet fixtures. Do not restart existing shared servers or
+alter wallet storage merely to load a configuration change; use a scoped test
+server if needed. Missing remote rejection/admission evidence still blocks the
+corresponding claim, not the separately testable BIS hardening work. The game
+runtime/vendor/import remain out of scope.
+
+Whole-second precision rounded down is approved. The proof must still determine the supported enforcement mechanism, clock authority and executable admission/finalization boundary. These are bounded technical deliverables with a stop condition. No server or treasury architecture decision remains open. Hosting, new networks, mainnet, and replacement guarantees after an infeasible proof require a separate decision and are outside implementation scope.

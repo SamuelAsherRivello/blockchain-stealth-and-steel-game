@@ -42,6 +42,8 @@ export function consume(bis: IBis, mount: HTMLElement, request: BisContractReque
   void bis.readyAsync();
   bis.openAccountDialog();
   const snapshot: BisSnapshot = bis.getSnapshot();
+  const gameSigningSource: 'manual' | 'server' | undefined = snapshot.account.gameWallet?.source;
+  void gameSigningSource;
   const continuation = bis.beginContinuation();
   void bis.payContinuationAsync(continuation.workflowId);
   void bis.checkContinuationAsync(continuation.workflowId);

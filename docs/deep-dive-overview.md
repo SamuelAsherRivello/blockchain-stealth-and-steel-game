@@ -115,3 +115,5 @@ Learn more about the five callbacks, effect receipts, stale-result protection, s
 ## Want More Detail?
 
 To learn more about the technical details see the [Deep Dive Details](deep-dive-details.md).
+
+The imported local candidate is BIS/game 0.0.27, recorded in [artifact provenance](../stealth-steel/vendor/BIS_PROVENANCE.md). Treasure funding requires explicit approval for one original deadline rounded down to at most 90 seconds. Signing custody and network enforcement are separate concerns. The [treasure guide](treasure-lto.md) records browser-policy limits, portable recovery and outstanding live/deployment checks.

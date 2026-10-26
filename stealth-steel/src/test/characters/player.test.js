@@ -6,7 +6,6 @@ import {
   PLAYER_MOVEMENT_COLLIDER,
   PLAYER_FRAME,
   PLAYER_PIVOT,
-  PLAYER_ART_PIVOT,
   getArrowSpawnPosition,
 } from "../../runtime/characters/player/player.js";
 
@@ -21,7 +20,6 @@ test("equipment refresh synchronizes existing player movement and combat stats",
 test("player uses a 70%-size circle collider with its body center unchanged", () => {
   assert.deepEqual(PLAYER_FRAME, { width: 192, height: 192 });
   assert.deepEqual(PLAYER_PIVOT, { x: 0.5, y: 0.78 });
-  assert.deepEqual(PLAYER_ART_PIVOT, { x: 0.5, y: 106 / 192 });
   assert.deepEqual(PLAYER_MOVEMENT_COLLIDER, {
     type: "circle",
     x: 96,

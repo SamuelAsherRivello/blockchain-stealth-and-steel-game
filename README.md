@@ -1,7 +1,7 @@
 <!-- AI: Customize this README from the repository's actual files, configuration, and user instructions. Preserve the section order, heading styles, and concise format unless asked to change them. Replace placeholders only with verified information; do not invent features, commands, URLs, contributors, or deployment behavior. Use TypeScript terminology for BIS's public integration boundary and distinguish the game's JavaScript runtime. Keep these instructions hidden as HTML comments. -->
 <!-- AI: Preserve the creator banner unless a replacement is requested. Update its relative path if assets move and verify the file exists with matching filename capitalization. -->
 <p>
-<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/docs/samuel-asher-rivello-banner.png?v=20261010" alt="Samuel Asher Rivello" width="600" /><br /><br />
+<img src="https://raw.githubusercontent.com/SamuelAsherRivello/blockchain-integration-service/main/BIS/documentation/samuel-asher-rivello-banner.png" alt="Samuel Asher Rivello" width="600" /><br /><br />
 </p>
 
 # YouTube
@@ -9,6 +9,8 @@
 <p>
 <a href="https://www.youtube.com/watch?v=-hZ7I68h7BI"><img src="docs/marketing/youtube-bitcoin-for-game-dev.png" alt="Watch the Bitcoin for Game Dev video on YouTube" width="600" /></a>
 </p>
+
+➡️ Bitcoin For Game Development — [https://bitcoingamedevelopment.com/](https://bitcoingamedevelopment.com/)
 
 # Stealth and Steel
 
@@ -88,6 +90,7 @@ WebGPU support. Clone or download this repository and run commands from its root
 
 <!-- AI: Use the actual local launch command and refer to the printed URL when the port can vary. Avoid repeating completed setup steps. -->
 1. Run `npm run dev` to launch the local development server with hot reload.
+   The game uses fixed port **5176**. BIS reserves **5174** and its faucet API reserves **5190**. Repeated starts reuse the healthy game server under a shared startup lock. Occupied or unhealthy ports require explicit resolution, not automatic fallback or termination. Isolated checks use `npm run dev -- --isolated --port <test-port>` and do not replace the shared preview or migrate wallet storage.
 2. Open the URL printed by Vite.
 
 Use `npm run preview` to serve the production bundle locally after building it.
@@ -98,14 +101,18 @@ links, screenshot, relative-path, and release-metadata checks.
 
 <!-- AI: Describe the checked-in release workflow accurately. Distinguish builds, tags, releases, and deployment; documentation edits do not authorize publishing or changing Git history. -->
 1. Release BIS first and verify its Admin and Marketplace Pages deployment.
-2. Import that exact verified BIS archive, and set the game to the same complete
-   version in `package.json`, the lockfile and release metadata. Run the package
-   verifier, real BIS contract checker, full tests, publishing checks and build.
-3. Commit and push the intended game changes to `main`. The independent
-   [Deploy game Pages](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/deploy-pages.yml)
-   workflow publishes the single stable game route listed under Live Demo.
-   Verify the exact commit's successful deployment and both online version
-   identities. No tag, GitHub Release or manual dispatch is required.
+2. Import that exact verified BIS archive and keep `version.txt`,
+   `package.json`, the lockfile, and release metadata aligned to the same
+   complete version. Run the package verifier, real BIS contract checker, full
+   tests, publishing checks, and build.
+3. Commit and push the intended game changes to `main`. Manually run
+   [Release game](https://github.com/SamuelAsherRivello/blockchain-stealth-and-steel-game/actions/workflows/release.yml)
+   on `main`. The workflow derives the next patch release, creates the matching
+   tag and immutable browser asset, and publishes the versioned Pages build.
+4. Wait for the workflow to succeed and verify the tag, GitHub Release asset,
+   live game, and Pages deployment URL. If publication failed after the tag was
+   pushed, rerun the same workflow on `main` with its `retry_tag` input set to
+   that incomplete tag.
 
 <!-- AI: Keep this release section brief and consistent with the checked-in workflow. -->
 

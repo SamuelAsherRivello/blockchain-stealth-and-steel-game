@@ -41,7 +41,7 @@ test('completion snapshot renders exact level/final bodies and action gating',()
 test('flow snapshots HUD and late initialization cannot attach to a disposed screen',async()=>{
   let resolve,begins=0,snapshot,shows=0;
   const ui={setCompletion:v=>snapshot=v,show:()=>shows++,setState:()=>{throw Error('late UI write');}};
-  const flow=createLevelReward({ui,progress:{current:2,total:2,hasNext:false},gold:{collected:42,total:99},accountHost:{readyAsync:()=>new Promise(r=>resolve=r)}});
+  const flow=createLevelReward({ui,progress:{current:2,total:3,hasNext:true},gold:{collected:42,total:99},accountHost:{readyAsync:()=>new Promise(r=>resolve=r)}});
   flow.show();flow.show();flow.dispose();resolve({beginReward:()=>begins++});await new Promise(r=>setTimeout(r,0));
   assert.equal(shows,1);assert.equal(snapshot.collected,42);assert.equal(snapshot.total,99);assert.equal(begins,0);
 });

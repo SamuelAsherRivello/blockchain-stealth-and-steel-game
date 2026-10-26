@@ -45,3 +45,25 @@ Once revealed, the chest SHALL remain rendered when offer status becomes pending
 #### Scenario: Start was skipped before wallet readiness
 - **WHEN** account readiness appears after a Start that did not create an offer
 - **THEN** readiness alone does not create a new offer or reveal a funded chest
+
+## ADDED Requirements
+
+### Requirement: Chest presentation stays stable during inspection
+An eligible chest window SHALL open from current scoped presentation without awaiting a provider response. Its layout, artwork and focus SHALL remain stable through pending, unavailable and expired states. Back and Escape SHALL remain usable during inspection or actions, and closing SHALL NOT cancel submitted financial work.
+
+#### Scenario: Reopen during a slow inspection
+- **WHEN** the player closes and reopens the same chest while inspection is pending
+- **THEN** the window opens immediately and adopts the existing offer-scoped request
+- **AND** a response for the old window cannot close the new one
+
+### Requirement: Loading feedback is bounded and nonblocking
+The window SHALL acknowledge input immediately, delay dedicated loading indicators until 300 ms, and explain a delayed result after ten seconds. Status checking SHALL coalesce matching inspections and SHALL NOT submit another financial action. Countdown rendering SHALL NOT request network data.
+
+#### Scenario: Inspection completes quickly
+- **WHEN** inspection finishes before 300 ms
+- **THEN** no transient loading indicator flashes
+
+#### Scenario: Inspection remains unresolved
+- **WHEN** a result remains unknown for ten seconds
+- **THEN** the player sees delayed-status feedback with usable Back and safe status checking
+- **AND** the fixed offer deadline and original financial operation remain unchanged

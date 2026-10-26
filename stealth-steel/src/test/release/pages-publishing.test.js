@@ -20,7 +20,7 @@ test("the app uses its GitHub Pages repository path as the deployment URL base",
   assert.equal(config.base, "/blockchain-stealth-and-steel-game/");
 });
 
-test("main pushes independently deploy only the verified stable game", async () => {
+test("main pushes deploy the stable game and manual releases publish versioned Pages", async () => {
   const workflow = await read(".github/workflows/deploy-pages.yml");
   assert.match(workflow, /push:\s*\n\s+branches: \[main\]/);
   assert.match(workflow, /contents: read/);
@@ -32,16 +32,28 @@ test("main pushes independently deploy only the verified stable game", async () 
   assert.match(workflow, /path: dist/);
   assert.match(workflow, /uses: actions\/deploy-pages@v4/);
   assert.doesNotMatch(workflow, /workflow_dispatch|git push|git tag|gh release|GAME_RELEASE_TAG|blockchain-integration-service|release-cli/);
-  await assert.rejects(read(".github/workflows/release.yml"), /ENOENT/);
+  const release = await read(".github/workflows/release.yml");
+  assert.match(release, /workflow_dispatch:/);
+  assert.match(release, /run: node stealth-steel\/tools\/release\/release-cli\.mjs prepare/);
+  assert.match(release, /run: npm ci/);
+  assert.match(release, /run: npm run test:publish/);
+  assert.match(release, /run: npm test/);
+  assert.match(release, /run: npm run typecheck:bis-contract/);
+  assert.match(release, /run: npm run build/);
+  assert.match(release, /git push --atomic/);
+  assert.match(release, /gh release create/);
+  assert.match(release, /uses: actions\/deploy-pages@v4/);
 });
 
-test("README documents BIS-first full-version alignment and one stable game link", async () => {
+test("README documents BIS-first full-version alignment and manual release publication", async () => {
   const readme = await read("README.md");
   const section = readme.match(/### 🛠 Release Version\r?\n([\s\S]*?)## Project Overview/)?.[1] ?? "";
   assert.match(section, /Release BIS first/);
-  assert.match(section, /same complete\s+version/);
-  assert.match(section, /actions\/workflows\/deploy-pages\.yml/);
-  assert.match(section, /No tag, GitHub Release or manual dispatch is required/);
-  assert.doesNotMatch(section, /Manually run|retry_tag|releases\/v|latest\x60 link/);
+  assert.match(section, /same\s+complete\s+version/);
+  assert.match(section, /actions\/workflows\/release\.yml/);
+  assert.match(section, /Manually run/);
+  assert.match(section, /GitHub Release asset/);
+  assert.match(section, /retry_tag/);
+  assert.doesNotMatch(section, /v\d+\.\d+\.\d+/);
   assert.equal(readme.split(`](${demoUrl})`).length - 1, 1);
 });

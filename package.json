@@ -1,11 +1,11 @@
 {
   "name": "babylon-lite-stealth-grid",
   "private": true,
-  "version": "0.0.23",
+  "version": "0.0.27",
   "type": "module",
   "scripts": {
     "openspec": "node openspec/cli.mjs",
-    "dev": "vite",
+    "dev": "node stealth-steel/tools/dev/project-run.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node stealth-steel/src/test/run-tests.mjs",
@@ -13,15 +13,15 @@
     "typecheck:bis-contract": "tsc --project tsconfig.bis-contract.json"
   },
   "devDependencies": {
-    "playwright": "^1.64.0",
-    "typescript": "7.0.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "playwright": "^1.64.0",
+    "typescript": "7.0.2",
     "vite": "^8.3.4"
   },
   "dependencies": {
     "@babylonjs/lite": "^1.34.0",
-    "@bis/integration": "file:stealth-steel/vendor/bis-integration-0.0.23.tgz",
+    "@bis/integration": "file:stealth-steel/vendor/bis-integration-0.0.27.tgz",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   }

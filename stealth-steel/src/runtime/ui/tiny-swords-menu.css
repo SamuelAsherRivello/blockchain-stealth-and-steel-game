@@ -777,6 +777,14 @@ menu-button-label {
   min-height: 1.6em;
   margin: 0;
 }
+.ui-layer .treasure-content > .treasure-feedback {
+  min-height: 1.6em;
+  margin: 0;
+}
+.ui-layer .treasure-content > .treasure-feedback[hidden] {
+  display: block;
+  visibility: hidden;
+}
 .settings-reset .menu-action-art i,
 .developer-settings-button .menu-action-art i {
   filter: hue-rotate(175deg) saturate(2) brightness(0.8);

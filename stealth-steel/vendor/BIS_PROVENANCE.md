@@ -1,3 +1,27 @@
+# Verified local 0.0.27 candidate (2026-10-26)
+
+- Package: `@bis/integration` 0.0.27; artifact: `bis-integration-0.0.27.tgz`.
+- SHA-256: `f441f9e2bba7f9f6d510c00405b90c0dbb7bdc25adfac0c69bcfe28533bb914c`.
+- Source commit: `53e80fe9df0d7179286d003fcede28ca28768a5d`; sourceDirty: true.
+- Inventory: 201 packed files in [bis-package-inventory.json](bis-package-inventory.json). All archive-member and installed-file hashes match the exact tarball after npm ci --ignore-scripts. Consumer verification passes 1,181/1,181 full game tests on Node 24.21.0, public contract types including the new signing-source projection, all 10 publishing checks and production build. Managed dev and production guest Start, Settings and Account show BIS: v0.0.27. Synthetic desktop/mobile consent checks verify manual/server wording and safe dismissal without financial calls. The install reports zero vulnerabilities. No wallet operation or publication occurred. Exact funded/deployed qualification remains open.
+- BIS candidate verification: host-context `npm test` passed 1,610/1,610, `npm run check:release -- --previous-version 0.0.26` passed, and `npm run build` passed after the 0.0.27 metadata update. The package source code and focused facade/typecheck validation were included in that run. This local dirty candidate is not a public release.
+
+### Game-consumable public API changes
+
+- `BisWalletReference` adds optional `source` (`manual` or `server`) when the signing origin is known. Omitted source remains unknown; consumers must not infer browser-local signing.
+- `IBis` exposes encrypted contract recovery export/import methods. Import is separate from transaction submission.
+
+# Verified local 0.0.26 snapshot (2026-10-26)
+
+- Package: `@bis/integration` 0.0.26; artifact: `bis-integration-0.0.26.tgz`.
+- SHA-256: `44de29908cefd8d80d5e4260770902ade0d85b11419098209f2b6c9c495dbfb9`.
+- Source commit: `53e80fe9df0d7179286d003fcede28ca28768a5d`; sourceDirty: true.
+- Inventory: 201 packed files in [bis-package-inventory.json](bis-package-inventory.json), UTF-8 without BOM. Archive hash, package identity, path containment and all installed-file hashes pass; `npm ci --ignore-scripts` resolves the exact vendored 0.0.26 package with zero reported vulnerabilities.
+- BIS source verification: release check, 1,608/1,608 tests, typecheck, root build, and BIS server deployment build pass for this local source snapshot. Consumer verification: package verifier, exact lockfile install, 1,174/1,174 full tests, contract typecheck, 10 publishing checks, production build, and guest browser check pass. The local same-origin proxy reaches BIS identity and correctly reports the local signer disabled; the guest UI remains in manual/guest mode. No wallet action occurred. Deployed-host verification and publication remain open.
+
+### Game-consumable public API changes
+
+- The public API adds server configuration and validation options/types while retaining the existing integration entry points. The game uses the exported `testNetwork`/`TestNetwork` identity to validate the exact operator environment. Wallet credentials, transaction journals, and signed recovery material are not included in the vendored artifact.
 # Verified local 0.0.23 snapshot (2026-10-13)
 
 - Package: `@bis/integration` 0.0.23; artifact: `bis-integration-0.0.23.tgz`.

@@ -1,6 +1,8 @@
 // Host gameplay policy. BIS knows contracts; this module owns treasure/session semantics.
+import {testNetwork} from '@bis/integration';
+
 export function createTreasureSession({ getSnapshot, offers, now = Date.now, newId = () => crypto.randomUUID() }) {
-  let session, generation = 0, reading = false, acting = false;
+  let session, generation = 0, inspection, acting = false;
   const listeners = new Set();
   const publish = () => listeners.forEach(listener => listener());
   const wallets = () => {
@@ -8,67 +10,114 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
     return {player:snapshot?.account.playerWallet,game:snapshot?.account.gameWallet,available:snapshot?.capabilities.contracts.available??false};
   };
   const walletKey = () => { const {player,game}=wallets();return JSON.stringify([player?.profileId,player?.network??'signet',game?.profileId,game?.network??'signet']); };
-  const matches = contract => session && contract.type === 'lto' && contract.purpose === 'treasureLTO' &&
-    contract.sessionId === session.id && contract.hostReference === session.reference &&
-    contract.scope.playerId === session.playerId && contract.scope.gameId === session.gameId;
+  const gameSource = () => ['manual','server'].includes(wallets().game?.source) ? wallets().game.source : undefined;
+  const matches = contract => {
+    if (!session || !contract || contract.type !== 'lto' || contract.purpose !== 'treasureLTO' ||
+      contract.sessionId !== session.id || contract.hostReference !== session.reference ||
+      contract.amountSats !== 1000 || !Number.isSafeInteger(contract.startedAt) ||
+      !Number.isSafeInteger(contract.expiresAt) ||
+      contract.expiresAt !== (Math.floor(contract.startedAt / 1000) + 90) * 1000) return false;
+    const {player,game}=wallets(), scope=contract.scope;
+    const network=player?.network??'signet', gameNetwork=game?.network??'signet';
+    if (!scope || !player?.profileId || !game?.profileId || !['signet','mutinynet'].includes(network) ||
+      player.profileId !== session.playerId || game.profileId !== session.gameId || network !== gameNetwork || scope.network !== network ||
+      scope.operator !== testNetwork(network).operator || scope.playerId !== session.playerId ||
+      scope.gameId !== session.gameId || scope.exclusivityKey !== 'treasure') return false;
+    return !session.contractId || contract.id === session.contractId;
+  };
   function getState() {
     if (!session) return { status: 'no-offer', remainingSeconds: 0 };
     const remainingSeconds = Math.max(0, Math.ceil((session.expiresAt - now()) / 1000));
     let status = session.status;
-    if (session.offered && !remainingSeconds && !['claimed', 'rejected'].includes(status)) status = 'expired';
+    if(status==='awaiting-consent'&&!remainingSeconds)status='expired';
+    if (session.offered && !remainingSeconds && !['claimed', 'rejected', 'pending', 'unavailable', 'unverified'].includes(status)) status = 'expired';
     const {player,game}=wallets();
     if (session.playerId !== player?.profileId && status !== 'missing-player') status = 'no-offer';
     if(status!=='missing-player' && (session.gameId!==game?.profileId || (session.walletKey && session.walletKey!==walletKey())))status='no-offer';
-    return { status, remainingSeconds, sessionId: session.id, contractId: session.contractId };
+    if(status==='awaiting-consent' && session.gameSource!==gameSource())status='no-offer';
+    return { status, remainingSeconds, sessionId: session.id, contractId: session.contractId,
+      ...(status==='awaiting-consent'?{fundingConsent:{sessionId:session.id,network:session.network,playerId:session.playerId,
+        gameId:session.gameId,gameSource:session.gameSource,amountSats:1000,startedAt:session.startedAt,expiresAt:session.expiresAt}}:{}) };
   }
   function end() {
     generation++;
-    if (session) void offers.endSession(session.id).catch(() => {});
+    if (session&&(session.fundingStarted||session.contractId||session.offered||session.status==='unverified')) void offers.endSession(session.id).catch(() => {});
     session = undefined; publish();
   }
   function updateContracts(result) {
-    if(!session || !session.playerId)return;
+    if(!session || !session.playerId || session.fundingStarted===false)return;
     if(result.status!=='ready'){session.status='unavailable';publish();return;}
     const contract=result.contracts.find(matches);
-    if(!contract || (session.contractId&&contract.id!==session.contractId))return;
-    session.contractId=contract.id;session.offered=true;
+    if(!contract)return;
+    session.contractId=contract.id;session.startedAt=contract.startedAt;session.expiresAt=contract.expiresAt;
+    session.walletKey=walletKey();session.offered=true;
+    const unresolvedClaim=session.status==='pending'||(contract.operationKind==='claim'&&['claiming','unknown'].includes(contract.financial));
     session.status=contract.financial==='claimed'?'claimed':contract.financial==='refunded'?(session.status!=='rejected'&&now()>=session.expiresAt?'expired':'rejected'):contract.eligibility==='ended'?'rejected':
-      contract.financial==='failed'?'no-offer':contract.canClaim?'active':contract.financial==='funding'?'preparing':'pending';
+      contract.financial==='failed'?'no-offer':unresolvedClaim?'pending':contract.canClaim?'active':contract.financial==='funding'?'preparing':'pending';
     publish();
   }
   async function inspect() {
-    if (!session || reading || !session.playerId) return;
-    const current = generation;
-    reading = true;
-    try {
-      const result = await offers.checkContractsAsync({purpose:'treasureLTO',sessionId:session.id,hostReference:session.reference,gameId:session.gameId,includeResolved:true});
-      if (current !== generation || !session) return;
-      updateContracts(result);
-    } catch { if (current === generation && session) { session.status = 'unavailable'; publish(); } }
-    finally { reading = false; }
+    if (!session || !session.playerId || session.fundingStarted===false) return;
+    const currentSession = session, currentGeneration = generation, currentWalletKey = walletKey();
+    const key = JSON.stringify([currentSession.id, currentGeneration, currentWalletKey]);
+    if (inspection?.key === key) return inspection.promise;
+    const promise = Promise.resolve().then(async () => {
+      try {
+        const result = await offers.checkContractsAsync({purpose:'treasureLTO',sessionId:currentSession.id,
+          hostReference:currentSession.reference,gameId:currentSession.gameId,includeResolved:true});
+        if (currentGeneration !== generation || session !== currentSession || walletKey() !== currentWalletKey) return;
+        updateContracts(result);
+      } catch {
+        if (currentGeneration === generation && session === currentSession && walletKey() === currentWalletKey) {
+          session.status = 'unavailable'; publish();
+        }
+      }
+    });
+    inspection = {key, promise};
+    try { return await promise; }
+    finally { if (inspection?.promise === promise) inspection = undefined; }
   }
   return {
     getState, subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
     snapshot() {return session?{...session}:undefined;},
     restore(saved) {
       if(session||!saved||typeof saved.id!=='string'||saved.reference!==`treasure:${saved.id}`||!Number.isSafeInteger(saved.expiresAt)||typeof saved.status!=='string')return false;
-      session={id:saved.id,reference:saved.reference,expiresAt:saved.expiresAt,walletKey:typeof saved.walletKey==='string'?saved.walletKey:JSON.stringify([saved.playerId,'signet',saved.gameId,'signet']),status:saved.status,offered:saved.offered===true,
+      session={id:saved.id,reference:saved.reference,expiresAt:0,walletKey:typeof saved.walletKey==='string'?saved.walletKey:JSON.stringify([saved.playerId,'signet',saved.gameId,'signet']),status:'unverified',offered:false,
         playerId:typeof saved.playerId==='string'?saved.playerId:undefined,gameId:typeof saved.gameId==='string'?saved.gameId:undefined,contractId:typeof saved.contractId==='string'?saved.contractId:undefined};
       generation++;publish();return true;
     },
     start() {
-      end(); const current = generation, startedAt = now();
+      end(); const startedAt = now();
       const {player,game,available}=wallets(),id=newId();
-      session = {id,reference:`treasure:${id}`,playerId:player?.profileId,gameId:game?.profileId,walletKey:walletKey(),expiresAt:startedAt+90000,offered:false,
-        status:!player?.profileId?'missing-player':!available?'no-offer':'preparing'};
+      const expiresAt=(Math.floor(startedAt/1000)+90)*1000;
+      const network=player?.network??'signet';
+      session = {id,reference:`treasure:${id}`,playerId:player?.profileId,gameId:game?.profileId,gameSource:gameSource(),network,walletKey:walletKey(),startedAt,expiresAt,offered:false,fundingStarted:false,
+        status:!player?.profileId?'missing-player':!available||!game?.profileId||network!==(game.network??'signet')||!['signet','mutinynet'].includes(network)?'no-offer':'awaiting-consent'};
       publish();
-      if (session.status !== 'preparing') return;
-      void offers.start({offerSessionId:id,hostReference:session.reference,purpose:'treasureLTO',exclusivityKey:'treasure',amountSats:1000,startedAt,expiresAt:session.expiresAt}).then(result => {
-        if(current!==generation || !session) return;
+    },
+    acceptFundingConsent(sessionId) {
+      if(!session||session.id!==sessionId||session.status!=='awaiting-consent'||getState().status==='no-offer'||!wallets().available)return {status:'unavailable'};
+      if(now()>=session.expiresAt){session.status='expired';publish();return {status:'too-late'};}
+      const original=session,current=generation;
+      session.status='preparing';publish();
+      void Promise.resolve().then(()=>{
+        if(current!==generation||session!==original||walletKey()!==original.walletKey||gameSource()!==original.gameSource||!wallets().available||now()>=original.expiresAt){
+          if(session===original){session.status='no-offer';publish();}return {status:'unavailable'};
+        }
+        original.fundingStarted=true;
+        return offers.start({offerSessionId:original.id,hostReference:original.reference,purpose:'treasureLTO',exclusivityKey:'treasure',amountSats:1000,
+          startedAt:original.startedAt,expiresAt:original.expiresAt});
+      }).then(result => {
+        if(current!==generation || session!==original) return;
         if(result.contract && matches(result.contract)) { session.contractId=result.contract.id; session.offered=true; }
         if(result.status==='unavailable'||result.status==='not-submitted')session.status='no-offer';
         publish(); void inspect();
-      }).catch(() => { if(current===generation && session) {session.status='unavailable';publish();} });
+      }).catch(() => { if(current===generation && session===original) {session.status='unavailable';publish();} });
+      return {status:'accepted'};
+    },
+    declineFundingConsent(sessionId) {
+      if(!session||session.id!==sessionId||session.status!=='awaiting-consent')return {status:'unavailable'};
+      session.status='no-offer';publish();return {status:'declined'};
     },
     inspect, end, updateContracts,
     notify(snapshot){updateContracts(snapshot.contracts);publish();},
@@ -90,7 +139,7 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
 }
 
 export function treasureMessage(status) {
-  return ({active:'Limited Time Offer: Treasure found — Claim 1,000 sats?',preparing:'Treasure is being prepared',expired:"You found a treasure but it's expired",
+  return ({active:'Limited Time Offer: Treasure found — Claim 1,000 sats?','awaiting-consent':'Treasure funding needs your approval',unverified:'Verifying the original treasure offer',preparing:'Treasure is being prepared',expired:"You found a treasure but it's expired",
     'missing-player':'Connect an account to receive treasure offers','no-offer':'No treasure offer available',unavailable:'Treasure status is unavailable',
     pending:'Treasure transaction is pending',claimed:'Reward claimed',rejected:'Offer ended'})[status] ?? 'No treasure offer available';
 }
