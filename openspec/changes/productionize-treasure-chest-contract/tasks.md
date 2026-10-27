@@ -752,3 +752,16 @@ the exact managed game UI can restore the registered pair, reconcile its
 journals, and produce real Signet Claim/Reject receipts. The stable release is
 published, but that publication must not be described as completed financial
 qualification.
+
+2026-10-27 post-release Pages preservation: the first ordinary push deployment
+`40530635530` succeeded but uploaded only the stable `dist`, which removed the
+immutable `/releases/v0.0.29/` route. The deploy workflow now downloads the
+published current browser asset, stages all published release archives through
+the release assembler, and merges `/releases/`, `/latest/`, and `.nojekyll`
+into the stable site while retaining the root app. Publishing contracts pass
+10/10. Follow-up Deploy Pages run `40531175273` succeeded after full suite,
+contract checks, build, release-route restoration, and deployment. The stable
+root and metadata, `/latest/`, `/releases/v0.0.29/`, and its `environment.json`
+all return HTTP 200; stable and versioned metadata both report `v0.0.29`.
+T042 is complete for the deployed release. C094 remains incomplete at T038 for
+funded UI Claim/Reject acceptance as documented above.
