@@ -1,6 +1,6 @@
 # LTO treasure integration
 
-Current local candidate: BIS/game 0.0.27. This imported snapshot is not production-qualified or deployed. The exact archive, hash, dirty-source provenance and history are in [provenance](../stealth-steel/vendor/BIS_PROVENANCE.md). Read [Deep Dive Overview](deep-dive-overview.md) for the three-part boundary and [Deep Dive Details](deep-dive-details.md) for the complete workflow reference.
+Current local candidate: BIS/game 0.0.28. This imported snapshot is not production-qualified or deployed. The exact archive, hash, dirty-source provenance and history are in [provenance](../stealth-steel/vendor/BIS_PROVENANCE.md). Read [Deep Dive Overview](deep-dive-overview.md) for the three-part boundary and [Deep Dive Details](deep-dive-details.md) for the complete workflow reference.
 
 ## Setup and availability
 
@@ -40,7 +40,7 @@ AI-created game URLs must contain both `muteMusic=true&muteSFX=true`; use fresh 
 
 ## Enforcement, recovery and candidate limits
 
-Release 1 game offers use disclosed Signet Browser validation, which a modified client can bypass. The game exposes no signing-mode choice. Mutinynet mode selection remains in Admin for controlled testing, with Arkade co-signer as the default and Browser validation as an explicit option; the game client does not create new Mutinynet offers in this release. A failed or unknown submission never authorizes replacement-mode funding. Real contract outputs and network receipts determine financial results. Local UI state cannot confirm payment. See [C096](../openspec/changes/qualify-treasure-chest-both-networks/proposal.md) for the separate two-network qualification and B2 recovery follow-up.
+Release 1 game offers use disclosed Signet Browser validation, which a modified client can bypass. The game exposes no signing-mode choice. Mutinynet mode selection remains in Admin for controlled testing, with Arkade co-signer as the default and Browser validation as an explicit option; the game client does not create new Mutinynet offers in this release. A failed or unknown submission never authorizes replacement-mode funding. Real contract outputs and network receipts determine financial results. Local UI state cannot confirm payment. See the [C094 acceptance handoff](../openspec/changes/productionize-treasure-chest-contract/acceptance-handoff-2026-10-26.md) for the Signet release scope and recorded live blockers; two-network qualification and B2 recovery remain separate follow-up work.
 
 Open Settings, Account and the BIS contract controls for original-contract recovery. BIS owns password-encrypted portable recovery export/import, reservations and journals. Imported recovery requires verification before actions become available. Preserve original requests and reconcile unknown outcomes before another spend. Browser closure does not guarantee monitoring or recovery. Batch expiry, renewal and unilateral exit remain SDK/operator constraints. Portable export cannot guarantee continuous monitoring, cheap exit or recovery from every batch failure.
 
