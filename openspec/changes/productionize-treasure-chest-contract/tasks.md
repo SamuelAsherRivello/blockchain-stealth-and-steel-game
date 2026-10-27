@@ -715,3 +715,18 @@ unverified. No competing spend or journal override was attempted. Publish the
 exact 0.0.29 candidate, then use the corrected address path in the registered
 managed browser and reconcile the original application journal before any
 Claim/Reject. T038 remains open; T042 is reopened for v0.0.29 deployment.
+
+2026-10-27 Release workflow run `40526835942` reached the exact 0.0.29
+candidate on `main`. Clean `npm ci`, immutable BIS verification, publishing
+checks, the full game suite, contract typecheck and production build all passed.
+The finalize step exposed a release-tool bug: the Vite Pages plugin had already
+written exact fixed-width metadata, while the release finalizer only accepted a
+placeholder. The finalizer now accepts an already-finalized file only when its
+tag and measured uncompressed size match; wrong tags and sizes still fail.
+Focused release-archive tests pass 3/3, publishing checks pass 10/10, the
+production build reports the expected 0.0.29 metadata, and the release CLI now
+creates the deterministic 322-file browser asset locally (SHA-256
+`d8839e26ec07798b4dd3c6d835e2a99ae100e822515bc17a65f9d90a4eba6ba8`). The
+failed workflow made no tag, release asset or deployment. Commit this fix and
+dispatch the release again; keep T042 open until GitHub reports successful
+publication and the public route serves v0.0.29.

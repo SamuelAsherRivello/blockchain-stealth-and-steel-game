@@ -100,9 +100,11 @@ export async function totalBytes(root) {
 export async function finalizeMetadata(dist, tag) {
   const path = join(dist, 'environment.json');
   const before = await readFile(path, 'utf8');
-  if (before !== metadataText(tag)) throw new Error('Built metadata does not contain the expected tag and size placeholder');
   const total = await totalBytes(dist);
   if (total > 999_999_999_999) throw new Error('Build exceeds twelve-digit size field');
+  const exact = metadataText(tag, String(total).padStart(12, '0'));
+  if (before === exact) return total;
+  if (before !== metadataText(tag)) throw new Error('Built metadata does not contain the expected tag and size placeholder');
   const size = String(total).padStart(12, '0');
   const after = metadataText(tag, size);
   if (after.length !== before.length) throw new Error('Final metadata changes its file length');

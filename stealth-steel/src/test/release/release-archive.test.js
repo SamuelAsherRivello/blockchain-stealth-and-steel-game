@@ -30,7 +30,10 @@ test('fixed-width metadata records the final uncompressed total', async () => fi
   assert.equal(await totalBytes(dist), total);
   assert.deepEqual(JSON.parse(await readFile(join(dist, 'environment.json'), 'utf8')),
     { releaseVersion: 'v0.1.16', downloadSize: String(total).padStart(12, '0') });
-  await assert.rejects(() => finalizeMetadata(dist, 'v0.1.16'), /placeholder/);
+  assert.equal(await finalizeMetadata(dist, 'v0.1.16'), total, 'already-finalized exact metadata is safely idempotent');
+  await assert.rejects(() => finalizeMetadata(dist, 'v0.1.17'), /tag and size placeholder/);
+  await writeFile(join(dist, 'environment.json'), metadataText('v0.1.16', '000000000001'));
+  await assert.rejects(() => finalizeMetadata(dist, 'v0.1.16'), /tag and size placeholder/);
 }));
 
 test('browser ZIP is reproducible and stages current and previous releases with redirects', async () => fixture(async root => {
