@@ -17,6 +17,8 @@ jobs:
   deploy:
     env:
       VITE_BIS_SERVER_URL: https://bis-server-rho.vercel.app/api/bis/
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_WORK: ${{ github.workspace }}/.release-pages-work
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -39,6 +41,19 @@ jobs:
         run: npm run typecheck:bis-contract
       - name: Build stable game and exact release metadata
         run: npm run build
+      - name: Restore immutable release routes into stable Pages site
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_tag="v$(node -p "require('./package.json').version")"
+          mkdir -p "$RELEASE_WORK"
+          gh release download "$release_tag" --pattern 'stealth-and-steel-web-build.zip' --dir "$RELEASE_WORK"
+          RELEASE_TAG="$release_tag" node stealth-steel/tools/release/release-cli.mjs stage
+          cp -a "$RELEASE_WORK/site/releases" dist/releases
+          cp -a "$RELEASE_WORK/site/latest" dist/latest
+          cp "$RELEASE_WORK/site/.nojekyll" dist/.nojekyll
+          test -f "dist/releases/$release_tag/environment.json"
+          test -f dist/latest/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

@@ -30,9 +30,15 @@ test("main pushes deploy the stable game and manual releases publish versioned P
   for(const command of ["npm ci","node stealth-steel/tools/verify-bis-package.mjs","npm run test:publish","npm test","npm run typecheck:bis-contract","npm run build"])assert.ok(workflow.includes("run: "+command),command);
   assert.ok(workflow.indexOf("run: npm test") < workflow.indexOf("run: npm run build"));
   assert.ok(workflow.indexOf("run: npm run build") < workflow.indexOf("actions/upload-pages-artifact"));
+  assert.match(workflow, /name: Restore immutable release routes into stable Pages site/);
+  assert.match(workflow, /gh release download \"\$release_tag\" --pattern 'stealth-and-steel-web-build\.zip'/);
+  assert.match(workflow, /RELEASE_TAG=\"\$release_tag\" node stealth-steel\/tools\/release\/release-cli\.mjs stage/);
+  assert.match(workflow, /cp -a \"\$RELEASE_WORK\/site\/releases\" dist\/releases/);
+  assert.match(workflow, /cp -a \"\$RELEASE_WORK\/site\/latest\" dist\/latest/);
+  assert.ok(workflow.indexOf("release-cli.mjs stage") < workflow.indexOf("actions/upload-pages-artifact"));
   assert.match(workflow, /path: dist/);
   assert.match(workflow, /uses: actions\/deploy-pages@v4/);
-  assert.doesNotMatch(workflow, /workflow_dispatch|git push|git tag|gh release|GAME_RELEASE_TAG|blockchain-integration-service|release-cli/);
+  assert.doesNotMatch(workflow, /workflow_dispatch|git push|git tag|GAME_RELEASE_TAG|blockchain-integration-service/);
   const release = await read(".github/workflows/release.yml");
   assert.match(release, /workflow_dispatch:/);
   assert.match(release, /run: node stealth-steel\/tools\/release\/release-cli\.mjs prepare/);
