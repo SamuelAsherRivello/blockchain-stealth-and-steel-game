@@ -1,0 +1,5 @@
+schema: spec-driven
+created: 2026-10-26
+id: C096
+goal: Complete two-network Treasure enforcement, recovery, lifecycle,
+  performance and rollout evidence after the Signet-only release

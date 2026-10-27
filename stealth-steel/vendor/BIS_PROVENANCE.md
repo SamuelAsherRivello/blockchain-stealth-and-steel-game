@@ -1,15 +1,17 @@
-# Verified local 0.0.28 candidate (2026-10-27)
+# Verified local 0.0.29 candidate (2026-10-27)
 
-- Package: `@bis/integration` 0.0.28; artifact: `bis-integration-0.0.28.tgz`.
-- SHA-256: `6b318fb45a778ac8e136716e30ef63f89e036d65d8abb3ef2ab87f7352f23a46`.
-- BIS source commit: `a9f281cb5565e5bd249d7648f0e725b1cc7ca35b`; sourceDirty: true.
-- Inventory: 201 packed files. Archive and every installed package file match the inventory after lockfile-resolved staging install and consumer overlay. Normal `npm ci` could not unlink one protected Rolldown native binary; the clean install was performed in ignored staging output and overlaid while preserving that binary. The full BIS suite passed 1,716/1,716 on the same source before the package-only 0.0.28 metadata bump; the subsequent cache-corrected revalidation was interrupted after a WebSocket port 24678 collision and is not counted. The 0.0.28 sequential release check, typecheck and production build pass. Game verification passes: package verifier, contract typecheck, focused integration/UI tests 22/22, publishing checks 10/10, full game suite 1,189/1,189, and production build. The managed game shell showed v0.0.28, while Account showed BIS v0.0.27 from the reused server; Account initialization POST returned 404. No wallet/financial action or deployment occurred, and the server was not restarted.
+- Package: `@bis/integration` 0.0.29; artifact: `bis-integration-0.0.29.tgz`.
+- SHA-256: `3617a257a9d1e48084d9e845d9d911747735d3dff9dcd6f4bb9fb0d51d89aff6`.
+- BIS source commit: `0a2b1726877fa6f85917c13bebbe29dbaf4e5d72`. The archive was rebuilt from the committed `BIS/packages/integration` subtree; unrelated BIS checkout changes were excluded.
+- Inventory: 201 packed files. The exact archive hash, package metadata, public JavaScript, stylesheet, source, and all installed-file hashes pass the package verifier. The lockfile SRI matches the archive, and `npm install --ignore-scripts` installed that exact package with zero reported vulnerabilities. A clean `npm ci --ignore-scripts` was not verified: the earlier attempt failed when Windows denied removal of a Rolldown binary held by the running shared server.
+- BIS verification: full suite 1,722/1,722, sequential release check from 0.0.28, typecheck, and production build passed on the BIS candidate checkout. Game verification against this exact archive: package verifier, BIS contract typecheck, focused integration/UI 22/22, Pages checks 10/10, full game suite, and production build passed. Pages metadata was `v0.0.29` with exact uncompressed size `000018829157`; the build reported the existing large-chunk warning.
+- Local code and package acceptance are complete. Deployed managed guest connection and funded Signet Claim/Reject remain open. No live financial operation or Pages deployment is claimed here. Wallet data and storage were not accessed or modified by package import.
 
 ### Game-consumable public API changes
 
-- The read-only BIS account projection exposes the selected network before login, allowing the game to render the correct network state without creating or restoring a wallet.
-- Existing encrypted treasure recovery methods remain available through the public BIS facade; recovery import does not submit a transaction.
-# Verified local 0.0.27 candidate (2026-10-26)
+- Server-backed Game Wallet address projection now uses the read-only identity path after wallet initialization. Rendering public addresses no longer calls wallet address getters that can initialize a signer session. The account role, network checks, and stale-session guards remain in force.
+- Admin treasure recovery preserves the selected validation mode, so an uncertain creation acknowledgement cannot silently resume with a different signing solution.
+# Historical local 0.0.27 candidate (2026-10-26)
 
 - Package: `@bis/integration` 0.0.27; artifact: `bis-integration-0.0.27.tgz`.
 - SHA-256: `f441f9e2bba7f9f6d510c00405b90c0dbb7bdc25adfac0c69bcfe28533bb914c`.

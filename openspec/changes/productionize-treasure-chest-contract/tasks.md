@@ -349,12 +349,12 @@ asset/latency/other-mode/upstream/integrated/game gates or complete T034/T035.
 
 The tasks below use new permanent IDs. Historical open IDs above are preserved in the carryover crosswalk and are not checked off by scope migration.
 
-- [x] 8.1 C094-T037 Verify the exact 0.0.28 candidate locally rejects new Mutinynet offers before funding while preserving existing inspection/recovery; verify the Admin selector retains the approved Signet-only and Mutinynet two-option behavior. The deployed-route portion is verified under T042 after release.
-- [ ] 8.2 C094-T038 Verify the exact imported BIS 0.0.28 package in managed guest and real funded Signet Claim/Reject UI using approved test wallets and exact receipts; no injected financial projections.
+- [x] 8.1 C094-T037 Verify the exact 0.0.29 candidate locally rejects new Mutinynet offers before funding while preserving existing inspection/recovery; verify the Admin selector retains the approved Signet-only and Mutinynet two-option behavior. The deployed-route portion is verified under T042 after release.
+- [ ] 8.2 C094-T038 Verify the exact imported BIS 0.0.29 package in managed guest and real funded Signet Claim/Reject UI using approved test wallets and exact receipts; no injected financial projections.
 - [x] 8.3 C094-T039 Complete the bounded Signet-only lifecycle disposition by recording each required funding, empty-player claim, reject/session-end, expiry/refund, conflict, closed-browser recovery, lost acknowledgement, import, asset-preservation and insufficient-funds case with exact evidence or an explicit stop blocker; this closes the evidence inventory, not production qualification.
 - [x] 8.4 C094-T040 Verify live Signet creation-disable rollback with legacy and new unresolved contracts, preserving journals and original recovery without replaying uncertain submissions.
 - [x] 8.5 C094-T041 Review Signet-only claims and user disclosure against both delta specs; confirm game-client Mutinynet creation remains unavailable and original B2 remains protected/unresolved.
-- [x] 8.6 C094-T042 Verify the authorized stable Pages deployment, confirm candidate route/version and successful Deploy game Pages workflow; do not count deterministic checks as funded acceptance.
+- [ ] 8.6 C094-T042 Verify the authorized stable Pages deployment, confirm candidate route/version v0.0.29 and successful Deploy game Pages workflow; do not count deterministic checks as funded acceptance.
 - [x] 8.7 C094-T043 Verify the exact imported BIS artifact and aligned game/package versions; run the full game suite, contract typecheck, publishing checks, production build and OpenSpec validations, recording warnings and exact evidence.
 - [x] 8.8 C094-T044 Verify the local game host rejects new Mutinynet offers before consent/funding while preserving existing inspection/recovery; verify no offer-creation call is made and the unavailable status is player-readable.
 
@@ -674,3 +674,44 @@ health remains HTTP 200 with `publicSigning:false` and `ownerSigning:true`; a
 public Signet game signer session is therefore not enabled. T038 remains open
 for managed guest connection plus exact real funded Signet Claim/Reject UI
 receipts. C094 is 36/37; T038 is the remaining open release-acceptance task.
+
+2026-10-27 superseding published-runtime acceptance: game Pages v0.0.28
+successfully POSTed `/api/bis/connect` to BIS production from the exact published
+origin (HTTP 200); the game reported Signet and BIS v0.0.28. Read-only browser
+requests to BIS `/api/bis/identity?network=signet` and Arkade `/v1/info` both
+returned HTTP 200. Production Signet identity advertises `sign`, `signMessage`,
+and `signerSession`; therefore the older `publicSigning=false`, missing
+deployed-boundary and blocked-Pages-CORS statements above are superseded by
+this dated evidence. The managed protected browser restored the registered
+Player profile through the actual UI, then showed `Game wallet source: Server`
+but left the Arkade address as `—` through the bounded wait. A separate
+read-only Node SDK derivation from the public identity succeeded, which does
+not prove browser address loading. No contract creation or spend occurred.
+T038 remains open: do not claim funded Claim/Reject acceptance and do not repeat
+the same browser attempt until an implementation/evidence change explains the
+address-read failure. Keep the recovered protected wallet and journal intact.
+
+2026-10-27 exact 0.0.29 candidate follow-up: BIS commit
+`0a2b1726877fa6f85917c13bebbe29dbaf4e5d72` fixes server-backed Game Wallet
+address projection from the public read-only identity, with a regression test
+that fails if address rendering calls signing-backed wallet getters. The
+committed package subtree was archived and rebuilt without unrelated checkout
+changes. Exact artifact SHA-256 is
+`3617a257a9d1e48084d9e845d9d911747735d3dff9dcd6f4bb9fb0d51d89aff6`; all 201
+installed-file hashes pass. Lockfile SRI matches. BIS full suite, contract
+typecheck and build pass; game focused integration/UI 22/22, publish checks
+10/10, full suite and Pages build pass. The Pages build reports `v0.0.29` and
+uncompressed size `000018829157`.
+
+The shared local game server on 5176 is owned by the registered game launcher
+instance and serves HTTP 200. Its current development page still reads the
+tracked pre-release `environment.json` (`v0.0.28`), and its local `/api/bis/connect`
+returns 404 because the static Vite route does not provide the hosted BIS API;
+this is not a test of the candidate's published connection. The local check did
+not use the protected wallet profile or make any chain operation. Read-only
+host vault status now works: the designated Signet Player shows 1,000 available
+sats, and the shared Game Wallet profile shows 2,000 with application journals
+unverified. No competing spend or journal override was attempted. Publish the
+exact 0.0.29 candidate, then use the corrected address path in the registered
+managed browser and reconcile the original application journal before any
+Claim/Reject. T038 remains open; T042 is reopened for v0.0.29 deployment.
