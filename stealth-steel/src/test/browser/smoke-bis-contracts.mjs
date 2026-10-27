@@ -40,13 +40,14 @@ try {
   await page.getByRole('button',{name:'Open settings',exact:true}).click();
   await page.getByRole('button',{name:'⚡ Account',exact:true}).click();
   await page.getByRole('button',{name:'⚡ Create Account',exact:true}).waitFor();
-  assert.equal(await page.locator('.bis-version-label').textContent(),`BIS: v${version}`);
+  assert.equal(await page.locator('.bis-version-label').textContent(),`BIS: v${version} Server`);
   if(capture)await page.screenshot({path:'docs/images/stealth-and-steel-bis-hud.png'});
   await page.getByRole('button',{name:'Back',exact:true}).click();
   await page.getByRole('button',{name:'Developer',exact:true}).click();
   await page.getByRole('button',{name:'Clear Settings',exact:true}).click();
-  await page.getByText('Local settings cleared. Remote transactions are not cancelled.',{exact:true}).waitFor();
+  await page.getByText('Settings cleared.',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Close developer settings',exact:true}).click();
+  await page.locator('.developer-settings-dimmer').waitFor({state:'detached'});
   await page.getByRole('button',{name:'Close settings',exact:true}).first().click();
   await page.getByRole('button',{name:'Open settings',exact:true}).click();
   await page.getByRole('button',{name:'⚡ Account',exact:true}).click();
