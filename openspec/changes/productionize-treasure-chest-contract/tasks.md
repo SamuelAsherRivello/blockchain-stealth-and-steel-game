@@ -354,7 +354,7 @@ The tasks below use new permanent IDs. Historical open IDs above are preserved i
 - [x] 8.3 C094-T039 Complete the bounded Signet-only lifecycle disposition by recording each required funding, empty-player claim, reject/session-end, expiry/refund, conflict, closed-browser recovery, lost acknowledgement, import, asset-preservation and insufficient-funds case with exact evidence or an explicit stop blocker; this closes the evidence inventory, not production qualification.
 - [x] 8.4 C094-T040 Verify live Signet creation-disable rollback with legacy and new unresolved contracts, preserving journals and original recovery without replaying uncertain submissions.
 - [x] 8.5 C094-T041 Review Signet-only claims and user disclosure against both delta specs; confirm game-client Mutinynet creation remains unavailable and original B2 remains protected/unresolved.
-- [ ] 8.6 C094-T042 Verify the authorized deployed game release, confirm candidate route/version and release workflow; do not count deterministic checks as funded acceptance.
+- [x] 8.6 C094-T042 Verify the authorized stable Pages deployment, confirm candidate route/version and successful Deploy game Pages workflow; do not count deterministic checks as funded acceptance.
 - [x] 8.7 C094-T043 Verify the exact imported BIS artifact and aligned game/package versions; run the full game suite, contract typecheck, publishing checks, production build and OpenSpec validations, recording warnings and exact evidence.
 - [x] 8.8 C094-T044 Verify the local game host rejects new Mutinynet offers before consent/funding while preserving existing inspection/recovery; verify no offer-creation call is made and the unavailable status is player-readable.
 
@@ -658,3 +658,19 @@ confirmed `https://samuelasherrivello.github.io` is allowed (HTTP 204) and
 `http://127.0.0.1:6280` is rejected (HTTP 403). The 0.0.28 UI test's production
 API connection failure is therefore origin policy plus disabled public
 signing; neither a retry nor a credentials workaround is appropriate.
+
+2026-10-27 stable Pages deployment acceptance: commit
+`6c761548b8084b79137d8f6e36b8963996bb964e` completed Deploy game Pages run
+161 successfully after the documentation-link correction. The public game root
+and `/environment.json` return HTTP 200; metadata reports `v0.0.28` and exact
+uncompressed size `000018817958`. The referenced entry, main, integration and
+CSS assets return HTTP 200; the deployed main JavaScript contains the explicit
+Mutinynet-unavailable message, production BIS endpoint and Claim API path. The
+workflow passed immutable BIS package verification, publish checks, all 1,189
+game tests, BIS contract typecheck and production build before deployment. This
+closes T042's stable Pages route/version/workflow check, not funded Signet
+acceptance or an immutable versioned download release. Fresh BIS production
+health remains HTTP 200 with `publicSigning:false` and `ownerSigning:true`; a
+public Signet game signer session is therefore not enabled. T038 remains open
+for managed guest connection plus exact real funded Signet Claim/Reject UI
+receipts. C094 is 36/37; T038 is the remaining open release-acceptance task.
