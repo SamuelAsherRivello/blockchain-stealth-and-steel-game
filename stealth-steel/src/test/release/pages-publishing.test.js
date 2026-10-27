@@ -23,6 +23,7 @@ test("the app uses its GitHub Pages repository path as the deployment URL base",
 test("main pushes deploy the stable game and manual releases publish versioned Pages", async () => {
   const workflow = await read(".github/workflows/deploy-pages.yml");
   assert.match(workflow, /push:\s*\n\s+branches: \[main\]/);
+  assert.match(workflow, /VITE_BIS_SERVER_URL:\s*https:\/\/bis-server-rho\.vercel\.app\/api\/bis\//);
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /pages: write/);
   assert.match(workflow, /id-token: write/);

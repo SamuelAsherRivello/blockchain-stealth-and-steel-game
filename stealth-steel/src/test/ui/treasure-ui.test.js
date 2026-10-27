@@ -35,12 +35,18 @@ test('all treasure messages and action eligibility update in one open game windo
  const s=setup(t);s.ui.open();assert.equal(s.doc.activeElement,s.button('Back'));
  assert.ok(s.host.textContent.includes('Limited Time Offer: Treasure found — Claim 1,000 sats?'));
  assert.ok(s.host.textContent.includes('90 secs remaining ...'));
- for(const status of ['preparing','active','unverified','expired','missing-player','no-offer','unavailable','pending','claimed','rejected']){
+ for(const status of ['preparing','active','unverified','expired','missing-player','network-unavailable','no-offer','unavailable','pending','claimed','rejected']){
   s.setState({status});assert.ok(s.host.textContent.includes(treasureMessage(status)));
   assert.equal(s.button('Claim').disabled,status!=='active');assert.equal(s.button('Reject').disabled,status!=='active');
   assert.equal(s.button('Claim').hidden,['missing-player','claimed','rejected'].includes(status));
  }
  click(s.button('Back'));assert.equal(s.ui.isOpen,false);assert.deepEqual([...s.pauses],['another-menu']);s.ui.dispose();
+});
+test('Mutinynet unavailable state is readable, keeps inspection available, and disables Claim and Reject',async t=>{
+ const s=setup(t);s.setState({status:'network-unavailable'});s.ui.open();await Promise.resolve();
+ assert.ok(s.host.textContent.includes('Treasure offers are not available on Mutinynet yet'));
+ assert.equal(s.button('Claim').disabled,true);assert.equal(s.button('Reject').disabled,true);
+ assert.equal(s.inspections(),1);assert.equal(s.calls(),0);s.ui.dispose();
 });
 test('slow status inspection keeps chest presentation, Back and Escape responsive without countdown reads',async t=>{
  const s=setup(t),finish=[];s.setInspection(()=>new Promise(resolve=>finish.push(resolve)));

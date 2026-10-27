@@ -6,6 +6,24 @@ Provide a verifiable treasure reward lifecycle for user-owned wallets, preservin
 
 ## ADDED Requirements
 
+### Requirement: Release 1 enables only qualified Signet Browser validation
+The Signet-only game release SHALL create new offers only on Signet using the real Browser validation contract mode, with its browser-enforced expiry limitation disclosed. Game-client Mutinynet creation SHALL remain unavailable until a separate qualification enables it. Admin SHALL retain the approved network-specific testing selector and truthful labels. Existing contracts on either network SHALL remain inspectable and recoverable under their original terms.
+
+#### Scenario: Player uses Signet release
+- **WHEN** the player requests a new Treasure offer on Signet
+- **THEN** the real compiled contract path may fund and spend under Browser validation
+- **AND** the user is told expiry is enforced by the browser
+
+#### Scenario: Game player starts on Mutinynet in release 1
+- **WHEN** a new Treasure offer is requested on Mutinynet
+- **THEN** creation is rejected before funding with a clear unavailable status
+- **AND** existing Mutinynet contracts remain inspectable and recoverable
+
+#### Scenario: Admin documents Mutinynet test choices
+- **WHEN** an Admin tester selects Mutinynet
+- **THEN** Arkade co-signer is selected by default and Browser validation is an explicit option
+- **AND** the selector describes actual guarantees and does not silently downgrade
+
 ### Requirement: Local wallet ownership is explicit
 The treasure flow SHALL use separate user-owned Player and Game Wallets without an application server. Setup SHALL identify the Game Wallet as the source of the reward. The product SHALL NOT imply a protected shared publisher treasury, authoritative gameplay verification, distributed exclusivity or cleanup while all clients are closed.
 

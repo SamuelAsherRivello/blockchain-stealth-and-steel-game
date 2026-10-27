@@ -7,7 +7,8 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
   const publish = () => listeners.forEach(listener => listener());
   const wallets = () => {
     const snapshot=getSnapshot();
-    return {player:snapshot?.account.playerWallet,game:snapshot?.account.gameWallet,available:snapshot?.capabilities.contracts.available??false};
+    const player=snapshot?.account.playerWallet;
+    return {player,game:snapshot?.account.gameWallet,network:player?.network??snapshot?.account.network??'signet',available:snapshot?.capabilities.contracts.available??false};
   };
   const walletKey = () => { const {player,game}=wallets();return JSON.stringify([player?.profileId,player?.network??'signet',game?.profileId,game?.network??'signet']); };
   const gameSource = () => ['manual','server'].includes(wallets().game?.source) ? wallets().game.source : undefined;
@@ -35,6 +36,7 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
     if (session.playerId !== player?.profileId && status !== 'missing-player') status = 'no-offer';
     if(status!=='missing-player' && (session.gameId!==game?.profileId || (session.walletKey && session.walletKey!==walletKey())))status='no-offer';
     if(status==='awaiting-consent' && session.gameSource!==gameSource())status='no-offer';
+    if(!player?.profileId&&wallets().network==='mutinynet')status='network-unavailable';
     return { status, remainingSeconds, sessionId: session.id, contractId: session.contractId,
       ...(status==='awaiting-consent'?{fundingConsent:{sessionId:session.id,network:session.network,playerId:session.playerId,
         gameId:session.gameId,gameSource:session.gameSource,amountSats:1000,startedAt:session.startedAt,expiresAt:session.expiresAt}}:{}) };
@@ -88,11 +90,10 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
     },
     start() {
       end(); const startedAt = now();
-      const {player,game,available}=wallets(),id=newId();
+      const {player,game,network,available}=wallets(),id=newId();
       const expiresAt=(Math.floor(startedAt/1000)+90)*1000;
-      const network=player?.network??'signet';
       session = {id,reference:`treasure:${id}`,playerId:player?.profileId,gameId:game?.profileId,gameSource:gameSource(),network,walletKey:walletKey(),startedAt,expiresAt,offered:false,fundingStarted:false,
-        status:!player?.profileId?'missing-player':!available||!game?.profileId||network!==(game.network??'signet')||!['signet','mutinynet'].includes(network)?'no-offer':'awaiting-consent'};
+        status:network==='mutinynet'?'network-unavailable':!player?.profileId?'missing-player':!available||!game?.profileId||network!==(game.network??'signet')||network!=='signet'?'no-offer':'awaiting-consent'};
       publish();
     },
     acceptFundingConsent(sessionId) {
@@ -140,6 +141,10 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
 
 export function treasureMessage(status) {
   return ({active:'Limited Time Offer: Treasure found — Claim 1,000 sats?','awaiting-consent':'Treasure funding needs your approval',unverified:'Verifying the original treasure offer',preparing:'Treasure is being prepared',expired:"You found a treasure but it's expired",
-    'missing-player':'Connect an account to receive treasure offers','no-offer':'No treasure offer available',unavailable:'Treasure status is unavailable',
+    'missing-player':'Connect an account to receive treasure offers','network-unavailable':'Treasure offers are not available on Mutinynet yet','no-offer':'No treasure offer available',unavailable:'Treasure status is unavailable',
     pending:'Treasure transaction is pending',claimed:'Reward claimed',rejected:'Offer ended'})[status] ?? 'No treasure offer available';
+}
+
+export function shouldRevealTreasureChest(status) {
+  return ['active','network-unavailable','unverified','unavailable'].includes(status);
 }

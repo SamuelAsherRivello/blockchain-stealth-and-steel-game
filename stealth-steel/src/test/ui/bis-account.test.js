@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createBisAccount} from '../../runtime/integration/bis-account.js';
+import {configureGameBisServer,createBisAccount} from '../../runtime/integration/bis-account.js';
 import {createPauseController} from '../../runtime/ui/pause-controller.js';
 class Element extends EventTarget {
   children=[];hidden=false;inert=false;
@@ -9,6 +9,19 @@ class Element extends EventTarget {
   remove(){if(this.parentElement)this.parentElement.children=this.parentElement.children.filter(c=>c!==this);this.parentElement=null;}
 }
 const flush=()=>new Promise(r=>setImmediate(r));
+
+test('game passes the consuming Pages endpoint into the packed BIS library',()=>{
+  let configured;
+  configureGameBisServer({configureBisServer:options=>configured=options},'https://bis-server-rho.vercel.app/api/bis/');
+  assert.deepEqual(configured,{url:'https://bis-server-rho.vercel.app/api/bis/'});
+});
+
+test('game leaves endpoint selection to BIS when no hosted URL is configured',()=>{
+  let configured;
+  configureGameBisServer({configureBisServer:options=>configured=options},undefined);
+  assert.deepEqual(configured,{url:undefined});
+});
+
 function fixture({load,ready=Promise.resolve(),timeoutMs=100}={}) {
   const documentRef=new EventTarget();documentRef.createElement=()=>new Element();
   const host=new Element(),other=new Element();host.append(other);

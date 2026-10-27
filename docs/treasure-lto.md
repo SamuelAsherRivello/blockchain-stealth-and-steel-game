@@ -6,6 +6,8 @@ Current local candidate: BIS/game 0.0.27. This imported snapshot is not producti
 
 Ordinary guest gameplay requires no wallet. BIS owns Player setup and separate Game Wallet Login through Account. The imported package supports manual browser signing and a separately configured server signing source. C094 local-wallet qualification does not qualify that server deployment. The game never receives recovery phrases or signing material. Profile IDs and networks alone do not establish custody. Consent uses the optional public signing-source field when available; older snapshots explicitly say the source is unavailable.
 
+Release 1 is game-client Signet-only. New Signet offers use the real Browser validation contract path and disclose that a modified client can bypass browser-enforced expiry. New Mutinynet game offers are unavailable before consent or funding; the game reports that Mutinynet Treasure offers are not available yet. Existing offers on either network remain inspectable and recoverable under their original terms. Admin remains the testing reference: Signet has Browser validation only; Mutinynet defaults to Arkade co-signer and offers Browser validation explicitly. Admin choices describe testable configurations and do not claim live qualification.
+
 The game consumes `IBis.hasContractSupport()` rather than reconstructing readiness from raw wallets. A capability is not proof of funding: BIS still validates wallet/network scope, fees, provider terms, reserved inputs and financial journals on each operation. Without support, Start remains playable and creates no offer. Starting before BIS finishes loading does not queue a later replacement offer.
 
 ## Commands and scope
@@ -38,7 +40,7 @@ AI-created game URLs must contain both `muteMusic=true&muteSFX=true`; use fresh 
 
 ## Enforcement, recovery and candidate limits
 
-Signet uses disclosed browser validation, which a modified client can bypass. Mutinynet supports a pinned co-signer and browser validation. BIS selects the supported mode before funding; Admin exposes explicit test choices. A failed or unknown submission never authorizes replacement-mode funding. Real contract outputs and network receipts determine financial results. Local UI state cannot confirm payment.
+Release 1 game offers use disclosed Signet Browser validation, which a modified client can bypass. The game exposes no signing-mode choice. Mutinynet mode selection remains in Admin for controlled testing, with Arkade co-signer as the default and Browser validation as an explicit option; the game client does not create new Mutinynet offers in this release. A failed or unknown submission never authorizes replacement-mode funding. Real contract outputs and network receipts determine financial results. Local UI state cannot confirm payment. See [C096](../openspec/changes/qualify-treasure-chest-both-networks/proposal.md) for the separate two-network qualification and B2 recovery follow-up.
 
 Open Settings, Account and the BIS contract controls for original-contract recovery. BIS owns password-encrypted portable recovery export/import, reservations and journals. Imported recovery requires verification before actions become available. Preserve original requests and reconcile unknown outcomes before another spend. Browser closure does not guarantee monitoring or recovery. Batch expiry, renewal and unilateral exit remain SDK/operator constraints. Portable export cannot guarantee continuous monitoring, cheap exit or recovery from every batch failure.
 

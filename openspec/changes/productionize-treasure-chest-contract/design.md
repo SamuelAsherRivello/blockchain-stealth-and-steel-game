@@ -1,5 +1,21 @@
 # Design
 
+## Release 1 scope (supersedes earlier two-network rollout text below)
+
+C094 is the Signet-only release slice. It preserves the real contract, wallet consent, immutable terms, exact receipt checks, portable recovery, legacy inspection, and responsive user flow already implemented. New creation is permitted only on Signet using Browser validation, whose weaker browser-enforced expiry is disclosed at the point of selection and in contract details. This mode is a real compiled Arkade contract with real funding/spending; it is not covenant-enforced timing, anti-cheat, or a protected treasury.
+
+Mutinynet new creation is unavailable to the game client in Release 1. Existing Mutinynet contracts remain inspectable and recoverable under their actual original mode. Admin remains the living test documentation already approved: Signet exposes Browser validation only; Mutinynet exposes Arkade co-signer by default plus explicit Browser validation, with no silent downgrade. Those Admin test options do not mean either mode has passed release qualification. The game makes no user-facing mode choice.
+
+The exact imported game dependency is BIS 0.0.27 (archive SHA-256 `f441f9e2bba7f9f6d510c00405b90c0dbb7bdc25adfac0c69bcfe28533bb914c`). Do not repack or import BIS as part of C094.
+
+Carryover mapping: original open tasks C094-T006/T007/T018/T019/T020/T026/T035 retain their IDs and full requirements in C096. C096 owns Mutinynet/co-signer acceptance, original B2 recovery, two-network funded lifecycle, full rollback, hidden-tab/funded responsiveness, and corresponding independent review. C094's remaining tasks below are interpreted only for Signet and release readiness; none of the historical incomplete tasks is marked complete by this scope change.
+
+### Signet release gates
+
+Before shipping, prove with the exact current package: the game can create no offer on Mutinynet; the Admin selector matches its agreed per-network choices and labels; a real Signet-funded offer supports the claimed player actions and receipt reconciliation; creation-disable rollback preserves new and legacy journals; the built release passes full quality checks; and deployed game routes identify the candidate version. Existing real receipts may be reused only when they match exact artifact, network, mode, terms and lifecycle case. No simulated projections qualify a funded UI case.
+
+If a Signet live case is blocked, keep the Signet release blocked and document the precise stop condition. Do not treat the two-network follow-up as a substitute for a Signet release gate.
+
 ## Context
 
 See [proposal.md](proposal.md) for scope. The assessment inspected the game's vendored BIS 0.0.23 source archive, the adjacent BIS LTO implementation, game runtime and tests on 2026-10-19. Source inspection establishes intended behavior, not current network execution. No funded transaction or acceptance test ran during planning.

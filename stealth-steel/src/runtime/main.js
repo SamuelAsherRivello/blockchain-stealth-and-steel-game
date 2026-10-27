@@ -136,6 +136,7 @@ import { createEquipmentSnapshot, EMPTY_EQUIPMENT_SNAPSHOT } from "./gameplay/eq
 import { createBisGameRewardFeedback } from "./integration/bis-game-reward-feedback.js";
 import { createLevelCompleteUi, createLevelLostUi } from "./ui/level-complete-ui.js";
 import {createTreasureRuntime} from './integration/treasure-runtime.js';
+import {shouldRevealTreasureChest} from './integration/treasure-session.js';
 import {createTreasureUi} from './ui/treasure-ui.js';
 import {createTreasureFundingConsent} from './ui/treasure-funding-consent.js';
 import {createTreasureChest} from './systems/objects/treasure-chest.js';
@@ -1294,7 +1295,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
   const treasureReveals=[];
   let treasureRevealed=false;
   const revealTreasures=()=>{
-    if(treasureRevealed||treasure.getState().status!=='active')return;
+    if(treasureRevealed||!shouldRevealTreasureChest(treasure.getState().status))return;
     treasureRevealed=true;
     for(const authored of level.treasureSpawners??[]){
       const position=gridCellToWorldCenter(authored.gameCell,TILE_SIZE);
@@ -1303,7 +1304,7 @@ async function createGameRun({ showStartPrompt = true, initialRun } = {}) {
         const sprite=addSprite2D(layer,{positionPx:[position.x,SCREEN_HEIGHT-position.y],sizePx:[64,64],frame:0,alpha:0,scaleX:0,scaleY:0});
         addSpriteRendererLayer(renderer,camera.attachLayer(layer));treasureLayers.push(layer);
         treasureReveals.push(createTreasureReveal({sprite,api:{updateSprite2D}}));
-        return createTreasureChest({position,sensor:authored.sensor,canEnter:()=>accountHost.hasContractSupport(),onEnter:()=>void treasureUi.open()});
+        return createTreasureChest({position,sensor:authored.sensor,canEnter:()=>accountHost.hasContractSupport()||shouldRevealTreasureChest(treasure.getState().status),onEnter:()=>void treasureUi.open()});
       }});spawner.initialize();treasureSpawners.push(spawner);
     }
   };

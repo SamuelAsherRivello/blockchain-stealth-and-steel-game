@@ -1,7 +1,16 @@
 import { bindToGameFrame } from "../ui/game-frame-bounds.js";
 
 // The game consumes only the public BIS package. Loading is independent of game startup.
-const loadPackage = () => Promise.all([import('@bis/integration'), import('@bis/integration/style.css')]).then(([api]) => api);
+// This consumer-side value must be passed into the package: library builds cannot
+// see the consuming application's Vite environment after they have been packed.
+export function configureGameBisServer(api, endpoint = import.meta.env?.VITE_BIS_SERVER_URL) {
+  if (typeof api?.configureBisServer === 'function') api.configureBisServer({ url: endpoint || undefined });
+}
+
+const loadPackage = () => Promise.all([import('@bis/integration'), import('@bis/integration/style.css')]).then(([api]) => {
+  configureGameBisServer(api);
+  return api;
+});
 
 export function createBisAccount({host, pauseController, restartGame, documentRef = globalThis.document,
   load = loadPackage, timeoutMs = 15000, onClose = () => {}, getBisGame = () => undefined,

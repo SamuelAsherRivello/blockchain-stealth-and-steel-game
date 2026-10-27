@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createTreasureSession} from '../../runtime/integration/treasure-session.js';
+import {createTreasureSession,shouldRevealTreasureChest} from '../../runtime/integration/treasure-session.js';
 
 // Deterministic host policy fixtures. No provider, credentials or wallet action.
 function fixture() {
@@ -20,6 +20,11 @@ const contract={id:'offer',type:'lto',purpose:'treasureLTO',sessionId:'original'
     amountSats:1000,startedAt:1000,expiresAt:91000,financial:'funded',eligibility:'within-window',canClaim:true};
   return {session,saved,contract,calls,snapshot,setNow:value=>{now=value;}};
 }
+
+test('the real chest remains reachable for Mutinynet disclosure and existing-offer recovery',()=>{
+  for(const status of ['active','network-unavailable','unverified','unavailable'])assert.equal(shouldRevealTreasureChest(status),true,status);
+  for(const status of ['missing-player','no-offer','expired','claimed','rejected'])assert.equal(shouldRevealTreasureChest(status),false,status);
+});
 
 test('restored active cache stays unverified until the exact funded BIS projection arrives',async()=>{
   const f=fixture();f.session.restore(f.saved);

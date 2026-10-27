@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createTreasureSession} from '../../runtime/integration/treasure-session.js';
+import {createTreasureSession,treasureMessage} from '../../runtime/integration/treasure-session.js';
 import {createTreasureFundingConsent} from '../../runtime/ui/treasure-funding-consent.js';
 
 const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
@@ -31,18 +31,33 @@ function fixture(network='signet'){
   return {session:createTreasureSession(options),options,calls,snapshot,setNow:value=>{clock=value;}};
 }
 
-test('both networks require explicit consent before offer creation, inspection or any financial call',async()=>{
-  for(const network of ['signet','mutinynet']){
-    const f=fixture(network);f.session.start();
-    const consent=f.session.getState().fundingConsent;
-    assert.equal(f.session.getState().status,'awaiting-consent');
-    assert.equal(consent.network,network);assert.equal(consent.amountSats,1000);
-    assert.equal(consent.gameId,'game-original');assert.equal(consent.playerId,'player-original');
-    await f.session.inspect();f.session.notify({contracts:{status:'unavailable',contracts:[]}});
-    assert.equal((await f.session.act('claim')).status,'unavailable');
-    await tick();assert.deepEqual(f.calls,[]);assert.equal(f.session.getState().status,'awaiting-consent');
-    f.session.dispose();assert.deepEqual(f.calls,[]);
-  }
+test('Signet requires consent while Mutinynet creation is clearly unavailable before any financial call',async()=>{
+  const signet=fixture('signet');signet.session.start();
+  const consent=signet.session.getState().fundingConsent;
+  assert.equal(signet.session.getState().status,'awaiting-consent');
+  assert.equal(consent.network,'signet');assert.equal(consent.amountSats,1000);
+  assert.equal(consent.gameId,'game-original');assert.equal(consent.playerId,'player-original');
+  await signet.session.inspect();assert.equal((await signet.session.act('claim')).status,'unavailable');
+  await tick();assert.deepEqual(signet.calls,[]);signet.session.dispose();
+  const mutiny=fixture('mutinynet');mutiny.session.start();
+  assert.equal(mutiny.session.getState().status,'network-unavailable');
+  assert.equal(mutiny.session.getState().fundingConsent,undefined);
+  assert.equal(mutiny.session.acceptFundingConsent(mutiny.session.getState().sessionId).status,'unavailable');
+  await mutiny.session.inspect();assert.equal((await mutiny.session.act('claim')).status,'unavailable');
+  await tick();assert.deepEqual(mutiny.calls,[]);mutiny.session.dispose();
+});
+
+test('a logged-out Mutinynet selection surfaces the unavailable state and keeps wallet setup independent',async()=>{
+  const f=fixture('signet');
+  delete f.snapshot.account.playerWallet;delete f.snapshot.account.gameWallet;
+  f.session.start();
+  assert.equal(f.session.getState().status,'missing-player');
+  f.snapshot.account.network='mutinynet';f.session.notify(f.snapshot);
+  assert.equal(f.session.getState().status,'network-unavailable');
+  assert.equal(f.session.getState().fundingConsent,undefined);
+  assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'unavailable');
+  await f.session.inspect();assert.equal((await f.session.act('claim')).status,'unavailable');
+  await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
 });
 
 test('acceptance funds once with the original amount and rounded deadline even after time spent deciding',async()=>{
@@ -127,8 +142,8 @@ test('consent names the public signing source and keeps an explicit fallback for
 
 test('consent UI shows exact terms and Skip, close and Escape never create an offer',async t=>{
   for(const action of ['skip','close','escape']){
-    const f=uiFixture(t,'mutinynet');f.session.start();assert.equal(f.ui.isOpen,true);
-    assert.match(f.host.textContent,/1,000 sats/);assert.match(f.host.textContent,/Mutinynet/);
+    const f=uiFixture(t,'signet');f.session.start();assert.equal(f.ui.isOpen,true);
+    assert.match(f.host.textContent,/1,000 sats/);assert.match(f.host.textContent,/Signet/);
     assert.match(f.host.textContent,/Game Wallet/);assert.match(f.host.textContent,/original window/);
     assert.match(f.host.textContent,/zero-fee policy/);assert.match(f.host.textContent,/can sign automatically; another popup is not guaranteed/);
     assert.match(f.host.textContent,/Check Game Wallet Login for the signing source/);
@@ -139,6 +154,14 @@ test('consent UI shows exact terms and Skip, close and Escape never create an of
     else {const event=new Event('keydown',{cancelable:true});event.key='Escape';f.host.children[0].dispatchEvent(event);}
     await tick();assert.equal(f.ui.isOpen,false);assert.deepEqual(f.calls,[]);assert.deepEqual([...f.pauses],['other-menu']);f.ui.dispose();
   }
+});
+
+test('Mutinynet shows unavailable messaging and never prompts for funding consent',async t=>{
+  const f=uiFixture(t,'mutinynet');f.session.start();
+  assert.equal(f.session.getState().status,'network-unavailable');
+  assert.match(treasureMessage(f.session.getState().status),/not available on Mutinynet yet/);
+  assert.equal(f.session.getState().fundingConsent,undefined);
+  assert.deepEqual(f.calls,[]);f.session.dispose();
 });
 
 test('consent UI approval creates one request and expiration skips without extending terms',async t=>{

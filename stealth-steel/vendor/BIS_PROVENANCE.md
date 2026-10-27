@@ -1,3 +1,14 @@
+# Verified local 0.0.28 candidate (2026-10-27)
+
+- Package: `@bis/integration` 0.0.28; artifact: `bis-integration-0.0.28.tgz`.
+- SHA-256: `6b318fb45a778ac8e136716e30ef63f89e036d65d8abb3ef2ab87f7352f23a46`.
+- BIS source commit: `a9f281cb5565e5bd249d7648f0e725b1cc7ca35b`; sourceDirty: true.
+- Inventory: 201 packed files. Archive and every installed package file match the inventory after lockfile-resolved staging install and consumer overlay. Normal `npm ci` could not unlink one protected Rolldown native binary; the clean install was performed in ignored staging output and overlaid while preserving that binary. The full BIS suite passed 1,716/1,716 on the same source before the package-only 0.0.28 metadata bump; the subsequent cache-corrected revalidation was interrupted after a WebSocket port 24678 collision and is not counted. The 0.0.28 sequential release check, typecheck and production build pass. Game verification passes: package verifier, contract typecheck, focused integration/UI tests 22/22, publishing checks 10/10, full game suite 1,189/1,189, and production build. The managed game shell showed v0.0.28, while Account showed BIS v0.0.27 from the reused server; Account initialization POST returned 404. No wallet/financial action or deployment occurred, and the server was not restarted.
+
+### Game-consumable public API changes
+
+- The read-only BIS account projection exposes the selected network before login, allowing the game to render the correct network state without creating or restoring a wallet.
+- Existing encrypted treasure recovery methods remain available through the public BIS facade; recovery import does not submit a transaction.
 # Verified local 0.0.27 candidate (2026-10-26)
 
 - Package: `@bis/integration` 0.0.27; artifact: `bis-integration-0.0.27.tgz`.
