@@ -354,7 +354,7 @@ The tasks below use new permanent IDs. Historical open IDs above are preserved i
 - [x] 8.3 C094-T039 Complete the bounded Signet-only lifecycle disposition by recording each required funding, empty-player claim, reject/session-end, expiry/refund, conflict, closed-browser recovery, lost acknowledgement, import, asset-preservation and insufficient-funds case with exact evidence or an explicit stop blocker; this closes the evidence inventory, not production qualification.
 - [x] 8.4 C094-T040 Verify live Signet creation-disable rollback with legacy and new unresolved contracts, preserving journals and original recovery without replaying uncertain submissions.
 - [x] 8.5 C094-T041 Review Signet-only claims and user disclosure against both delta specs; confirm game-client Mutinynet creation remains unavailable and original B2 remains protected/unresolved.
-- [ ] 8.6 C094-T042 Verify the authorized stable Pages deployment, confirm candidate route/version v0.0.29 and successful Deploy game Pages workflow; do not count deterministic checks as funded acceptance.
+- [x] 8.6 C094-T042 Verify the authorized stable Pages deployment, confirm candidate route/version v0.0.29 and successful Deploy game Pages workflow; do not count deterministic checks as funded acceptance.
 - [x] 8.7 C094-T043 Verify the exact imported BIS artifact and aligned game/package versions; run the full game suite, contract typecheck, publishing checks, production build and OpenSpec validations, recording warnings and exact evidence.
 - [x] 8.8 C094-T044 Verify the local game host rejects new Mutinynet offers before consent/funding while preserving existing inspection/recovery; verify no offer-creation call is made and the unavailable status is player-readable.
 
@@ -723,10 +723,32 @@ The finalize step exposed a release-tool bug: the Vite Pages plugin had already
 written exact fixed-width metadata, while the release finalizer only accepted a
 placeholder. The finalizer now accepts an already-finalized file only when its
 tag and measured uncompressed size match; wrong tags and sizes still fail.
-Focused release-archive tests pass 3/3, publishing checks pass 10/10, the
-production build reports the expected 0.0.29 metadata, and the release CLI now
-creates the deterministic 322-file browser asset locally (SHA-256
+Focused release-archive tests pass 3/3, publishing checks pass 10/10, and the
+local release CLI produced the deterministic 322-file browser asset (SHA-256
 `d8839e26ec07798b4dd3c6d835e2a99ae100e822515bc17a65f9d90a4eba6ba8`). The
-failed workflow made no tag, release asset or deployment. Commit this fix and
-dispatch the release again; keep T042 open until GitHub reports successful
-publication and the public route serves v0.0.29.
+corrected release workflow run `40528079252` succeeded on commit
+`ecac83f8572d2ef6ab968b850f04468d5aae86a2`; its clean install, immutable BIS
+check, full test suite, contract typecheck, production build, tag, Release asset,
+Pages assembly, and deployment steps all passed. GitHub Release `v0.0.29`
+contains the browser build (SHA-256
+`43c1f12d18a07caf8e6f73c659f33d7571e92e7118b6ad771a18713aa5b83fba`). The
+versioned route `/releases/v0.0.29/` returns HTTP 200 and
+`environment.json` reports `releaseVersion: v0.0.29`, `downloadSize:
+000018817926`. The stable game route also returns HTTP 200. The deployed public
+Account dialog was manually opened and showed `NETWORK: SIGNET`, BIS `v0.0.29`,
+and the expected not-logged-in Create/Restore actions. This completes T042 only;
+it is not funded contract acceptance.
+
+The protected managed-browser attempt remains blocked before wallet restore:
+the Signet test-wallet runner timed out waiting for the game Settings control
+on both its configured Edge and a bounded installed-Chrome comparison. The
+ordinary public browser renders Settings and Account, so this is specific to
+the protected runner/browser startup path; the root cause is not established.
+No phrase was entered, no account was restored, and no transaction was sent.
+The registered test-wallet status remains 1,000 available sats for the Player
+and 2,000 available sats for the Game Wallet, with application journals
+unverified. Do not spend or override those journals. T038 remains open until
+the exact managed game UI can restore the registered pair, reconcile its
+journals, and produce real Signet Claim/Reject receipts. The stable release is
+published, but that publication must not be described as completed financial
+qualification.
