@@ -31,6 +31,24 @@ test('creation-disabled rollback preserves exact original inspection on both net
   }
 });
 
+test('creation-disabled rollback preserves unresolved legacy Claim journals on both networks',async()=>{
+  for(const network of ['signet','mutinynet']){
+    const startedAt=Math.floor(Date.now()/1000)*1000,saved={id:'legacy-unknown-claim',reference:'treasure:legacy-unknown-claim',playerId:'player',gameId:'game',
+      walletKey:JSON.stringify(['player',network,'game',network]),expiresAt:startedAt+90000,status:'pending',offered:true,contractId:'legacy-original'};
+    const s=setup(saved),queries=[];
+    s.publish({account:{playerWallet:{profileId:'player',network},gameWallet:{profileId:'game',network}},capabilities:{contracts:{available:false}}});
+    s.bis.checkContractsAsync=async filter=>{queries.push(filter);return {status:'ready',contracts:[{id:'legacy-original',type:'lto',purpose:'treasureLTO',sessionId:saved.id,
+      hostReference:saved.reference,scope:{playerId:'player',gameId:'game',network,operator:`https://${network}.arkade.sh`,exclusivityKey:'treasure'},amountSats:1000,
+      startedAt,expiresAt:startedAt+90000,operationKind:'claim',financial:'unknown',eligibility:'within-window',canClaim:false}]};};
+    const runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage,resumeRun:true});
+    runtime.start();await runtime.inspect();
+    assert.equal(queries.length,1);assert.equal(queries[0].includeResolved,true);
+    assert.equal(runtime.getState().status,'pending');assert.equal(runtime.snapshot().contractId,'legacy-original');
+    assert.equal(JSON.parse(s.storage.getItem('stealth-steel-treasure-session-v1')).contractId,'legacy-original');
+    assert.deepEqual(s.calls,[]);runtime.dispose({preserveSession:true});assert.deepEqual(s.calls,[]);
+  }
+});
+
 test('unsupported network cannot create an offer or authorize funding',async()=>{
   const s=setup();s.publish({account:{playerWallet:{profileId:'player',network:'mainnet'},gameWallet:{profileId:'game',network:'mainnet'}}});
   const runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage});runtime.start();
