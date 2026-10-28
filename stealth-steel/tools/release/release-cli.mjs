@@ -146,7 +146,9 @@ async function stage() {
 
 async function mergeStagedAssets() {
   const work = resolve(releaseWork ?? '');
-  if (!releaseWork || !work.startsWith(`${root}${sep}`)) throw new Error('RELEASE_WORK must be inside the repository');
+  const repository = resolve(root);
+  if (!releaseWork || !(work === repository || work.startsWith(`${repository}${sep}`)))
+    throw new Error('RELEASE_WORK must be inside the repository');
   await preserveImmutableAssets(join(work, 'site', 'assets'), join(root, 'dist', 'assets'));
 }
 
@@ -155,4 +157,4 @@ if (action === 'prepare') await prepare();
 else if (action === 'finalize') await finalize();
 else if (action === 'stage') await stage();
 else if (action === 'merge-assets') await mergeStagedAssets();
-else throw new Error('Use prepare, finalize, or stage');
+else throw new Error('Use prepare, finalize, stage, or merge-assets');
