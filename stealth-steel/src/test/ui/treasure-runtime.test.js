@@ -49,6 +49,52 @@ test('creation-disabled rollback preserves unresolved legacy Claim journals on b
   }
 });
 
+test('unknown creation write survives creation-disabled restart without changing the unresolved journal',async()=>{
+  const s=setup();let operationJournalBytes,checks=0;
+  const originalScriptHex=`5120${'ab'.repeat(32)}`;
+  const recoveryMaterial={fixtureOnly:true,opaqueBytes:'treasure-recovery-fixture-7f31'};
+  s.bis.startContractAsync=async request=>{
+    s.calls.push(['start',request]);
+    const contract={id:'unresolved-write-contract',type:'lto',purpose:'treasureLTO',sessionId:request.offerSessionId,
+      hostReference:request.hostReference,amountSats:1000,startedAt:request.startedAt,expiresAt:request.expiresAt,
+      scope:{playerId:'player',gameId:'game',network:'signet',operator:'https://signet.arkade.sh',exclusivityKey:'treasure'},
+      operationKind:'claim',financial:'unknown',eligibility:'within-window',canClaim:false,originalScriptHex,recoveryMaterial};
+    operationJournalBytes=JSON.stringify({operationId:'fixture-unknown-create',state:'unknown',contract});
+    return {status:'unknown',contract};
+  };
+  s.bis.checkContractsAsync=async filter=>{
+    checks++;assert.equal(filter.includeResolved,true);
+    const journal=JSON.parse(operationJournalBytes);
+    assert.equal(filter.sessionId,journal.contract.sessionId);
+    return {status:'ready',contracts:[journal.contract]};
+  };
+
+  const first=createTreasureRuntime({accountHost:s.host,storage:s.storage});startApproved(first);
+  await tick();
+  assert.equal(first.getState().status,'pending');
+  assert.equal(first.snapshot().contractId,'unresolved-write-contract');
+  const firstJournalBytes=operationJournalBytes;
+  first.dispose({preserveSession:true});
+
+  s.publish({capabilities:{contracts:{available:false}}});
+  const restarted=createTreasureRuntime({accountHost:s.host,storage:s.storage,resumeRun:true});
+  restarted.start();await restarted.inspect();
+  assert.equal(restarted.getState().status,'pending');
+  assert.equal(restarted.snapshot().contractId,'unresolved-write-contract');
+  assert.equal(checks,2);
+  assert.equal(s.calls.filter(([kind])=>kind==='start').length,1);
+  assert.deepEqual(s.calls.filter(([kind])=>['claim','reject','end'].includes(kind)),[]);
+  assert.equal(operationJournalBytes,firstJournalBytes);
+  const retained=JSON.parse(operationJournalBytes);
+  assert.equal(retained.state,'unknown');
+  assert.equal(retained.contract.id,'unresolved-write-contract');
+  assert.equal(retained.contract.originalScriptHex,originalScriptHex);
+  assert.deepEqual(retained.contract.recoveryMaterial,recoveryMaterial);
+  assert.equal(JSON.parse(s.storage.getItem('stealth-steel-treasure-session-v1')).contractId,'unresolved-write-contract');
+  restarted.dispose({preserveSession:true});
+  assert.equal(operationJournalBytes,firstJournalBytes);
+});
+
 test('unsupported network cannot create an offer or authorize funding',async()=>{
   const s=setup();s.publish({account:{playerWallet:{profileId:'player',network:'mainnet'},gameWallet:{profileId:'game',network:'mainnet'}}});
   const runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage});runtime.start();
