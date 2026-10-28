@@ -1,5 +1,5 @@
 import { deflateRawSync, inflateRawSync } from 'node:zlib';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { allFiles, assertTag, redirectHtml } from './release-core.mjs';
 
@@ -148,11 +148,35 @@ export async function stagePages(archives, latestTag, site) {
     assertTag(tag);
     if (tags.has(tag)) throw new Error(`Duplicate release archive: ${tag}`);
     tags.add(tag);
-    await extractBrowserZip(path, join(site, 'releases', tag));
+    const releaseRoot = join(site, 'releases', tag);
+    await extractBrowserZip(path, releaseRoot);
+    await preserveImmutableAssets(join(releaseRoot, 'assets'), join(site, 'assets'));
   }
   await mkdir(join(site, 'latest'), { recursive: true });
   await writeFile(join(site, 'index.html'), redirectHtml(`releases/${latestTag}/`));
   await writeFile(join(site, 'latest', 'index.html'), redirectHtml(`../releases/${latestTag}/`));
   await writeFile(join(site, '.nojekyll'), '');
   return tags.size;
+}
+
+// Stable Pages keeps the repository-root /assets URLs used by every immutable
+// release. Merge archived assets without replacing a path already published
+// with different bytes; content-addressed assets can coexist across releases.
+export async function preserveImmutableAssets(source, destination) {
+  let entries;
+  try { entries = await allFiles(source); }
+  catch (error) { if (error.code === 'ENOENT') return; throw error; }
+  for (const entry of entries) {
+    const target = join(destination, ...entry.name.split('/'));
+    await mkdir(dirname(target), { recursive: true });
+    let existing;
+    try { existing = await readFile(target); }
+    catch (error) { if (error.code !== 'ENOENT') throw error; }
+    if (existing) {
+      const incoming = await readFile(entry.path);
+      if (!existing.equals(incoming)) throw new Error(`Immutable root asset collision: ${entry.name}`);
+      continue;
+    }
+    await copyFile(entry.path, target, 1); // COPYFILE_EXCL prevents a concurrent replacement.
+  }
 }

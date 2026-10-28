@@ -15,11 +15,11 @@ async function fixture(fn) {
   }
 }
 
-async function build(root, tag, content) {
+async function build(root, tag, content, assetName = content) {
   const dist = join(root, tag);
   await mkdir(join(dist, 'assets'), { recursive: true });
   await writeFile(join(dist, 'index.html'), `<title>${content}</title>`);
-  await writeFile(join(dist, 'assets', 'main.js'), `console.log(${JSON.stringify(content)});`);
+  await writeFile(join(dist, 'assets', `${assetName}.js`), `console.log(${JSON.stringify(content)});`);
   await writeFile(join(dist, 'environment.json'), metadataText(tag));
   return dist;
 }
@@ -53,6 +53,20 @@ test('browser ZIP is reproducible and stages current and previous releases with 
   assert.match(await readFile(join(site, 'latest', 'index.html'), 'utf8'), /\.\.\/releases\/v0\.1\.16\//);
   assert.match(await readFile(join(site, 'releases', 'v0.1.15', 'index.html'), 'utf8'), /old/);
   assert.match(await readFile(join(site, 'releases', 'v0.1.16', 'index.html'), 'utf8'), /new/);
+  assert.equal(await readFile(join(site, 'assets', 'old.js'), 'utf8'), 'console.log("old");');
+  assert.equal(await readFile(join(site, 'assets', 'new.js'), 'utf8'), 'console.log("new");');
+}));
+
+test('Pages asset staging rejects a changed immutable root path', async () => fixture(async root => {
+  const oldDist = await build(root, 'v0.1.15', 'old', 'shared');
+  const newDist = await build(root, 'v0.1.16', 'new', 'shared');
+  await finalizeMetadata(oldDist, 'v0.1.15');
+  await finalizeMetadata(newDist, 'v0.1.16');
+  const oldZip = join(root, 'old.zip'), newZip = join(root, 'new.zip');
+  await createBrowserZip(oldDist, oldZip);
+  await createBrowserZip(newDist, newZip);
+  await assert.rejects(() => stagePages([{ tag: 'v0.1.15', path: oldZip }, { tag: 'v0.1.16', path: newZip }],
+    'v0.1.16', join(root, 'collision-site')), /Immutable root asset collision: shared\.js/);
 }));
 
 test('archive extraction rejects path traversal and invalid CRC', async () => fixture(async root => {

@@ -36,6 +36,7 @@ test("main pushes deploy the stable game and manual releases publish versioned P
   assert.match(workflow, /cp -a \"\$RELEASE_WORK\/site\/releases\" dist\/releases/);
   assert.match(workflow, /cp -a \"\$RELEASE_WORK\/site\/latest\" dist\/latest/);
   assert.ok(workflow.indexOf("release-cli.mjs stage") < workflow.indexOf("actions/upload-pages-artifact"));
+  assert.match(workflow, /release-cli\.mjs merge-assets/);
   assert.match(workflow, /path: dist/);
   assert.match(workflow, /uses: actions\/deploy-pages@v4/);
   assert.doesNotMatch(workflow, /workflow_dispatch|git push|git tag|GAME_RELEASE_TAG|blockchain-integration-service/);
