@@ -34,7 +34,7 @@ export function createTreasureUi({host,screenLayer,frameElement=null,pauseContro
   }
   const render=()=>{
     if(!window)return;
-    const state=session.getState();message.textContent=treasureMessage(state.status);
+    const state=session.getState();message.textContent=treasureMessage(state.status,state.reason);
     countdown.textContent=state.status==='active'?`${state.remainingSeconds} secs remaining ...`:'';
     claim.disabled=reject.disabled=busy||state.status!=='active';
     claim.hidden=reject.hidden=['claimed','rejected','missing-player'].includes(state.status);

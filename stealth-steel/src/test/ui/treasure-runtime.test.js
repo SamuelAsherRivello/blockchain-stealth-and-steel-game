@@ -143,6 +143,21 @@ test('legacy Mutinynet co-signer recovery retains its original mode instead of b
   assert.equal(runtime.acceptFundingConsent(saved.id).status,'unavailable');assert.deepEqual(s.calls,[]);
   runtime.dispose({preserveSession:true});
 });
+
+for(const network of ['signet','mutinynet'])test(`${network} Contracts support false preserves original funded-offer inspection and Claim`,async()=>{
+  const startedAt=Math.floor(Date.now()/1000)*1000,source=network==='mutinynet'?'manual':'server';
+  const saved={id:'original-funded',reference:'treasure:original-funded',playerId:'player',gameId:'game',network,gameSource:source,
+    walletKey:JSON.stringify(['player',network,'game',network]),validationMode:'browser-policy-v1',expiresAt:startedAt+90000,status:'active',contractId:'original-contract'};
+  const s=setup(saved,{network,source}),contract={id:saved.contractId,type:'lto',purpose:'treasureLTO',sessionId:saved.id,hostReference:saved.reference,
+    scope:{playerId:'player',gameId:'game',network,operator:`https://${network}.arkade.sh`,exclusivityKey:'treasure'},
+    validationMode:'browser-policy-v1',amountSats:1000,startedAt,expiresAt:saved.expiresAt,financial:'funded',canClaim:true};
+  s.publish({capabilities:{contracts:{available:false,reason:'New offers are unsupported on this network.'}},contracts:{status:'ready',contracts:[contract]}});
+  const runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage,resumeRun:true});runtime.start();await runtime.inspect();
+  assert.equal(runtime.getState().status,'active');assert.equal(runtime.getState().reason,undefined);
+  assert.equal(runtime.acceptFundingConsent(saved.id).status,'unavailable');
+  assert.equal((await runtime.act('claim')).status,'pending');
+  assert.deepEqual(s.calls,[['claim','original-contract']]);runtime.dispose({preserveSession:true});
+});
 test('Start before BIS readiness stays skipped rather than retroactively funding',async()=>{
   const s=setup();let current,resolve;const ready=new Promise(done=>resolve=done);
   const runtime=createTreasureRuntime({accountHost:{...s.host,getBis:()=>current,readyAsync:()=>ready},storage:s.storage});startApproved(runtime);current=s.bis;resolve(current);await tick();assert.equal(s.calls.filter(call=>call[0]==='start').length,0);assert.equal(runtime.getState().status,'missing-player');runtime.dispose();await tick();

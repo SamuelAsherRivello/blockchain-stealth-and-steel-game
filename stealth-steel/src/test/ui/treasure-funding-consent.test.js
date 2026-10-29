@@ -6,10 +6,10 @@ import {createTreasureFundingConsent} from '../../runtime/ui/treasure-funding-co
 const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 
 test('funding approval is invalidated when the public signing source changes, including before submission',async()=>{
-  for(const initial of [undefined,'manual','server'])for(const next of ['manual','server']){
+  for(const initial of ['manual','server'])for(const next of ['manual','server']){
     if(initial===next)continue;
     for(const afterApproval of [false,true]){
-      const f=fixture();f.snapshot.account.gameWallet.source=initial;f.session.start();
+      const f=fixture(initial==='manual'?'mutinynet':'signet');f.snapshot.account.gameWallet.source=initial;f.session.start();
       const id=f.session.getState().sessionId;
       assert.equal(f.session.getState().fundingConsent.gameSource,initial);
       if(afterApproval)assert.equal(f.session.acceptFundingConsent(id).status,'accepted');
@@ -111,6 +111,34 @@ test('selected-network changes invalidate consent before stale wallet snapshots 
   assert.equal(f.session.getState().status,'no-offer');await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
 });
 
+test('the existing Contracts flag blocks new funding and retains its plain reason on either network',async()=>{
+  for(const network of ['signet','mutinynet'])for(const phase of ['before-start','before-approval','after-approval']){
+    const f=fixture(network),reason=`Browser validation is not supported on ${network} in this release.`;
+    if(phase!=='before-start')f.session.start();
+    if(phase==='after-approval')assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'accepted');
+    f.snapshot.capabilities.contracts={available:false,reason};
+    f.snapshot.capabilities.items={available:true};f.snapshot.capabilities.payments={available:true};
+    if(phase==='before-start')f.session.start();
+    await tick();const state=f.session.getState();
+    assert.equal(state.status,'no-offer');assert.equal(state.fundingConsent,undefined);assert.equal(state.reason,reason);
+    assert.equal(treasureMessage(state.status,state.reason),reason);
+    assert.equal(f.session.acceptFundingConsent(state.sessionId).status,'unavailable');
+    assert.equal(f.snapshot.capabilities.items.available,true);assert.equal(f.snapshot.capabilities.payments.available,true);
+    assert.deepEqual(f.calls,[]);f.session.dispose();
+  }
+});
+
+test('missing login and temporary wallet readiness retain setup messages instead of claiming network failure',()=>{
+  const f=fixture('mutinynet');delete f.snapshot.account.playerWallet;delete f.snapshot.account.gameWallet;
+  f.snapshot.capabilities.contracts={available:false,reason:'Contracts are unavailable: sign in to an active Player Wallet.'};
+  f.session.start();assert.equal(f.session.getState().status,'missing-player');
+  assert.match(treasureMessage(f.session.getState().status),/Connect an account/);
+  f.snapshot.account.playerWallet={profileId:'player-original',network:'mutinynet'};
+  f.snapshot.capabilities.contracts.reason='Contracts are unavailable: select or create a Game Wallet.';
+  f.session.start();assert.equal(f.session.getState().status,'no-offer');
+  assert.match(f.session.getState().reason,/select or create a Game Wallet/);assert.deepEqual(f.calls,[]);f.session.dispose();
+});
+
 test('stale approval or close cannot approve or decline a replacement offer',async()=>{
   const f=fixture();f.session.start();const first=f.session.getState().sessionId;f.session.start();
   const second=f.session.getState().sessionId;assert.notEqual(first,second);
@@ -144,9 +172,10 @@ function uiFixture(t,network='signet'){
   return {...f,host,doc,ui,timers,pauses,button:text=>descendants(host).find(node=>node.tagName==='button'&&node.textContent===text)};
 }
 
-test('consent names the public signing source and keeps an explicit fallback for older snapshots',t=>{
+test('consent names the selected Local or Server signing source',t=>{
   const f=uiFixture(t);
-  for(const [source,copy] of [[undefined,'signing source is unavailable'],['server','signing source: Server'],['manual','signing source: Local']]){
+  for(const [source,copy] of [['server','signing source: Server'],['manual','signing source: Local']]){
+    f.snapshot.account.playerWallet.network=f.snapshot.account.gameWallet.network=source==='manual'?'mutinynet':'signet';
     f.snapshot.account.gameWallet.source=source;f.session.start();
     assert.ok(f.host.textContent.includes(copy));
     assert.equal(f.host.textContent.includes('Both wallets are yours in this browser'),false);
@@ -180,11 +209,11 @@ test('Local Mutinynet consent names the network, local signer and Browser valida
   assert.equal(f.ui.isOpen,true);assert.deepEqual(f.calls,[]);f.ui.dispose();f.session.dispose();
 });
 
-test('Mutinynet refuses hosted or unknown Game signing sources before consent and funding',async()=>{
-  for(const source of ['server',undefined]){
-    const f=fixture('mutinynet');f.snapshot.account.gameWallet.source=source;f.session.start();
+test('fixed network modes refuse the opposite or unknown Game signing source before consent and funding',async()=>{
+  for(const network of ['signet','mutinynet'])for(const source of [network==='mutinynet'?'server':'manual',undefined]){
+    const f=fixture(network);f.snapshot.account.gameWallet.source=source;f.session.start();
     assert.equal(f.session.getState().status,'network-unavailable');
-    assert.match(treasureMessage(f.session.getState().status),/needs a Local Game Wallet/);
+    assert.match(treasureMessage(f.session.getState().status,f.session.getState().reason),network==='mutinynet'?/needs a Local Game Wallet/:/needs a Server Game Wallet/);
     assert.equal(f.session.getState().fundingConsent,undefined);
     assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'unavailable');
     await tick();assert.deepEqual(f.calls,[]);f.session.dispose();

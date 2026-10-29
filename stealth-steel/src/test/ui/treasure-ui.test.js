@@ -43,10 +43,16 @@ test('all treasure messages and action eligibility update in one open game windo
  click(s.button('Back'));assert.equal(s.ui.isOpen,false);assert.deepEqual([...s.pauses],['another-menu']);s.ui.dispose();
 });
 test('unsupported Mutinynet source is readable, keeps inspection available, and disables Claim and Reject',async t=>{
- const s=setup(t);s.setState({status:'network-unavailable'});s.ui.open();await Promise.resolve();
+ const s=setup(t);s.setState({status:'network-unavailable',reason:'Mutinynet treasure needs a Local Game Wallet. Open Account to check your wallet.'});s.ui.open();await Promise.resolve();
  assert.ok(s.host.textContent.includes('Mutinynet treasure needs a Local Game Wallet'));
  assert.equal(s.button('Claim').disabled,true);assert.equal(s.button('Reject').disabled,true);
  assert.equal(s.inspections(),1);assert.equal(s.calls(),0);s.ui.dispose();
+});
+test('an unavailable new offer displays the existing Contracts reason as plain text and keeps Back usable',t=>{
+ const s=setup(t),reason='Browser validation is unavailable on this selected network.';
+ s.setState({status:'no-offer',reason});s.ui.open();
+ assert.ok(s.host.textContent.includes(reason));assert.equal(s.button('Claim').disabled,true);assert.equal(s.button('Reject').disabled,true);
+ assert.equal(s.calls(),0);click(s.button('Back'));assert.equal(s.ui.isOpen,false);assert.deepEqual([...s.pauses],['another-menu']);s.ui.dispose();
 });
 test('slow status inspection keeps chest presentation, Back and Escape responsive without countdown reads',async t=>{
  const s=setup(t),finish=[];s.setInspection(()=>new Promise(resolve=>finish.push(resolve)));
