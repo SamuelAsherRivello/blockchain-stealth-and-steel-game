@@ -5,10 +5,10 @@ const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 // Existing financial lifecycle fixtures explicitly approve their new offer.
 // Separate consent tests verify that default Start never funds.
 function startApproved(runtime){runtime.start();const consent=runtime.getState().fundingConsent;if(consent)runtime.acceptFundingConsent(consent.sessionId);}
-function setup(saved){
+function setup(saved,{network='signet',source=network==='mutinynet'?'manual':'server'}={}){
   const values=new Map(saved?[['stealth-steel-treasure-session-v1',JSON.stringify(saved)]]:[]),calls=[],listeners=new Set();
   const storage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};
-  let snapshot={account:{playerWallet:{profileId:'player',network:'signet'},gameWallet:{profileId:'game',network:'signet'}},capabilities:{contracts:{available:true}},contracts:{status:'ready',contracts:[]}};
+  let snapshot={account:{playerWallet:{profileId:'player',network},gameWallet:{profileId:'game',network,source}},capabilities:{contracts:{available:true}},contracts:{status:'ready',contracts:[]}};
   const bis={getSnapshot:()=>snapshot,startContractAsync:async request=>{calls.push(['start',request]);return {status:'unavailable'};},checkContractsAsync:async()=>snapshot.contracts,endContractSessionAsync:async id=>calls.push(['end',id]),claimContractAsync:async id=>{calls.push(['claim',id]);return {status:'pending'};},rejectContractAsync:async id=>{calls.push(['reject',id]);return {status:'pending'};}};
   const host={getBis:()=>bis,readyAsync:async()=>bis,subscribe:fn=>{listeners.add(fn);return()=>listeners.delete(fn);}};
   return {bis,host,storage,calls,publish(value){snapshot={...snapshot,...value};listeners.forEach(fn=>fn(snapshot));}};
@@ -55,7 +55,7 @@ test('unknown creation write survives creation-disabled restart without changing
   const recoveryMaterial={fixtureOnly:true,opaqueBytes:'treasure-recovery-fixture-7f31'};
   s.bis.startContractAsync=async request=>{
     s.calls.push(['start',request]);
-    const contract={id:'unresolved-write-contract',type:'lto',purpose:'treasureLTO',sessionId:request.offerSessionId,
+    const contract={id:'unresolved-write-contract',type:'lto',purpose:'treasureLTO',validationMode:request.validationMode,sessionId:request.offerSessionId,
       hostReference:request.hostReference,amountSats:1000,startedAt:request.startedAt,expiresAt:request.expiresAt,
       scope:{playerId:'player',gameId:'game',network:'signet',operator:'https://signet.arkade.sh',exclusivityKey:'treasure'},
       operationKind:'claim',financial:'unknown',eligibility:'within-window',canClaim:false,originalScriptHex,recoveryMaterial};
@@ -102,6 +102,47 @@ test('unsupported network cannot create an offer or authorize funding',async()=>
   assert.equal(runtime.acceptFundingConsent(runtime.getState().sessionId).status,'unavailable');
   await runtime.inspect();await tick();assert.deepEqual(s.calls,[]);runtime.dispose();
 });
+
+// Public projections test host scoping only. They are not live funding receipts.
+for(const network of ['signet','mutinynet'])test(`${network} new offers pin Browser validation and the original signing source through restart`,async()=>{
+  const source=network==='mutinynet'?'manual':'server',s=setup(undefined,{network,source});
+  s.bis.startContractAsync=async request=>{s.calls.push(['start',request]);return {status:'submitted'};};
+  const runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage});runtime.start();
+  const original=runtime.snapshot();assert.equal(s.calls.length,0);
+  assert.equal(runtime.acceptFundingConsent(original.id).status,'accepted');await tick();
+  assert.equal(s.calls[0][1].validationMode,'browser-policy-v1');
+  const contract={id:'browser-original',type:'lto',purpose:'treasureLTO',sessionId:original.id,hostReference:original.reference,
+    scope:{playerId:'player',gameId:'game',network,operator:`https://${network}.arkade.sh`,exclusivityKey:'treasure'},
+    validationMode:'arkade-covenant-v2',amountSats:1000,startedAt:original.startedAt,expiresAt:original.expiresAt,financial:'funded',canClaim:true};
+  s.publish({contracts:{status:'ready',contracts:[contract]}});assert.equal(runtime.getState().status,'preparing');
+  contract.validationMode='browser-policy-v1';
+  s.publish({contracts:{status:'ready',contracts:[contract]}});assert.equal(runtime.getState().status,'active');
+  runtime.dispose({preserveSession:true});
+  const resumed=createTreasureRuntime({accountHost:s.host,storage:s.storage,resumeRun:true});resumed.start();
+  assert.equal(resumed.getState().status,'unverified');await resumed.inspect();
+  assert.equal(resumed.getState().status,'active');assert.equal(resumed.snapshot().gameSource,source);
+  assert.equal(resumed.snapshot().validationMode,'browser-policy-v1');assert.equal(resumed.snapshot().expiresAt,original.expiresAt);
+  const changed=source==='manual'?'server':'manual';
+  s.publish({account:{playerWallet:{profileId:'player',network},gameWallet:{profileId:'game',network,source:changed}}});
+  assert.equal(resumed.getState().status,'no-offer');assert.equal((await resumed.act('claim')).status,'unavailable');
+  assert.equal(s.calls.filter(([kind])=>kind==='start').length,1);
+  assert.equal(s.calls.some(([kind])=>['claim','reject','end'].includes(kind)),false);
+  resumed.dispose({preserveSession:true});
+});
+
+test('legacy Mutinynet co-signer recovery retains its original mode instead of becoming a Browser offer',async()=>{
+  const startedAt=Math.floor(Date.now()/1000)*1000,saved={id:'legacy-covenant',reference:'treasure:legacy-covenant',playerId:'player',gameId:'game',
+    walletKey:JSON.stringify(['player','mutinynet','game','mutinynet']),gameSource:'manual',validationMode:'arkade-covenant-v2',
+    expiresAt:startedAt+90000,status:'pending',contractId:'legacy-original'};
+  const s=setup(saved,{network:'mutinynet'}),contract={id:saved.contractId,type:'lto',purpose:'treasureLTO',sessionId:saved.id,hostReference:saved.reference,
+    scope:{playerId:'player',gameId:'game',network:'mutinynet',operator:'https://mutinynet.arkade.sh',exclusivityKey:'treasure'},
+    validationMode:'arkade-covenant-v2',amountSats:1000,startedAt,expiresAt:saved.expiresAt,financial:'unknown',operationKind:'claim',canClaim:false};
+  s.publish({contracts:{status:'ready',contracts:[contract]}});
+  const runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage,resumeRun:true});runtime.start();await runtime.inspect();
+  assert.equal(runtime.getState().status,'pending');assert.equal(runtime.snapshot().validationMode,'arkade-covenant-v2');
+  assert.equal(runtime.acceptFundingConsent(saved.id).status,'unavailable');assert.deepEqual(s.calls,[]);
+  runtime.dispose({preserveSession:true});
+});
 test('Start before BIS readiness stays skipped rather than retroactively funding',async()=>{
   const s=setup();let current,resolve;const ready=new Promise(done=>resolve=done);
   const runtime=createTreasureRuntime({accountHost:{...s.host,getBis:()=>current,readyAsync:()=>ready},storage:s.storage});startApproved(runtime);current=s.bis;resolve(current);await tick();assert.equal(s.calls.filter(call=>call[0]==='start').length,0);assert.equal(runtime.getState().status,'missing-player');runtime.dispose();await tick();
@@ -130,7 +171,7 @@ test('inspection coalesces per offer and stale slow reads cannot block or replac
   const second=runtime.snapshot();assert.notEqual(second.id,first.id);assert.equal(requests.length,2);
   assert.deepEqual(requests.map(({filter})=>filter.sessionId),[first.id,second.id]);
 
-  const contractFor=session=>({id:`offer-${session.id}`,type:'lto',purpose:'treasureLTO',sessionId:session.id,
+  const contractFor=session=>({id:`offer-${session.id}`,type:'lto',purpose:'treasureLTO',validationMode:session.validationMode,sessionId:session.id,
     hostReference:session.reference,amountSats:1000,startedAt:session.startedAt,expiresAt:session.expiresAt,
     scope:{playerId:'player',gameId:'game',network:'signet',operator:'https://signet.arkade.sh',exclusivityKey:'treasure'},
     financial:'funded',eligibility:'within-window',canClaim:true});
@@ -143,7 +184,7 @@ test('inspection coalesces per offer and stale slow reads cannot block or replac
 test('closed-window funding progress comes from safe events, scopes offers and permits claim/reject',async()=>{
   for(const action of ['claim','reject']){
     const s=setup(),runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage});startApproved(runtime);await tick();const binding=runtime.snapshot();
-    const contract={id:'offer',type:'lto',purpose:'treasureLTO',sessionId:binding.id,offerSessionId:binding.id,hostReference:binding.reference,
+    const contract={id:'offer',type:'lto',purpose:'treasureLTO',validationMode:binding.validationMode,sessionId:binding.id,offerSessionId:binding.id,hostReference:binding.reference,
       scope:{playerId:'player',gameId:'game',network:'signet',operator:'https://signet.arkade.sh',exclusivityKey:'treasure'},amountSats:1000,
       startedAt:binding.startedAt,expiresAt:binding.expiresAt,financial:'funding',eligibility:'within-window',canClaim:false};
     s.publish({contracts:{status:'ready',contracts:[{...contract,hostReference:'other'}]}});assert.notEqual(runtime.getState().status,'active');
@@ -154,7 +195,7 @@ test('closed-window funding progress comes from safe events, scopes offers and p
 });
 test('unrelated refresh and an unknown delayed claim never submit a second operation',async()=>{
   const s=setup(),runtime=createTreasureRuntime({accountHost:s.host,storage:s.storage});startApproved(runtime);await tick();
-  const binding=runtime.snapshot(),contract={id:'offer',type:'lto',purpose:'treasureLTO',sessionId:binding.id,
+  const binding=runtime.snapshot(),contract={id:'offer',type:'lto',purpose:'treasureLTO',validationMode:binding.validationMode,sessionId:binding.id,
     hostReference:binding.reference,amountSats:1000,startedAt:binding.startedAt,expiresAt:binding.expiresAt,
     scope:{playerId:'player',gameId:'game',network:'signet',operator:'https://signet.arkade.sh',exclusivityKey:'treasure'},
     financial:'funded',eligibility:'within-window',canClaim:true};

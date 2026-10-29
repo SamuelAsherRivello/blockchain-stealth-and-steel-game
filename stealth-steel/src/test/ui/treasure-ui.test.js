@@ -42,9 +42,9 @@ test('all treasure messages and action eligibility update in one open game windo
  }
  click(s.button('Back'));assert.equal(s.ui.isOpen,false);assert.deepEqual([...s.pauses],['another-menu']);s.ui.dispose();
 });
-test('Mutinynet unavailable state is readable, keeps inspection available, and disables Claim and Reject',async t=>{
+test('unsupported Mutinynet source is readable, keeps inspection available, and disables Claim and Reject',async t=>{
  const s=setup(t);s.setState({status:'network-unavailable'});s.ui.open();await Promise.resolve();
- assert.ok(s.host.textContent.includes('Treasure offers are not available on Mutinynet yet'));
+ assert.ok(s.host.textContent.includes('Mutinynet treasure needs a Direct Game Wallet'));
  assert.equal(s.button('Claim').disabled,true);assert.equal(s.button('Reject').disabled,true);
  assert.equal(s.inspections(),1);assert.equal(s.calls(),0);s.ui.dispose();
 });

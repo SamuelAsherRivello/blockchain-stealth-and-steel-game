@@ -17,7 +17,7 @@ export function createTreasureFundingConsent({host,screenLayer,frameElement=null
     paragraph(`Lock 1,000 sats from your selected Game Wallet on ${network} for this treasure offer?`);
     paragraph(`Game Wallet: …${consent.gameId.slice(-8)}. Player Wallet: …${consent.playerId.slice(-8)}. These are the selected BIS wallets; this prompt does not prove a protected publisher treasury.`);
     paragraph(consent.gameSource==='server'?'Game Wallet signing source: server. BIS requests signing from the configured server.':consent.gameSource==='manual'?'Game Wallet signing source: manual. The selected wallet signs in this browser.':'Game Wallet signing source is unavailable in this package snapshot. Check Account before funding.');
-    paragraph('A verified claim pays 1,000 sats to the Player Wallet. Refunds require original-contract recovery. Browser validation may control expiry; it can be bypassed by a modified client.');
+    paragraph('A verified claim pays 1,000 sats to the Player Wallet. Refunds require original-contract recovery. Browser validation controls expiry and payout checks; a modified client can bypass those checks.');
     paragraph('Funding requires the supported zero-fee policy; otherwise BIS skips this offer. The configured signing source can sign automatically; another popup is not guaranteed. Review the signing source in Account.');
     paragraph(`The offer ends at ${new Date(consent.expiresAt).toLocaleTimeString()}. Time spent deciding and funding uses the original window; it never exceeds 90 seconds.`);
     const countdown=paragraph(`${state.remainingSeconds} seconds remain in the original offer window.`);countdown.setAttribute('role','status');

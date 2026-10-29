@@ -21,7 +21,7 @@ test('funding approval is invalidated when the public signing source changes, in
 });
 function fixture(network='signet'){
   let clock=1234,sequence=0;
-  const calls=[],snapshot={account:{playerWallet:{profileId:'player-original',network},gameWallet:{profileId:'game-original',network}},capabilities:{contracts:{available:true}}};
+  const calls=[],snapshot={account:{playerWallet:{profileId:'player-original',network},gameWallet:{profileId:'game-original',network,source:network==='mutinynet'?'manual':'server'}},capabilities:{contracts:{available:true}}};
   const options={getSnapshot:()=>snapshot,now:()=>clock,newId:()=>`offer-${++sequence}`,offers:{
     start:async request=>{calls.push(['start',request]);return {status:'unavailable'};},
     checkContractsAsync:async()=>{calls.push(['inspect']);return {status:'ready',contracts:[]};},
@@ -31,44 +31,46 @@ function fixture(network='signet'){
   return {session:createTreasureSession(options),options,calls,snapshot,setNow:value=>{clock=value;}};
 }
 
-test('Signet requires consent while Mutinynet creation is clearly unavailable before any financial call',async()=>{
-  const signet=fixture('signet');signet.session.start();
-  const consent=signet.session.getState().fundingConsent;
-  assert.equal(signet.session.getState().status,'awaiting-consent');
-  assert.equal(consent.network,'signet');assert.equal(consent.amountSats,1000);
-  assert.equal(consent.gameId,'game-original');assert.equal(consent.playerId,'player-original');
-  await signet.session.inspect();assert.equal((await signet.session.act('claim')).status,'unavailable');
-  await tick();assert.deepEqual(signet.calls,[]);signet.session.dispose();
-  const mutiny=fixture('mutinynet');mutiny.session.start();
-  assert.equal(mutiny.session.getState().status,'network-unavailable');
-  assert.equal(mutiny.session.getState().fundingConsent,undefined);
-  assert.equal(mutiny.session.acceptFundingConsent(mutiny.session.getState().sessionId).status,'unavailable');
-  await mutiny.session.inspect();assert.equal((await mutiny.session.act('claim')).status,'unavailable');
-  await tick();assert.deepEqual(mutiny.calls,[]);mutiny.session.dispose();
+test('Direct Mutinynet and Server Signet require consent before any offer or financial action',async()=>{
+  for(const network of ['signet','mutinynet']){
+    const f=fixture(network);f.session.start();
+    const consent=f.session.getState().fundingConsent;
+    assert.equal(f.session.getState().status,'awaiting-consent');
+    assert.equal(consent.network,network);assert.equal(consent.amountSats,1000);
+    assert.equal(consent.validationMode,'browser-policy-v1');
+    assert.equal(consent.gameSource,network==='mutinynet'?'manual':'server');
+    assert.equal(consent.gameId,'game-original');assert.equal(consent.playerId,'player-original');
+    await f.session.inspect();assert.equal((await f.session.act('claim')).status,'unavailable');
+    await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
+  }
 });
 
-test('a logged-out Mutinynet selection surfaces the unavailable state and keeps wallet setup independent',async()=>{
+test('a logged-out selection on either network keeps wallet setup independent of Treasure',async()=>{
   const f=fixture('signet');
   delete f.snapshot.account.playerWallet;delete f.snapshot.account.gameWallet;
   f.session.start();
   assert.equal(f.session.getState().status,'missing-player');
   f.snapshot.account.network='mutinynet';f.session.notify(f.snapshot);
-  assert.equal(f.session.getState().status,'network-unavailable');
+  assert.equal(f.session.getState().status,'missing-player');
   assert.equal(f.session.getState().fundingConsent,undefined);
   assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'unavailable');
   await f.session.inspect();assert.equal((await f.session.act('claim')).status,'unavailable');
   await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
 });
 
-test('acceptance funds once with the original amount and rounded deadline even after time spent deciding',async()=>{
-  const f=fixture();f.session.start();const original=f.session.snapshot();f.setNow(31_234);
+test('both network sources request Browser validation once with original terms after time spent deciding',async()=>{
+ for(const network of ['signet','mutinynet']){
+  const f=fixture(network);f.session.start();const original=f.session.snapshot();f.setNow(31_234);
   assert.equal(f.session.acceptFundingConsent(original.id).status,'accepted');
   assert.equal(f.session.acceptFundingConsent(original.id).status,'unavailable');
   await tick();const starts=f.calls.filter(([kind])=>kind==='start');assert.equal(starts.length,1);
   assert.equal(starts[0][1].amountSats,1000);assert.equal(starts[0][1].startedAt,original.startedAt);
   assert.equal(starts[0][1].expiresAt,original.expiresAt);
+  assert.equal(starts[0][1].validationMode,'browser-policy-v1');
   assert.equal(original.expiresAt,(Math.floor(original.startedAt/1000)+90)*1000);
   assert.ok(original.expiresAt-original.startedAt<=90_000);
+  f.session.dispose();
+ }
 });
 
 test('decline and ending an unapproved session are non-financial and cannot later be accepted',async()=>{
@@ -94,6 +96,19 @@ test('a replaced wallet or network cannot reuse the previous consent',async()=>{
   }
   const f=fixture();f.session.start();f.session.acceptFundingConsent(f.session.getState().sessionId);
   f.snapshot.account.gameWallet.profileId='changed-between-click-and-submit';await tick();assert.deepEqual(f.calls,[]);
+});
+
+test('selected-network changes invalidate consent before stale wallet snapshots finish updating',async()=>{
+  for(const afterApproval of [false,true]){
+    const f=fixture();f.session.start();const id=f.session.getState().sessionId;
+    if(afterApproval)assert.equal(f.session.acceptFundingConsent(id).status,'accepted');
+    f.snapshot.account.network='mutinynet';
+    assert.equal(f.session.getState().status,'no-offer');
+    if(!afterApproval)assert.equal(f.session.acceptFundingConsent(id).status,'unavailable');
+    await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
+  }
+  const f=fixture();f.snapshot.account.network='mutinynet';f.session.start();
+  assert.equal(f.session.getState().status,'no-offer');await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
 });
 
 test('stale approval or close cannot approve or decline a replacement offer',async()=>{
@@ -156,12 +171,24 @@ test('consent UI shows exact terms and Skip, close and Escape never create an of
   }
 });
 
-test('Mutinynet shows unavailable messaging and never prompts for funding consent',async t=>{
+test('Direct Mutinynet consent names the network, local signer and Browser validation limitations',async t=>{
   const f=uiFixture(t,'mutinynet');f.session.start();
-  assert.equal(f.session.getState().status,'network-unavailable');
-  assert.match(treasureMessage(f.session.getState().status),/not available on Mutinynet yet/);
-  assert.equal(f.session.getState().fundingConsent,undefined);
-  assert.deepEqual(f.calls,[]);f.session.dispose();
+  assert.equal(f.session.getState().status,'awaiting-consent');
+  assert.match(f.host.textContent,/Mutinynet/);assert.match(f.host.textContent,/signing source: manual/);
+  assert.match(f.host.textContent,/Browser validation controls expiry and payout checks/);
+  assert.match(f.host.textContent,/modified client can bypass/);
+  assert.equal(f.ui.isOpen,true);assert.deepEqual(f.calls,[]);f.ui.dispose();f.session.dispose();
+});
+
+test('Mutinynet refuses hosted or unknown Game signing sources before consent and funding',async()=>{
+  for(const source of ['server',undefined]){
+    const f=fixture('mutinynet');f.snapshot.account.gameWallet.source=source;f.session.start();
+    assert.equal(f.session.getState().status,'network-unavailable');
+    assert.match(treasureMessage(f.session.getState().status),/needs a Direct Game Wallet/);
+    assert.equal(f.session.getState().fundingConsent,undefined);
+    assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'unavailable');
+    await tick();assert.deepEqual(f.calls,[]);f.session.dispose();
+  }
 });
 
 test('consent UI approval creates one request and expiration skips without extending terms',async t=>{

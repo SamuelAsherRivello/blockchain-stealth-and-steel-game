@@ -12,6 +12,8 @@ The user now requires Mutinynet Direct and Signet Server with all existing featu
 
 Existing C094-T038 stays open for exact-candidate Signet financial acceptance. The checked historical Signet-only restriction/release tasks keep their original evidence but do not establish these new requirements. C096-T005/T008/T010 complete the current two-tuple acceptance. No task is completed by this planning update.
 
+Game-only implementation checkpoint, 2026-10-29: new Direct Mutinynet and Signet offers explicitly request `browser-policy-v1`, retain consent and original 1,000-sat/90-second terms, and reject stale network/source approval. Restored sessions retain their original source and validation mode, including legacy co-signer recovery. The affected Treasure checks pass 54/54 and the installed-baseline public BIS contract typecheck passes. The exact candidate import, shared routing/header, real both-tuple lifecycle receipts and managed browser acceptance remain required; T045/T046 stay open. The actual paid-continuation price remains 1,000 sats, not the earlier generic 330-sat payment case. Trophy requests remain one NFT unit with provider-derived carriers/fees.
+
 ## Current execution order, 2026-10-29
 
 - Owner: Treasure/game execution chat; see the current takeover section in the BIS program ledger for its exact chat ID and file boundary.
