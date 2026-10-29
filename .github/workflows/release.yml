@@ -25,6 +25,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     env:
+      VITE_BIS_SERVER_URL: https://bis-server-rho.vercel.app/api/bis/
       GH_TOKEN: ${{ github.token }}
       RELEASE_WORK: ${{ github.workspace }}/.release-work
       RETRY_TAG: ${{ inputs.retry_tag }}

@@ -65,3 +65,13 @@ test("README documents BIS-first full-version alignment and manual release publi
   assert.doesNotMatch(section, /v\d+\.\d+\.\d+/);
   assert.equal(readme.split(`](${demoUrl})`).length - 1, 1);
 });
+
+test("stable and versioned game builds use the same public BIS server", async () => {
+  const endpoint = "https://bis-server-rho.vercel.app/api/bis/";
+  for (const path of ["deploy-pages.yml", "release.yml"]) {
+    const workflow = await read(`.github/workflows/${path}`);
+    const jobEnvironment = workflow.match(/\n    env:\r?\n((?:      [^\r\n]*\r?\n)+)/)?.[1] ?? "";
+    assert.ok(jobEnvironment.includes(`VITE_BIS_SERVER_URL: ${endpoint}`),
+      `${path} must configure the server for every production build`);
+  }
+});
