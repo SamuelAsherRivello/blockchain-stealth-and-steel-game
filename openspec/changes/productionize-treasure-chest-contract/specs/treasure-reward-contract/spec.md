@@ -6,30 +6,35 @@ Provide a verifiable treasure reward lifecycle for user-owned wallets, preservin
 
 ## ADDED Requirements
 
-### Requirement: Release 1 enables only qualified Signet Browser validation
-The Signet-only game release SHALL create new offers only on Signet using the real Browser validation contract mode, with its browser-enforced expiry limitation disclosed. Game-client Mutinynet creation SHALL remain unavailable until a separate qualification enables it. Admin SHALL retain the approved network-specific testing selector and truthful labels. Existing contracts on either network SHALL remain inspectable and recoverable under their original terms.
+### Requirement: Qualified Treasure works in both required wallet modes
+The game SHALL support new real Browser validation offers on Mutinynet Direct and Signet Server after each tuple passes its live acceptance. It SHALL disclose browser-enforced expiry and retain original-contract inspection/recovery. Unsupported stronger modes SHALL NOT qualify a tuple or prevent independently qualified Browser validation.
 
 #### Scenario: Player uses Signet release
 - **WHEN** the player requests a new Treasure offer on Signet
 - **THEN** the real compiled contract path may fund and spend under Browser validation
 - **AND** the user is told expiry is enforced by the browser
 
-#### Scenario: Game player starts on Mutinynet in release 1
-- **WHEN** a new Treasure offer is requested on Mutinynet
-- **THEN** creation is rejected before funding with a clear unavailable status
-- **AND** existing Mutinynet contracts remain inspectable and recoverable
+#### Scenario: Game player starts on Mutinynet Direct
+- **WHEN** a ready player explicitly starts on qualified Mutinynet Direct and accepts the funding consent
+- **THEN** the real Browser validation contract may fund from the selected local Game Wallet without any BIS server request
+- **AND** Claim, Reject, expiry/refund and recovery retain their original terms and require exact receipts
+
+#### Scenario: Game player starts on Signet Server
+- **WHEN** a ready player explicitly starts on qualified Signet Server and accepts funding consent
+- **THEN** the same user-facing Treasure flow uses the server-assisted Game authority with a local Player Wallet
+- **AND** no server mnemonic or owner credential is exposed to the player
 
 #### Scenario: Admin documents Mutinynet test choices
 - **WHEN** an Admin tester selects Mutinynet
 - **THEN** Arkade co-signer is selected by default and Browser validation is an explicit option
 - **AND** the selector describes actual guarantees and does not silently downgrade
 
-### Requirement: Local wallet ownership is explicit
-The treasure flow SHALL use separate user-owned Player and Game Wallets without an application server. Setup SHALL identify the Game Wallet as the source of the reward. The product SHALL NOT imply a protected shared publisher treasury, authoritative gameplay verification, distributed exclusivity or cleanup while all clients are closed.
+### Requirement: Wallet source and ownership are explicit
+Direct SHALL use separate user-owned Player and Game Wallets. Server SHALL keep Player signing local and Game authority on the BIS service. Setup SHALL identify the actual reward-funding wallet and selected source. Neither source SHALL imply authoritative gameplay verification, distributed browser exclusivity or cleanup while all clients are closed.
 
 #### Scenario: Reward setup
 - **WHEN** a user configures treasure rewards
-- **THEN** the user can identify which locally controlled Game Wallet funds the reward
+- **THEN** the user can identify which local or server-assisted Game Wallet funds the reward
 - **AND** no shared treasury key or automatically transferred recovery phrase is required
 
 ### Requirement: Original reward terms remain immutable

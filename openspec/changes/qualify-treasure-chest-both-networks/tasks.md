@@ -1,5 +1,11 @@
 # Tasks
 
+## Current finite acceptance contract, 2026-10-29
+
+The required current tuples are Mutinynet Direct and Signet Server, each using its independently qualified real Browser validation contract. Hosted Mutinynet and stronger unqualified guarantees are deferred, not passed. C096-T005 requires current-artifact real funding/Claim/Reject on both tuples; C096-T008 requires actual hidden-tab/funded acknowledgement; C096-T010 requires full matrix and final matching deployed versions/modes. Include real original expiry/refund and required recovery evidence in the matrix, not only a completed inventory of blocked rows.
+
+Follow the BIS program's finite nine-step dependency order. C094 and C096 may integrate the same frozen package-verified local candidate before public publication, eliminating the old publication/import cycle. Direct bypasses the BIS signer. Current game-only implementation is C094-T045/T046; final game publication is C094-T047. BIS owns Sandbox step 9, whose local acceptance precedes publication and whose public verification precedes final closure. Preserve historical task states and all original B2/refund evidence. No criterion passes merely because its mode was deferred.
+
 ## Current execution order, 2026-10-29
 
 - Owner: Treasure/game execution chat; see the current takeover section in the BIS program ledger for its exact chat ID and file boundary.

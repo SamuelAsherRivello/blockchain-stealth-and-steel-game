@@ -27,6 +27,16 @@ The game SHALL reveal one treasure chest per valid authored spawner only after a
 - **WHEN** the wallet capability is ready but matching funding is pending or unknown
 - **THEN** the game does not reveal a new chest or enable a claim
 
+#### Scenario: Qualified Mutinynet Direct offer
+- **WHEN** the active Mutinynet Direct run has a current matching verified funded Browser validation offer
+- **THEN** the authored chest and normal interaction become available without a BIS server
+- **AND** the upper-left shared header shows `Direct` with the selected network and BIS version
+
+#### Scenario: Qualified Signet Server offer
+- **WHEN** the active Signet Server run has a current matching verified funded Browser validation offer
+- **THEN** the same authored chest and normal interaction become available
+- **AND** the upper-left shared header shows `Server`, with actual connection health reported separately
+
 #### Scenario: Active state is restored from game storage
 - **WHEN** game storage contains a previously active treasure session without a current verified BIS projection
 - **THEN** the restored cache cannot reveal a new chest or authorize its financial actions

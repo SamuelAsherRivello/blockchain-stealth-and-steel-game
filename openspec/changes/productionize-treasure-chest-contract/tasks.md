@@ -1,5 +1,17 @@
 # Tasks
 
+## Current finite release order, 2026-10-29
+
+The user now requires Mutinynet Direct and Signet Server with all existing features and the upper-left mode label. This supersedes historical new-Mutinynet-offer bans and publication-before-local-import gates below. Follow the BIS program's nine-step sequence. Game-only work is ready now; local import needs the frozen verified candidate, not prior publication. Public release still needs both complete workflows and Sandbox step 9 acceptance.
+
+## 9. Current Direct and Server release
+
+- [ ] 9.1 C094-T045 Integrate network-specific Direct Mutinynet / Server Signet selection through the public BIS API and verify the upper-left mode, retained network/version, explicit safe fallback, stale-reply isolation and source-pinned recovery in focused tests and managed browser checks.
+- [ ] 9.2 C094-T046 Restore Mutinynet Direct Treasure creation through qualified Browser validation, retaining consent, real 1,000-sat funding and original 90-second terms; verify real funded Claim/Reject with C096-T005 and preserve all applicable account, paid-continuation, inventory/equipment/trophy and recovery behavior on both tuples using the fixed feature matrix.
+- [ ] 9.3 C094-T047 On the exact final candidate, pass package/inventory/hash, contract typecheck, full tests, publishing tests and build, complete both tuple browser/live acceptance and Sandbox prerequisite, publish the matching authorized game release and verify deployed commit/version/mode plus authoritative README links. Historical releases do not satisfy this task.
+
+Existing C094-T038 stays open for exact-candidate Signet financial acceptance. The checked historical Signet-only restriction/release tasks keep their original evidence but do not establish these new requirements. C096-T005/T008/T010 complete the current two-tuple acceptance. No task is completed by this planning update.
+
 ## Current execution order, 2026-10-29
 
 - Owner: Treasure/game execution chat; see the current takeover section in the BIS program ledger for its exact chat ID and file boundary.

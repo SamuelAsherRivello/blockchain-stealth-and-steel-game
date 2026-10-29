@@ -1,5 +1,15 @@
 # Design
 
+## Current two-workflow execution contract
+
+The user explicitly replaced the Signet-only consumer restriction on 2026-10-29. Mutinynet uses Direct and Signet uses Server, with all existing game/account/payment/inventory/reward/Treasure features. Shared BIS composition owns source routing and the upper-left `Server` / `Direct` header; game code consumes the public API. No global force-manual flag may disable Server Signet, and Direct Mutinynet must not probe the BIS service.
+
+Remove the unconditional Mutinynet new-offer ban. The game chooses the qualified Browser validation mode before funding on both required tuples; stronger unqualified modes remain disabled. Direct is a signing-source label, not a contract-enforcement guarantee. Preserve consent, original terms, exact evidence, zero-fee 1,000-sat payout, legacy inspection and original-mode recovery.
+
+The BIS program's finite sequence is authoritative. Implement game-only changes while BIS finishes its public composition. After BIS freezes and package-verifies the candidate, import its exact immutable hash for local integration without waiting for Pages publication. Run required current-candidate tests/types/build/publish checks and actual Direct Mutinynet + Server Signet guest/account/continuation/Treasure flows. Publish matching versions only after acceptance. Sandbox's four-page step 9 must also pass before final release closure; BIS owns those files.
+
+Historical Signet-only tasks remain evidence of their original release, not evidence that new Direct creation, mode routing/header or the new candidate passed. C094-T045/T046/T047 are the new implementation and release gates; C094-T038 and C096-T005/T008/T010 remain mandatory where applicable.
+
 ## Current execution ownership
 
 The 2026-10-29 takeover section of the BIS program ledger supersedes historical owner/thread assignments and obsolete package-version observations in this document. It does not supersede contract guarantees or safety requirements. Use the actual accepted candidate version, archive hash and source evidence rather than a historical 0.0.27/0.0.29/0.0.30 observation.
@@ -8,7 +18,7 @@ The Treasure/game owner follows the execution order in proposal.md. One owner wr
 
 Preflight the exact test command, browser cache and private temporary-path requirements with a small affected check. Reuse unchanged-source evidence, run focused checks during fixes, and run required integrated checks after the candidate is frozen. Do not start competing suites or replace real hidden-tab or network evidence with injected state.
 
-## Release 1 scope (supersedes earlier two-network rollout text below)
+## Historical Signet-only scope, superseded by the current two-workflow contract
 
 C094 is the Signet-only release slice. It preserves the real contract, wallet consent, immutable terms, exact receipt checks, portable recovery, legacy inspection, and responsive user flow already implemented. New creation is permitted only on Signet using Browser validation, whose weaker browser-enforced expiry is disclosed at the point of selection and in contract details. This mode is a real compiled Arkade contract with real funding/spending; it is not covenant-enforced timing, anti-cheat, or a protected treasury.
 
@@ -47,9 +57,9 @@ The Conditional Vault work in the adjacent BIS repository has different state an
 
 ## Decisions
 
-### Preserve the local wallet model
+### Preserve local Player custody and source-bound Game authority
 
-The browser remains the application signer and active recovery worker. Consent and setup must make clear whose Game Wallet supplies the 1,000 sats. A locally controlled wallet cannot be advertised as a shared publisher treasury protected against the player controlling the browser. An external signing service would solve different authority and scheduling problems, but the user declined that architecture for this change.
+The browser remains the Player signer and active workflow/recovery worker. Direct keeps the user-owned Game signer local; Server uses the explicitly approved private BIS signer. Consent identifies the actual Game Wallet supplying 1,000 sats. Neither source establishes anti-cheat or background completion while all browsers are closed. Keys and old operations never migrate merely because source or network changes.
 
 Browser storage remains useful for caching and coordination. Production recovery additionally needs a user-controlled, encrypted portable recovery bundle with a versioned descriptor and protected journal. Public descriptors contain network, operator identity, participant public keys, amount, original deadline, script/program commitment, contract outpoint and sanitized operation references. Secrets, preimages and signed recovery artifacts remain private. Restoring on a different device requires explicit import and live reconciliation before any new mutation. Concurrent independent-device spending is not coordinated by browser locks; exact outpoint conflicts and uncertain outcomes must be handled conservatively.
 

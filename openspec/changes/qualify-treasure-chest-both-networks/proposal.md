@@ -1,5 +1,11 @@
 # Proposal
 
+## Current required tuples, 2026-10-29
+
+The user requires Mutinynet **Direct** and Signet **Server**, with all features and the upper-left shared mode label. Qualification here now gates the real Browser validation lifecycle on both tuples and the complete game feature regression. Hosted Mutinynet and stronger unqualified co-signer guarantees remain deferred and must not block independently qualified Direct Browser validation. Preserve their blocked evidence and the original B2 uncertainty; do not call them passed.
+
+This change may qualify the two tuples concurrently with C094 integration; C094 final publication is not an input prerequisite. Both consume the same frozen verified local BIS candidate before public release. Current live tasks C096-T005/T008/T010 remain open until their actual requirements pass. Historical matrix/disposition checkmarks are not current financial proof. Sandbox step 9 is a required BIS-owned final release dependency.
+
 ## Execution takeover, 2026-10-29
 
 The user requested replacement ownership, minimum calendar time and a two-hour completion target. Reuse this change and its acceptance criteria; do not restart its implementation or migrate unfinished requirements into a nominally completed replacement. The Treasure/game execution chat owns this change under the current takeover section of the BIS program ledger.

@@ -9,6 +9,11 @@ Define how Treasure earns per-network and per-mode qualification using real cont
 ### Requirement: Network support is advertised only after mode qualification
 Each network and signing mode SHALL be enabled only when its exact contract behavior and lifecycle have passed the applicable live acceptance matrix.
 
+#### Scenario: Required Direct and Server tuples
+- **WHEN** the current release is declared complete
+- **THEN** Mutinynet Direct and Signet Server each have current-artifact real Browser validation funding, Claim, Reject, expiry/refund and recovery evidence
+- **AND** neither hosted Mutinynet nor unqualified stronger-mode support is required or claimed
+
 #### Scenario: Mutinynet co-signer evidence is incomplete
 - **WHEN** operator admission or finalization evidence is missing for the co-signer mode
 - **THEN** that mode remains unavailable for new offers
@@ -36,6 +41,7 @@ Game clients SHALL select the strongest currently supported mode through non-mut
 #### Scenario: Stronger mode is unavailable before funding
 - **WHEN** preflight proves the co-signer mode is unsupported before any financial submission
 - **THEN** the game may select the approved browser-policy mode and disclose its limits
+- **AND** Direct Mutinynet does not contact the BIS signer while selecting or executing that real contract mode
 
 #### Scenario: Submission outcome is uncertain
 - **WHEN** funding or a spend may have reached the network
