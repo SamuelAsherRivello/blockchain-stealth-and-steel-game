@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createBrowserZip, stagePages } from './release-archive.mjs';
+import { createBrowserZip, preserveImmutableAssets, stagePages } from './release-archive.mjs';
 import { RELEASE_ASSET, assertTag, finalizeMetadata, metadataText, nextPatch, planRelease, releaseBase, versionFiles } from './release-core.mjs';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
@@ -144,8 +144,17 @@ async function stage() {
   await output({ site, release_count: count });
 }
 
+async function mergeStagedAssets() {
+  const work = resolve(releaseWork ?? '');
+  const repository = resolve(root);
+  if (!releaseWork || !(work === repository || work.startsWith(`${repository}${sep}`)))
+    throw new Error('RELEASE_WORK must be inside the repository');
+  await preserveImmutableAssets(join(work, 'site', 'assets'), join(root, 'dist', 'assets'));
+}
+
 const action = process.argv[2];
 if (action === 'prepare') await prepare();
 else if (action === 'finalize') await finalize();
 else if (action === 'stage') await stage();
-else throw new Error('Use prepare, finalize, or stage');
+else if (action === 'merge-assets') await mergeStagedAssets();
+else throw new Error('Use prepare, finalize, stage, or merge-assets');

@@ -1,11 +1,17 @@
-# Verified local 0.0.29 candidate (2026-10-27)
+# Verified local 0.0.30 candidate (2026-10-27)
 
-- Package: `@bis/integration` 0.0.29; artifact: `bis-integration-0.0.29.tgz`.
-- SHA-256: `3617a257a9d1e48084d9e845d9d911747735d3dff9dcd6f4bb9fb0d51d89aff6`.
-- BIS source commit: `0a2b1726877fa6f85917c13bebbe29dbaf4e5d72`. The archive was rebuilt from the committed `BIS/packages/integration` subtree; unrelated BIS checkout changes were excluded.
-- Inventory: 201 packed files. The exact archive hash, package metadata, public JavaScript, stylesheet, source, and all installed-file hashes pass the package verifier. The lockfile SRI matches the archive, and `npm install --ignore-scripts` installed that exact package with zero reported vulnerabilities. A clean `npm ci --ignore-scripts` was not verified: the earlier attempt failed when Windows denied removal of a Rolldown binary held by the running shared server.
-- BIS verification: full suite 1,722/1,722, sequential release check from 0.0.28, typecheck, and production build passed on the BIS candidate checkout. Game verification against this exact archive: package verifier, BIS contract typecheck, focused integration/UI 22/22, Pages checks 10/10, full game suite, and production build passed. Pages metadata was `v0.0.29` with exact uncompressed size `000018829157`; the build reported the existing large-chunk warning.
-- Local code and package acceptance are complete. Deployed managed guest connection and funded Signet Claim/Reject remain open. No live financial operation or Pages deployment is claimed here. Wallet data and storage were not accessed or modified by package import.
+- Package: `@bis/integration` 0.0.30; artifact: `bis-integration-0.0.30.tgz`.
+- SHA-256: `5f031b0915fb7b865679fdd080c74b3e906a58c0a0f6f1c8a0373a2165da6ede`.
+- BIS source commit: `a77ad6b20da03e0a063cd689bd6a5f4d9663ee83`; the source worktree was dirty because concurrent release tasks had unrelated edits. The ignored BIS export manifest records the immutable tarball hash and dirty-source status.
+- Inventory: 201 packed files. The archive contains `dist/`, `src/`, and the public stylesheet; its hash and all installed-file hashes pass the package verifier. BIS focused Game Wallet tests pass 25/25 after the change, root typecheck passes, and the integration package and full BIS build pass. The coordinated full BIS suite passed 1,728/1,728 immediately before this narrow API addition; broad suites were not repeated. Existing large-chunk and ineffective dynamic-import warnings remain.
+- Game verification against this exact archive: package verifier, BIS contract typecheck, focused integration/UI 22/22, Pages publishing checks 10/10, and production build pass. Pages metadata build resolves `v0.0.30` with BIS `0.0.30`; the existing large-chunk warning remains. No Pages workflow was dispatched and no public release is claimed.
+- The local package import changes only package/version/provenance metadata and the vendor archive. It did not read wallet data, onboard, sign, or transact. Funded Signet Claim/Reject and published/manual-fallback acceptance remain open.
+
+### Game-consumable public API changes
+
+- `createBisGameWallet().quoteBoarding(requestedSats?)` now accepts an optional exact positive whole-sat amount for a Game Wallet Bitcoin-to-Arkade boarding quote. Omitting it preserves the previous Max quote behavior; invalid non-positive, fractional, or unsafe amounts are rejected before account selection.
+- Server-backed Game Wallet address projection uses the read-only identity path after wallet initialization. Rendering public addresses no longer calls wallet address getters that can initialize a signer session. Account role, network checks, and stale-session guards remain in force.
+- Admin treasure recovery preserves the selected validation mode, so an uncertain creation acknowledgement cannot silently resume with a different signing solution.
 
 ### Game-consumable public API changes
 
@@ -190,4 +196,3 @@ Asset-carrier funding fix: bis-integration-0.14.1-g1-g2-d191d1bc8688.tgz; SHA-25
 - `IBisGame.authorizePlayerLogoutAsync` lets a game return `allow`, `deny`, or `confirm` with a bounded, game-authored body. BIS owns the dialog title and buttons.
 - `IBisGame.confirmPlayerLogoutAsync` rechecks an opaque confirmation authorization immediately before Player Wallet cleanup. Timeouts, unavailable hosts, and invalid responses require an explicit BIS override rather than silently proceeding.
 - Public account snapshots keep Player Wallet and Game Wallet role identities distinct; game consumers must compare both and discard stale asynchronous work after either changes.
-

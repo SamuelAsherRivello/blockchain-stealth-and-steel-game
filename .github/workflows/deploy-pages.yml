@@ -52,6 +52,7 @@ jobs:
           cp -a "$RELEASE_WORK/site/releases" dist/releases
           cp -a "$RELEASE_WORK/site/latest" dist/latest
           cp "$RELEASE_WORK/site/.nojekyll" dist/.nojekyll
+          RELEASE_WORK="$RELEASE_WORK" node stealth-steel/tools/release/release-cli.mjs merge-assets
           test -f "dist/releases/$release_tag/environment.json"
           test -f dist/latest/index.html
       - uses: actions/configure-pages@v5
