@@ -1,5 +1,15 @@
 # Tasks
 
+## Current execution order, 2026-10-29
+
+- Owner: Treasure/game execution chat; see the current takeover section in the BIS program ledger for its exact chat ID and file boundary.
+- Preserve existing task IDs, checkboxes and historical evidence. This ownership update completes no acceptance task.
+- Retain C094 as the Signet prerequisite. Complete independent game synchronization, real headed-tab observation and exact-artifact preparation while awaiting BIS. Preserve unavailable modes and the original B2 reservation until authoritative evidence supports their existing gates.
+- Reconcile actual commits and unrelated dirty work before scoped commits on main. Do not create a branch/worktree or include unrelated changes.
+- Stop unchanged status polling and repeated blocked probes. Record only a result, changed prerequisite, concrete defect, accepted artifact or required decision. Financial actions require the coordinator's sole slot and all existing journal/budget gates.
+- The current exact-artifact import contract is C094 design's release gate, which supersedes historical whole-checkout-clean and import-freeze statements below. The accepted packed source and truthful manifest remain mandatory. Keep this proposal's exact-artifact and real two-network requirements intact.
+- Current game evidence and the bounded headed-browser limitation are recorded once in `output/reports/treasure/game-takeover-2026-10-29/current-disposition.md`. Neither the isolated guest checks nor runner diagnosis closes T005, T008 or T010.
+
 C096, `qualify-treasure-chest-both-networks`. This is the follow-up to C094's Signet-only release. Do not claim the original open C094 criteria passed by migration. Use exact imported artifacts and real contract receipts; keep unknown outcomes protected.
 
 ## Original C094 task carryover
@@ -18,12 +28,12 @@ C096, `qualify-treasure-chest-both-networks`. This is the follow-up to C094's Si
 - [x] C096-T002 Disposition complete — blocked, not qualified. No new attributable co-signer operator acceptance/admission or delayed-finalization evidence exists; the current Mutinynet identity is unavailable, so co-signer creation remains unavailable. Do not infer signing success.
 - [x] C096-T003 Disposition complete — stopped before recovery, not recovered. Current public evidence shows the exact original B2 output is swept, preconfirmed, and past its recorded expiry, so the pinned refund spendability precondition fails. The protected run/operation and terminal destination/fee receipt are also absent. No recovery, signing, or submission was performed; do not substitute generic SDK recovery.
 - [x] C096-T004 Complete the per-network/mode lifecycle evidence matrix and record every case as passed, failed, blocked or unperformed. Matrix completion is evidence inventory only; it does not promote any network/mode to production-qualified.
-- [ ] C096-T005 Verify managed browser Claim/Reject flow with real funded offers and exact receipts; deterministic fixtures must not inject financial success.
-- [ ] C096-T006 Exercise creation-disable rollback with legacy and unresolved contracts; preserve journals, original scripts and recovery.
+- [ ] C096-T005 Verify managed browser Claim/Reject flow with real funded offers and exact receipts; deterministic fixtures must not inject financial success. (Partial: 51 current-source BIS boarding/hosted-policy/network-selection/wallet-pool tests pass; published v0.0.30 Signet guest screen and connect endpoint were observed without wallet login or financial action. This verifies preconditions and guest connection only; there are no managed funded Claim/Reject receipts. See `blockchain-integration-service/output/reports/bis-server/two-network/2026-10-29/wallet-free-focused-verification.md` and the C094 current-candidate report.)
+- [x] C096-T006 Exercise creation-disable rollback with legacy and unresolved contracts; preserve journals, original scripts and recovery. (Closed 2026-10-29 at the deterministic application level: the current-source LTO service/public-factory suite passed 24/24, covering refusal of new creation, continued inspection/refund recovery of existing records, unresolved journal preservation across reset, and no duplicate operation after uncertain outcomes. The full BIS suite also passed 1,805/1,805 and includes contract-storage checks that preserve encrypted recovery and reject changes to original game/player/contract scripts. The public-factory fixture asserts no `fetch` call. These fixtures establish rollback and preservation behavior only; they do not prove a protected live-wallet rollback, any network receipt, or contract settlement. The unknown Signet refund remains untouched and blocks funded acceptance. Evidence: `blockchain-integration-service/output/reports/bis-server/two-network/2026-10-29/rollback-and-game-performance.md` and `blockchain-integration-service/output/reports/bis-server/milestone-1/verification-2026-10-29.md`.)
 - [x] C096-T007 Verify Admin selector labels/defaults and game automatic pre-funding mode selection; ensure no silent downgrade after uncertain submission.
-- [ ] C096-T008 Measure local cold/warm/offline/slow and actual hidden-tab behavior plus funded acknowledgement on a documented device; meet local p95 <=100 ms or document failure, reporting provider latency separately.
+- [ ] C096-T008 Measure local cold/warm/offline/slow and actual hidden-tab behavior plus funded acknowledgement on a documented device; meet local p95 <=100 ms or document failure, reporting provider latency separately. (Current 0.0.30 measurements meet the local p95 budget: desktop cold/warm open/back 14.7/15.3 and 15.7/15.6 ms; portrait 15.4/16.7 and 15.7/15.6 ms; offline open/back 11.1/15.4 and 12.6/14.3 ms. Slow unresolved reads keep the view open, show delayed feedback, disable Claim/Reject, and make zero financial calls. Provider duration was not measured; actual `hidden` state was not observed; funded acknowledgement is unperformed. Additional bounded DevTools observation: page 2 remained `visible` with `document.hidden === false` and no `visibilitychange` event after a foreground `about:blank` page was opened; this confirms no hidden transition was observed and does not qualify hidden-tab behavior. Report: `output/reports/treasure/C096-T008-2026-10-29/hidden-tab-observation.md`. Source-hash-matched performance report: `output/reports/treasure-local-responsiveness-2026-10-28/performance-current.json`; current task map: `blockchain-integration-service/output/reports/bis-server/two-network/2026-10-29/rollback-and-game-performance.md`. T008 stays open.)
 - [x] C096-T009 Independently review proofs, receipts, recovery and disclosure against both specs; enable only passing network/mode tuples and retain blockers.
-- [ ] C096-T010 Run complete game and BIS acceptance, exact artifact/type/build/publish checks, then verify deployed Admin/game routes and release version. Keep game import separate until BIS evidence is ready; publish only under the applicable release authorization.
+- [ ] C096-T010 Run complete game and BIS acceptance, exact artifact/type/build/publish checks, then verify deployed Admin/game routes and release version. Keep game import separate until BIS evidence is ready; publish only under the applicable release authorization. (Latest shared game-tree `npm.cmd test` passed 1,192/1,192 with zero failures/cancellations/skips in 8.98 s; log: `output/reports/diagnostics/goal-continuation-2026-10-29/game-npm-test.log`. The current installed `@bis/integration` 0.0.30 baseline also passes the 201-file package verifier, BIS contract typecheck, publish tests 10/10, and production build (v0.0.30/BIS 0.0.30; existing large-chunk warning only); details: `output/reports/diagnostics/treasure-root-suite-2026-10-29/current-game-verification.md`. These are deterministic current-baseline checks only. They do not form the accepted exact 0.0.31 artifact chain: the BIS candidate is source-dirty, has not been accepted/imported, and no authorized deployment has been verified. See the 2026-10-29 offline-gate audit below.)
 
 Current shared game candidate verification update (2026-10-28): the full root
 `npm test` run passed **1,192/1,192** with zero failures, cancellations, or
@@ -105,9 +115,11 @@ passes.
 
 The matrix is complete as an evidence inventory, including its blocked and
 unperformed cases. It does not claim all rows passed. Exact game-client funded
-Claim/Reject remains C096-T005/C094-T038; live rollback remains C096-T006;
-actual hidden-tab and funded-action timing remain C096-T008. No network/mode
-tuple is promoted to production-qualified by checking T004.
+Claim/Reject remains C096-T005/C094-T038; C096-T006's creation-disable
+rollback behavior is closed at the deterministic application level below, with
+no live settlement claim; actual hidden-tab and funded-action timing remain
+C096-T008. No network/mode tuple is promoted to production-qualified by
+checking T004 or closing T006.
 
 #### B2 exact-input SDK settlement source review
 
@@ -147,12 +159,13 @@ missing protocol facts; no generic refund workaround is justified.
 | Task | Source/local work already evidenced | Outstanding acceptance (why the task stays open) |
 | --- | --- | --- |
 | C096-T005 | Current 0.0.30 guest route reaches Settings → Account; deterministic Claim/Reject guards are covered without financial-success injection. | Must connect the registered managed test session and complete real funded Claim/Reject with exact receipts. Current wallet/budget readiness does not admit a funded slot; no new operation is safe. |
-| C096-T006 | Creation-disabled rollback regression is committed (`eb80ece`) and passed 10/10 focused runtime tests; unresolved legacy Claim journal preservation is covered for both networks. | Real rollback with the registered legacy/unresolved contract and reconciled protected journal/recovery receipts has not run. A fixture cannot close this live gate. |
+| C096-T006 | Closed at deterministic acceptance: the 24/24 LTO suite covers creation refusal, existing inspection/refund recovery, unresolved journal preservation, and duplicate prevention; the full BIS suite covers immutable encrypted recovery/script fields. | No live wallet rollback or contract settlement is claimed. This is a limitation, not an unmet C096-T006 criterion. |
 | C096-T008 | Current-source-hash-matched cold/warm/offline/slow UI p95 measurements meet the local target on desktop and mobile; repeated reads coalesce. | Automation never observed `visibilityState: hidden`; funded acknowledgement and provider latency were not measured. No extra synthetic visibility event is counted. |
 | C096-T010 | Current artifact/version/provenance checks, production build and publish checks, public route/version observations, and OpenSpec validation are recorded. | Final acceptance requires the remaining live gates, clean exact-artifact integration and authorized coordinated release checks. The latest BIS full-suite run had one sandbox process-ownership failure; an isolated elevated rerun passed, so the suite was not repeated. |
 
-No remaining C096 task is source/test-only. The local portion of T005/T006/T008/T010
-is recorded above; each open task requires the named live/runtime/receipt gate.
+No remaining unchecked C096 task is source/test-only. T006's deterministic
+criterion is closed above; each remaining open task requires its named
+live/runtime/receipt gate.
 
 ## 2026-10-28 additional T008 browser visibility attempt
 
@@ -305,7 +318,8 @@ recovery sentinels are unchanged in the mocked journal, only one create
 submission occurred, and claim/reject/end were never called. No protected
 vault, network, signing, or transaction is involved. The focused runtime suite
 now passes **11/11** (`node --test
-stealth-steel/src/test/ui/treasure-runtime.test.js`).
+stealth-steel/src/test/ui/treasure-runtime.test.js`). Captured output:
+`output/reports/treasure/C096-T006-2026-10-28/treasure-runtime-focused-11-of-11.log`.
 
 This closes only the deterministic fixture gap for unknown-write/restart
 preservation. The operation journal, original script, and recovery fields are
@@ -347,6 +361,25 @@ remain unmeasured because they require the separately gated live operation.
 The current root `npm test` result is deterministic suite evidence, not a
 substitute for those T008 observations. Keep C096-T008 open.
 
+### 2026-10-28 C096-T008 isolated hidden-tab attempt
+
+One distinct real background-page attempt was made from the isolated browser
+workflow using the game preview URL and a named isolated Chrome DevTools
+context. Page creation failed before a browser page existed because the
+Chrome DevTools browser profile was already running; the tool returned its
+profile-lock error. Therefore `document.visibilityState` was not observable
+for this attempt, and no `hidden` transition is claimed. No synthetic event,
+visibility override, browser stop, or profile replacement was used. The source
+hash was independently checked against
+`stealth-steel/src/runtime/ui/treasure-ui.js`:
+`578825b9ae5b672d5959919f5a57c9e9824b29b98685d4d6de2b9ffa66934512`.
+This exact blocker and null visibility result are recorded in the
+`actualHiddenTab.attempts` array of
+`output/reports/treasure-local-responsiveness-2026-10-28/performance-current.json`.
+Per the bounded attempt, stop browser retries here. C096-T008 remains open for
+a genuine browser-hidden observation and funded acknowledgement; the latter
+still requires the separately admitted live financial slot.
+
 The T006 audit compared all eleven cases in
 `stealth-steel/src/test/ui/treasure-runtime.test.js` with the task wording. The
 two creation-disabled regressions provide deterministic fixture evidence on
@@ -370,3 +403,229 @@ original signed material. The fixture cannot establish process-level recovery
 or network settlement. Thus only deterministic fixture rollback-safety is
 evidenced; C096-T006 remains unchecked for protected-state and live-operation
 acceptance. The updated focused suite passes 11/11.
+
+## 2026-10-28 local-work and release-gate reconciliation
+
+OpenSpec remains **6/10**, with only T005, T006, T008 and T010 unchecked.
+The source/test/documentation audit found no additional standalone local item
+to complete without crossing one of those acceptance gates:
+
+| Open task | Local/deterministic work already complete | Exact remaining gate |
+| --- | --- | --- |
+| T005 | Claim/Reject UI guards and no-fabricated-success fixtures are recorded. | Managed guest on the accepted exact BIS import, with one real funded Claim and one real funded Reject and matching network receipts. The Signet journal/budget gate currently refuses wallet attachment. |
+| T006 | Creation-disabled legacy/unresolved rollback fixture coverage is 11/11 focused runtime tests; fixtures explicitly preserve mock journal/script/recovery sentinels only. | Real rollback preserving the protected journal and original recovery, using reconciled operations and attributable receipts. No fixture closes this. |
+| T008 | Current-source 0.0.30 desktop/mobile cold/warm/offline/slow measurements meet the local p95 target; reads coalesce. One actual hidden-page attempt could not create its isolated page because the Chrome DevTools profile was locked; `visibilityState` is unobserved, not hidden. | Genuine hidden browser lifecycle observation plus funded-action acknowledgement/provider timing. Do not repeat browser attempts or synthesize visibility. Source hash and blocker are in `output/reports/treasure-local-responsiveness-2026-10-28/performance-current.json`. |
+| T010 | Existing 0.0.30 archive/install verification, game build, publish checks 10/10, public route/version observation and OpenSpec validation are recorded. BIS root typecheck/build pass. Its adjusted root test run reports 1,774/1,775 passed; the single process-ownership test failed because the sandbox denied process/port inspection, then its isolated 8/8 suite passed with scoped permission. This covers the test case without skipping it but is not one green full-root invocation. | BIS must produce the accepted versioned archive, SHA-256, clean-source commit/provenance, manifest and export-verifier evidence. Then independently import that exact archive and rerun the required game checks; do not import or relabel 0.0.30. Deployment/release remains gated on P1 all_done and applicable release authorization. |
+
+C094 remains **36/37**, with T038 open. The fresh BIS test evidence does not
+create an integration package: the game/BIS export inventory still contains
+only 0.0.30 and older archives, and current BIS `package.json` remains 0.0.30
+with modified integration source. No accepted clean-source version/hash tuple
+is present. The protected 2,000-sat Signet refund also remains unknown and the
+budget guard still refuses the live slot. Do not start Proposal 2 or publish.
+
+### Preview share-link containment — 2026-10-28
+
+A BIS Preview share link was created or reused outside the intended five-minute
+access window and has not been revoked. A Vercel connector revocation action
+exists, but requires the exact share secret. The approved fetch did not expose
+that secret, and automatic review rejected another protected fetch because it
+could create a new link with up to 23 hours of access. Connector-only
+revocation is therefore unavailable without the secret. Do not make another
+protected fetch, CLI, or browser attempt. The user must revoke the existing
+link manually in Vercel at Deployment → Share → Only people with access before
+any further Preview use.
+
+### 2026-10-29 approved Preview health attempt
+
+The single approved protected Preview fetch used `/api/health` and returned
+HTTP 404. It did not verify deployment health. The correct route is documented
+as `/api/bis/health`, but the authorization did not permit another fetch or a
+new share link, so do not retry it. The existing share link remains unrevoked;
+revoke it manually in the Vercel Dashboard at Deployment → Share → Only people
+with access before any future Preview use. This failed health check does not
+close T010 or any deployed acceptance criterion.
+
+### 2026-10-29 current-tree BIS focused suite
+
+The BIS owner ran
+`npm run test:milestone-1 --workspace @bis/bis-server` on the current working
+tree; it exited successfully with 112/112 cases, including hosted-signing and
+wallet-pool coverage. The subsequent repository-wide BIS suite passed 1,788/1,788
+with normal OS temp and process permissions. An earlier restricted run reported
+22 failures, including sandbox-only process-inspection and temp-file rename
+errors; the focused affected wallet fixtures independently passed 30/30 with
+normal OS permissions. Typecheck and production builds are the next verification
+steps. No live wallet operation, package export, or release occurred. These test
+results close no C094/C096 acceptance gate: the exact accepted BIS artifact,
+protected Signet disposition, managed-guest Claim/Reject receipts, protected
+rollback, and hidden-tab/funded timing evidence remain outstanding.
+
+An additional wallet-free 0.0.31 slice passed 51/51: Game Wallet boarding 5/5,
+hosted network policy and client selection 34/34, and network-scoped wallet
+pool 12/12. The focused fixtures cover portions of BIS 5.1/5.5 and Proposal 2
+2.2/3.1/3.3 only. They made no wallet, provider, indexer, Vercel, signing, or
+transaction calls and do not close any game C096 task. Details:
+`blockchain-integration-service/output/reports/bis-server/two-network/2026-10-29/wallet-free-focused-verification.md`.
+
+The new local tarball is explicitly `sourceDirty: true`; BIS task 5.1 remains
+open and Proposal 1 is not accepted. The same candidate report records that a
+read-only host-profile preflight completed at 05:19 UTC. A preliminary
+sandboxed shell had a redirected `LOCALAPPDATA`, which explained its
+`vault-protection-unavailable` result. The host-profile read still found the
+2,000-sat refund `unknown` and the rolling fee budget refused both zero-fee
+projections; no funded live acceptance is admissible. Sanitized evidence is in
+`blockchain-integration-service/output/reports/treasure/2026-10-29/protected-signet-readonly-preflight.json`.
+Candidate and published-game observation details are in
+`blockchain-integration-service/output/reports/bis-server/milestone-1/current-candidate-and-game-browser-2026-10-29.md`;
+the bounded boarding suite is in
+`blockchain-integration-service/output/reports/bis-server/milestone-1/server-game-wallet-boarding-focused-2026-10-29.md`.
+
+### 2026-10-29 published Mutinynet guest observation
+
+On the currently published v0.0.30 game, Settings → Account with no logged-in
+wallet showed Mutinynet and BIS v0.0.30, no `Server` indicator, and enabled
+manual Create/Restore choices. `OPTIONS /api/bis/connect` returned 204 and
+`POST /api/bis/connect` returned 403. No response body, wallet, or signing
+action was used. This is partial endpoint-policy/guest-UI evidence only; it
+does not establish the reason for 403, qualify a hosted signing mode, or
+validate the source-dirty 0.0.31 candidate. Evidence:
+`output/reports/treasure/published-game-mutinynet-account-no-spend-2026-10-29.md`.
+No C096 task is closed by this observation.
+
+### 2026-10-29 current game suite
+
+The current shared game tree at v0.0.30 passed `npm test`: 1,192 passed,
+zero failed/cancelled/skipped, in 10.1 seconds. Full output is in
+`output/reports/diagnostics/treasure-root-suite-2026-10-29/npm-test-current-tree.log`.
+This is deterministic current-tree evidence only; it does not satisfy T005's
+funded browser Claim/Reject, T006's protected live rollback, T008's actual
+hidden-tab/funded timing, or T010's exact accepted-package release gate.
+
+Additional v0.0.30 release checks passed on the same shared tree: BIS contract
+typecheck, publishing tests (10/10), the installed-package verifier (201 files),
+and production build. A second production build with the Pages workflow's exact
+`VITE_BIS_SERVER_URL` embedded the endpoint in the main bundle and included its
+origin in generated CSP `connect-src`. Evidence and limitations are recorded in
+`output/reports/diagnostics/treasure-root-suite-2026-10-29/current-game-verification.md`.
+These checks qualify only the existing v0.0.30 tree, not the source-dirty BIS
+0.0.31 candidate, funded contract behavior, or a new deployment.
+
+### 2026-10-29 protected two-network budget preflight
+
+A fresh host-profile, read-only vault preflight at 05:31 UTC found the Signet
+rolling window at five rows / 1,974 intent sats / two missing-fee rows, with
+five nonterminal entries (one submitting, four unknown). Mutinynet had three
+rows / 1,644 intent sats / one missing-fee row, with four unknown entries.
+Zero-fee lower-bound projections for both a 1,000-sat intent and a conservative
+2,000-sat lifecycle were rejected as `acceptance-budget-unverified` on both
+networks. The check made no wallet, provider, signature, transaction, or vault
+write call. No live test slot is admitted on either network; do not retry or
+clear unresolved records. Full sanitized result:
+`blockchain-integration-service/output/reports/treasure/2026-10-29/protected-two-network-readonly-preflight.json`.
+Consequently C096-T005/T006 cannot proceed to funded operations, and T010 stays
+open pending an accepted BIS artifact and the remaining live/release gates.
+
+### 2026-10-29 C096-T010 offline-gate audit
+
+Reviewed T010 for outstanding requirements that can be completed independently
+of wallet actions, external wallet-derived queries, package import, or release.
+There is no additional independently closable acceptance item: the game 0.0.30
+suite, typecheck, publish checks, installed-package verification, and production
+build are already recorded in
+`output/reports/diagnostics/treasure-root-suite-2026-10-29/current-game-verification.md`;
+BIS root suite/build evidence and exact-candidate archive/hash evidence are
+already recorded in
+`blockchain-integration-service/output/reports/bis-server/two-network/2026-10-29/rollback-and-game-performance.md`.
+Those results refer to different package states. The BIS 0.0.31 archive is
+marked `sourceDirty: true`, so it cannot satisfy the accepted clean-source
+artifact prerequisite or be imported as the release candidate. Once BIS has an
+accepted clean-source artifact, T010 still requires importing that exact hash,
+running the required checks against the imported artifact, and verifying the
+deployed Admin/game routes and release version under applicable authorization.
+No test was rerun and no wallet, provider, deployment, or release operation was
+performed for this audit. C096-T010 remains open; no checkbox is closed by
+cross-version or partial evidence.
+
+### 2026-10-29 T005/T008 execution prerequisites
+
+Prepared a bounded real-evidence sequence: use one real offer for Claim (also
+measuring T008 acknowledgement) and a separate offer for Reject, each with one
+attempt and exact terminal receipts. T008 requires a headed same-window tab
+switch that records actual `hidden` then `visible` state without property or
+event overrides. The Signet unknown reservation and budget guard remain hard
+stops; no wallet action, further indexer query, import, or retry is authorized
+by this runbook. T005/T008 remain open. See
+`output/reports/treasure/C094-T038-2026-10-29/guard-only-import-and-live-evidence-runbook.md`.
+
+### 2026-10-29 exact Signet lookup and log-retention result
+
+The previously approved exact lookup was repeated once with its saved query
+window verified against protected vault revision 1669. The sole Signet page
+returned HTTP 200 with zero VTXOs; SDK pagination reported current=1, next=0,
+total=0, with no page cap reached. This does not prove settlement or failure;
+the 2,000-sat operation remains `unknown`, with no provider ID, inputs, fee, or
+receipt. A historical Vercel runtime-log lookup for the Oct 28 window returned
+HTTP 400 `bad_request` because the Hobby plan does not retain that range; no
+logs were returned. These results do not release the reservation or budget
+gate. Keep the funded C096-T005 gate closed and do not repeat either lookup.
+The T006 deterministic rollback disposition is handled separately below. The
+latest exact-window repeat at 11:14 UTC again returned HTTP 200 with no
+candidates and complete one-page metadata. A local-only 11:15 UTC recheck found
+three settled sibling operations with verified fees, but the refund remains
+`unknown`, no provider ID/fee is present, no Admin run matches, and no external
+calls or wallet mutation occurred. Sanitized evidence:
+`../../../blockchain-integration-service/output/reports/treasure/2026-10-29/approved-signet-indexer-lookup-repeat-2026-10-29.json`,
+`../../../blockchain-integration-service/output/reports/treasure/2026-10-29/protected-refund-journal-follow-up.json`, and
+`../../../blockchain-integration-service/output/reports/treasure/2026-10-29/approved-signet-indexer-lookup-10-pages.json`;
+log-retention evidence:
+`../../../blockchain-integration-service/output/reports/treasure/2026-10-28/vercel-runtime-log-retention-check.json`.
+
+### Remaining Proposal 2 acceptance gates — 2026-10-29
+
+The offline source, deterministic, performance, artifact-inventory, and
+documentation portions are complete and recorded above. The lookup and log
+retention evidence add no terminal proof. Exact remaining conditions:
+
+| Task | Single closure condition |
+| --- | --- |
+| C094-T038 | On the exact BIS-accepted imported artifact, complete managed-guest verification and real funded Signet Claim and Reject with attributable terminal receipts. |
+| C096-T005 | On the accepted artifact and an admitted protected budget slot, complete managed-browser Claim and Reject for real funded offers and verify both exact terminal receipts. |
+| C096-T008 | On a documented headed device and admitted real offer, observe genuine hidden→visible transitions and funded acknowledgement, record provider timing separately, and retain the measured local p95 result. |
+| C096-T010 | Import one clean, BIS-accepted exact artifact; pass the complete game/BIS checks against it; then verify the authorized deployed Admin/game routes and matching release version. |
+
+The unresolved Signet refund prevents admission of the funded slots required by
+C094-T038 and C096-T005/T008. Its empty lookup result and unavailable historic
+logs do not establish failure. The T006 closeout below does not change any
+financial gate.
+
+### C096-T008 independent DevTools observation — 2026-10-29
+
+A separate managed Chrome DevTools attempt selected the game tab with
+`bringToFront=true`, then selected an `about:blank` tab. The game still reported
+`visibilityState === "visible"`, `document.hidden === false`, and
+`document.hasFocus() === true`. No genuine hidden transition was observed, so
+this is not qualifying evidence. Do not repeat this DevTools page-selection
+method; T008 still requires a supported headed-browser UI that produces an
+actual hidden→visible transition on the real offer.
+
+A separate CUA IAB attempt created and selected another `about:blank` tab, then
+hid the browser window. The game document still reported
+`visibilityState: "visible"` and `hidden: false`. This backend also failed to
+produce a page-visibility transition and is not qualifying evidence. T008
+remains open; do not repeat the DevTools or CUA IAB methods.
+
+### C096-T006 acceptance adjudication — 2026-10-29
+
+The literal task asks for creation-disable rollback behavior over existing and
+unresolved contracts, preserving journals, original scripts, and recovery; it
+does not require a live wallet transaction or network settlement. The 24/24
+LTO service/public-factory suite demonstrates that disabling creation refuses
+new offers while existing offers remain inspectable and refundable, and that
+reset/uncertain outcomes preserve unresolved recovery without duplicate
+operations. The full BIS 1,805/1,805 suite includes encrypted contract-storage
+coverage that rejects mutation of the established script/recovery fields. The
+combined deterministic evidence satisfies C096-T006. It does not establish
+protected-wallet rollback or settlement; no financial result is claimed.
+C096 is now 7/10, with only T005, T008, and T010 unchecked. C094-T038 remains
+open, and the unknown Signet refund continues to block funded actions.

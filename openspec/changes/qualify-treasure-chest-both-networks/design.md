@@ -1,8 +1,16 @@
 # Design
 
+## Current execution ownership
+
+The 2026-10-29 takeover section of the BIS program ledger supersedes historical owner/thread assignments and obsolete package-version observations in this document. It does not supersede contract guarantees or safety requirements. Use the actual accepted candidate version, archive hash and source evidence rather than a historical 0.0.27/0.0.29/0.0.30 observation.
+
+The Treasure/game owner follows the execution order in proposal.md. One owner writes BIS runtime/release files, one writes game runtime/release files, and the coordinator writes the shared program ledger. Only the assigned financial-slot owner may operate protected acceptance wallets. The other owner can prepare wallet-free code, fixtures, synchronization and browser observations.
+
+Preflight the exact test command, browser cache and private temporary-path requirements with a small affected check. Reuse unchanged-source evidence, run focused checks during fixes, and run required integrated checks after the candidate is frozen. Do not start competing suites or replace real hidden-tab or network evidence with injected state.
+
 ## Context
 
-This change follows the Signet-only release slice in C094. It carries forward the remaining Mutinynet and cross-network qualification work without treating partial Signet evidence as completion of the original combined acceptance. The game repo already contains BIS 0.0.27 locally; any later import must use the established verified artifact workflow and only after BIS is ready.
+This change follows the Signet-only release slice in C094. It carries forward the remaining Mutinynet and cross-network qualification work without treating partial Signet evidence as completion of the original combined acceptance. The installed baseline is BIS 0.0.30. The current takeover authorizes the next import through the established verified artifact workflow after the BIS owner supplies its accepted exact archive. Passing baseline checks does not accept that future candidate.
 
 ## Decisions
 

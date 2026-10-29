@@ -1,5 +1,13 @@
 # Proposal
 
+## Execution takeover, 2026-10-29
+
+The user requested replacement ownership, minimum calendar time and a two-hour completion target. Reuse this change and its acceptance criteria; do not restart its implementation or migrate unfinished requirements into a nominally completed replacement. The Treasure/game execution chat owns this change under the current takeover section of the BIS program ledger.
+
+Retain C094 as the Signet prerequisite. Complete independent game synchronization, real headed-tab observation and exact-artifact preparation while awaiting BIS. Preserve unavailable modes and the original B2 reservation until authoritative evidence supports their existing gates.
+
+The execution target ends at 15:28 UTC on 2026-10-29. This target does not waive live evidence, spending limits or uncertain-operation preservation. Report an exact external blocker once, continue independent authorized work, and reopen the blocked action only when its recorded prerequisite changes.
+
 ## Why
 
 The Signet release can ship with a clearly disclosed browser-policy contract, but it does not establish Mutinynet enforcement or resolve the original swept B2 output. This follow-up qualifies both advertised Mutinynet modes with real receipts and protects unresolved recovery until operator-specific evidence supports a safe action.

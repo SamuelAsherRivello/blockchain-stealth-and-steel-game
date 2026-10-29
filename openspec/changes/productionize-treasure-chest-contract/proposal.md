@@ -1,5 +1,13 @@
 # Proposal
 
+## Execution takeover, 2026-10-29
+
+The user requested replacement ownership, minimum calendar time and a two-hour completion target. Reuse this change and its acceptance criteria; do not restart its implementation or migrate unfinished requirements into a nominally completed replacement. The Treasure/game execution chat owns this change under the current takeover section of the BIS program ledger.
+
+Finish exact-artifact Signet guest/connected/manual-fallback and funded Claim/Reject acceptance, then the matching game release. Preserve the real Browser validation contract and its disclosed guarantee limits. Do not import before the accepted BIS handoff.
+
+The execution target ends at 15:28 UTC on 2026-10-29. This target does not waive live evidence, spending limits or uncertain-operation preservation. Report an exact external blocker once, continue independent authorized work, and reopen the blocked action only when its recorded prerequisite changes.
+
 ## Why
 
 The game now contains real contract integration, recovery, and responsive chest UX, but release claims must be limited to evidence actually established for each network. This release makes the user-facing Treasure flow available on Signet through the real, disclosed Browser validation contract path while keeping Mutinynet creation unavailable until its separate qualification is complete.
@@ -26,7 +34,7 @@ None.
 
 ## Impact
 
-The game Admin/runtime, existing imported BIS 0.0.27 dependency, tests, documentation and Pages deployment are in scope. BIS code is already available as the exact imported artifact; no further game import is authorized before BIS readiness. Mutinynet qualification and the original B2 swept output are tracked in C096. No simulated transactions, mainnet, production treasury, or fake financial success is introduced.
+The game runtime, imported BIS dependency, tests, documentation and Pages deployment are in scope. The current installed baseline is BIS 0.0.30. The authorized next import must consume the exact archive accepted by the BIS owner after server acceptance, publication and provenance verification. It must then pass the game and live acceptance gates before the matching release. Mutinynet qualification and the original B2 swept output are tracked in C096. No simulated transactions, mainnet, production treasury, or fake financial success is introduced.
 
 ## Task migration
 
