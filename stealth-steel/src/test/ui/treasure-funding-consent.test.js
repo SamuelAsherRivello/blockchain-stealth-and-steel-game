@@ -146,7 +146,7 @@ test('consent UI shows exact terms and Skip, close and Escape never create an of
     assert.match(f.host.textContent,/1,000 sats/);assert.match(f.host.textContent,/Signet/);
     assert.match(f.host.textContent,/Game Wallet/);assert.match(f.host.textContent,/original window/);
     assert.match(f.host.textContent,/zero-fee policy/);assert.match(f.host.textContent,/can sign automatically; another popup is not guaranteed/);
-    assert.match(f.host.textContent,/Check Game Wallet Login for the signing source/);
+    assert.match(f.host.textContent,/Review the signing source in Account/);
     assert.doesNotMatch(f.host.textContent,/Both wallets are yours in this browser|local browser wallet/);
     assert.equal(f.doc.activeElement,f.button('Skip treasure'),'safe decline is initially focused');
     if(action==='skip')f.button('Skip treasure').dispatchEvent(new Event('click'));
