@@ -147,7 +147,7 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
 
 export function treasureMessage(status) {
   return ({active:'Limited Time Offer: Treasure found — Claim 1,000 sats?','awaiting-consent':'Treasure funding needs your approval',unverified:'Verifying the original treasure offer',preparing:'Treasure is being prepared',expired:"You found a treasure but it's expired",
-    'missing-player':'Connect an account to receive treasure offers','network-unavailable':'Mutinynet treasure needs a Direct Game Wallet. Open Account to check your wallet.','no-offer':'No treasure offer available',unavailable:'Treasure status is unavailable',
+    'missing-player':'Connect an account to receive treasure offers','network-unavailable':'Mutinynet treasure needs a Local Game Wallet. Open Account to check your wallet.','no-offer':'No treasure offer available',unavailable:'Treasure status is unavailable',
     pending:'Treasure transaction is pending',claimed:'Reward claimed',rejected:'Offer ended'})[status] ?? 'No treasure offer available';
 }
 

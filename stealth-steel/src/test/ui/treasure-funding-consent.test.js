@@ -31,7 +31,7 @@ function fixture(network='signet'){
   return {session:createTreasureSession(options),options,calls,snapshot,setNow:value=>{clock=value;}};
 }
 
-test('Direct Mutinynet and Server Signet require consent before any offer or financial action',async()=>{
+test('Local Mutinynet and Server Signet require consent before any offer or financial action',async()=>{
   for(const network of ['signet','mutinynet']){
     const f=fixture(network);f.session.start();
     const consent=f.session.getState().fundingConsent;
@@ -146,7 +146,7 @@ function uiFixture(t,network='signet'){
 
 test('consent names the public signing source and keeps an explicit fallback for older snapshots',t=>{
   const f=uiFixture(t);
-  for(const [source,copy] of [[undefined,'signing source is unavailable'],['server','signing source: server'],['manual','signing source: manual']]){
+  for(const [source,copy] of [[undefined,'signing source is unavailable'],['server','signing source: Server'],['manual','signing source: Local']]){
     f.snapshot.account.gameWallet.source=source;f.session.start();
     assert.ok(f.host.textContent.includes(copy));
     assert.equal(f.host.textContent.includes('Both wallets are yours in this browser'),false);
@@ -171,10 +171,10 @@ test('consent UI shows exact terms and Skip, close and Escape never create an of
   }
 });
 
-test('Direct Mutinynet consent names the network, local signer and Browser validation limitations',async t=>{
+test('Local Mutinynet consent names the network, local signer and Browser validation limitations',async t=>{
   const f=uiFixture(t,'mutinynet');f.session.start();
   assert.equal(f.session.getState().status,'awaiting-consent');
-  assert.match(f.host.textContent,/Mutinynet/);assert.match(f.host.textContent,/signing source: manual/);
+  assert.match(f.host.textContent,/Mutinynet/);assert.match(f.host.textContent,/signing source: Local/);
   assert.match(f.host.textContent,/Browser validation controls expiry and payout checks/);
   assert.match(f.host.textContent,/modified client can bypass/);
   assert.equal(f.ui.isOpen,true);assert.deepEqual(f.calls,[]);f.ui.dispose();f.session.dispose();
@@ -184,7 +184,7 @@ test('Mutinynet refuses hosted or unknown Game signing sources before consent an
   for(const source of ['server',undefined]){
     const f=fixture('mutinynet');f.snapshot.account.gameWallet.source=source;f.session.start();
     assert.equal(f.session.getState().status,'network-unavailable');
-    assert.match(treasureMessage(f.session.getState().status),/needs a Direct Game Wallet/);
+    assert.match(treasureMessage(f.session.getState().status),/needs a Local Game Wallet/);
     assert.equal(f.session.getState().fundingConsent,undefined);
     assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'unavailable');
     await tick();assert.deepEqual(f.calls,[]);f.session.dispose();

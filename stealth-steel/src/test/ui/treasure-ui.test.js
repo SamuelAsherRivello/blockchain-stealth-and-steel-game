@@ -44,7 +44,7 @@ test('all treasure messages and action eligibility update in one open game windo
 });
 test('unsupported Mutinynet source is readable, keeps inspection available, and disables Claim and Reject',async t=>{
  const s=setup(t);s.setState({status:'network-unavailable'});s.ui.open();await Promise.resolve();
- assert.ok(s.host.textContent.includes('Mutinynet treasure needs a Direct Game Wallet'));
+ assert.ok(s.host.textContent.includes('Mutinynet treasure needs a Local Game Wallet'));
  assert.equal(s.button('Claim').disabled,true);assert.equal(s.button('Reject').disabled,true);
  assert.equal(s.inspections(),1);assert.equal(s.calls(),0);s.ui.dispose();
 });
