@@ -1,9 +1,9 @@
 {
   "artifact": "bis-integration-0.0.32.tgz",
-  "sha256": "062f1f94f176be92f33098a0aacd02a6777e059cca793518c797fd8d4c3a49f1",
+  "sha256": "67a85422d856ce9c8acfce501290e409ec0cd6fece1a26123bb8f13fbaa1ccff",
   "files": {
     "dist/integration.css": "7fb7ec9a390b66fa8a1863c4bdd7b41ececee7aad0b0f2e89e4710b8aff5186e",
-    "dist/integration.js": "ed98b3ab4af66b3c7f7bc89030896d1390a1f529b97e827af5a882b16c0d2f68",
+    "dist/integration.js": "7aa09052eedf3e290f9269a17e61282df5e02591f5cd9738db7f8f545aa8b14e",
     "dist/server-wallet-protocol-PnETkMOQ.js": "84f2953f5426899a5e1a3d9902a55689e2729135416dbe319c12d7e6752d6deb",
     "dist/treasure-server-journal-CyTt_tiY.js": "3bdd17f34282ecb28e8c600082b5dd41e6a53e038c99d3966ef102ab50c78005",
     "dist/treasure-server-recovery-fJ2nlroJ.js": "bbfb7345e315a509ef5e714f84071fa2ed2dbfab708fb3fd86f5be3055ff8387",
@@ -171,7 +171,7 @@
     "src/client/wallet-layer-arkade/lto-observed-spend.ts": "61df96e82e131ad2108f45da6666e3cd9d72a44713dace408091dc283db5c7b4",
     "src/client/wallet-layer-arkade/lto-recovery-descriptor.ts": "1ef5955d28e278982976391004501f78fda9b35ad1ec2cba38580bf094ca9631",
     "src/client/wallet-layer-arkade/lto-script.ts": "52ee338e9dbb50f8d61f3b11ce7d40984e7cb3ca68a3be58e7fb8caf009e56be",
-    "src/client/wallet-layer-arkade/onboarding.ts": "b22482657126e9e7153fbdebff07b3faec9b688234ba63255c9bc89ddc51e8a7",
+    "src/client/wallet-layer-arkade/onboarding.ts": "5772184606a2acd738a73bdf6bdcbc73eb59c9489d55201e3319e6209a15b549",
     "src/client/wallet-layer-arkade/player-proof-client.ts": "85065ff1f693c8441185621797d3315d8dc73b98ee7f3669626a17c67b802968",
     "src/client/wallet-layer-arkade/player-proof-protocol.ts": "9c6e6bba42b684c5a2ad708662b469631ba5ef3555bf7bc56f2401cf0881e3b9",
     "src/client/wallet-layer-arkade/public-asset-inventory.ts": "efa5f0de1a04ed149d7fe0b2882c273218025bd1d5d535b6ec47f3a19142c599",

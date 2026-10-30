@@ -1,3 +1,18 @@
+# Verified replacement 0.0.32 candidate (2026-10-30)
+
+- Package: `@bis/integration` 0.0.32; artifact: `bis-integration-0.0.32.tgz`.
+- SHA-256: `67a85422d856ce9c8acfce501290e409ec0cd6fece1a26123bb8f13fbaa1ccff`.
+- BIS source commit: `574f4e154f7cbed4ad78c8faa632c12650b93c51`. The supplied seven-field manifest truthfully records sourceDirty: true for the primary checkout's excluded unrelated `debug.log` edit. The build snapshot is clean, built only from a frozen committed Git archive and separate index; the primary index was not used. The manifest and archive were retained exactly, without repacking or relabeling source state.
+- Independent game intake verified all 203 archive members, all 196 packed source files and all 2,334 frozen source files. Packed sources match the frozen inventory exactly; 192 CRLF text serializations match Git content after newline normalization. The source archive and frozen index hashes also match provenance. Only onboarding source and compiled `dist/integration.js` differ from the previous 0.0.32 package. The public stylesheet, types, other members and React 19.3.0 peers are unchanged.
+- Owner qualification passed on the frozen source: root tests 1,884 passed with one optional adjacent-game skip, standalone onboarding 92/92, faucet 19 passed with one live-test skip, Sandbox 223, native hosted store five, builds, strict checks, staged Pages and asset checks. Optional skips and unfunded UI checks do not count as funded acceptance.
+- Game replacement verification passed: all 203 installed file hashes, native Node 24 full suite 1,204/1,204 with no skips, focused integration/host regressions 66/66, publishing checks 11/11, BIS contract typecheck and configured production build. Built metadata is v0.0.32 with 18,846,369 uncompressed bytes. The exact archive and lockfile integrity match; only this 0.0.32 tarball remains vendored. Existing build chunk warnings remain.
+- Managed headed Chrome guest checks passed all eight desktop/mobile views for fixed Local Mutinynet and Server Signet, outage behavior, return to Local and reload persistence. Account displays v0.0.32. Both mute parameters were present; only same-origin GETs were forwarded, BIS attempts were blocked and page errors were zero. The managed browser closed. The ownership-verified isolated 6282 preview was restored after the locked install; shared 5176 was untouched.
+- No wallet action, financial operation, journal mutation, push, release or deployment occurred. Funded game acceptance and actual hidden-tab acknowledgement remain separate open gates.
+
+### Game-consumable public API changes
+
+- Public API signatures and fixed Local Mutinynet / Server Signet policies are unchanged. The onboarding runtime now observes already-started read rejections before checking cancellation, preventing a detached cancelled read from escaping as an unhandled rejection. Original cancellation results, wallet ownership, grants, budgets and financial operations are preserved. No game host adaptation is required.
+
 # Verified local 0.0.32 candidate (2026-10-30)
 
 - Package: `@bis/integration` 0.0.32; artifact: `bis-integration-0.0.32.tgz`.
