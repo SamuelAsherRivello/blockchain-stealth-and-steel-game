@@ -1,9 +1,9 @@
 {
   "artifact": "bis-integration-0.0.32.tgz",
-  "sha256": "67a85422d856ce9c8acfce501290e409ec0cd6fece1a26123bb8f13fbaa1ccff",
+  "sha256": "47060e7fc1d2e2911d53daf182a67340854472926806221d4abd03f7f354281c",
   "files": {
     "dist/integration.css": "7fb7ec9a390b66fa8a1863c4bdd7b41ececee7aad0b0f2e89e4710b8aff5186e",
-    "dist/integration.js": "7aa09052eedf3e290f9269a17e61282df5e02591f5cd9738db7f8f545aa8b14e",
+    "dist/integration.js": "16d037f34bec23b0723d2ac66f004db581c7cc2dbbca4610d573ceae7a1b4191",
     "dist/server-wallet-protocol-PnETkMOQ.js": "84f2953f5426899a5e1a3d9902a55689e2729135416dbe319c12d7e6752d6deb",
     "dist/treasure-server-journal-CyTt_tiY.js": "3bdd17f34282ecb28e8c600082b5dd41e6a53e038c99d3966ef102ab50c78005",
     "dist/treasure-server-recovery-fJ2nlroJ.js": "bbfb7345e315a509ef5e714f84071fa2ed2dbfab708fb3fd86f5be3055ff8387",
@@ -179,7 +179,7 @@
     "src/client/wallet-layer-arkade/sending.ts": "d0d89941ad64e7f8bfe66c297c9e28342936ab4ffb8bd2c9bc62aeb51843496a",
     "src/client/wallet-layer-arkade/server-settlement.ts": "c897044ea5ae03bdb92f839c980902990ee1c3544c5b5c82ecb602c3d6e9ff1e",
     "src/client/wallet-layer-arkade/server-wallet-protocol.ts": "448da48e0b8c4e1a93c13b852e29d54d17f985c9fd07d9b1fafb5ae4b8e34370",
-    "src/client/wallet-layer-arkade/server-wallet.ts": "673e2fa69dc474a60c5d5313427d97d54efae351ec3a4024a6a9cc81eb6b34db",
+    "src/client/wallet-layer-arkade/server-wallet.ts": "bb39ab77f48c4d4c9e8d6db03b1c4ee37ba5bfae1a45fd32ca669ed16317d6f8",
     "src/client/wallet-layer-arkade/shared-wallet-service.ts": "6cbb1ed6e2a0928e1857bc48d69354048f2bdb5081d5992e41e70f747224cf01",
     "src/client/wallet-layer-arkade/treasure-authorization-protocol.ts": "1a712ebec7104f172c978cc3f1ec1e556dd5a8f94b4761e83b581661d939bab6",
     "src/client/wallet-layer-arkade/treasure-authorized-recovery.ts": "4fa15a03e1034449829a54b9d08d675362d9718b85a15fa4f96cfc3c80a5d5e3",
