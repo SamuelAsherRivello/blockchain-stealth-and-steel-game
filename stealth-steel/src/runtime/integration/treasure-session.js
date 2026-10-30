@@ -9,7 +9,8 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
     const snapshot=getSnapshot();
     const player=snapshot?.account.playerWallet;
     return {player,game:snapshot?.account.gameWallet,network:snapshot?.account.network??player?.network??'signet',
-      available:snapshot?.capabilities.contracts.available??false,reason:snapshot?.capabilities.contracts.reason};
+      available:snapshot?.capabilities.contracts.available??false,reason:snapshot?.capabilities.contracts.reason,
+      ready:(!snapshot?.account.phase||snapshot.account.phase==='active')&&(!snapshot?.account.gameWalletStatus||snapshot.account.gameWalletStatus==='ready')};
   };
   const walletKey = () => { const {player,game}=wallets();return JSON.stringify([player?.profileId,player?.network??'signet',game?.profileId,game?.network??'signet']); };
   const gameSource = () => ['manual','server'].includes(wallets().game?.source) ? wallets().game.source : undefined;
@@ -35,14 +36,14 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
     let status = session.status;
     if(status==='awaiting-consent'&&!remainingSeconds)status='expired';
     if (session.offered && !remainingSeconds && !['claimed', 'rejected', 'pending', 'unavailable', 'unverified'].includes(status)) status = 'expired';
-    const {player,game,network,available,reason}=wallets();
+    const {player,game,network,available,reason,ready}=wallets();
     if (session.playerId !== player?.profileId && status !== 'missing-player') status = 'no-offer';
     if(status!=='missing-player' && (session.gameId!==game?.profileId || (session.walletKey && session.walletKey!==walletKey())))status='no-offer';
     if(player && (network!==(player.network??'signet') || (session.network && session.network!==network)))status='no-offer';
     if(!sourceMatches() || (status==='awaiting-consent' && session.gameSource!==gameSource()))status='no-offer';
-    if(status==='awaiting-consent'&&!available)status='no-offer';
+    if(status==='awaiting-consent'&&(!available||!ready))status='no-offer';
     return { status, remainingSeconds, sessionId: session.id, contractId: session.contractId,
-      ...(status==='no-offer'&&!available&&typeof reason==='string'&&reason.trim()?{reason}:{}),
+      ...(status==='no-offer'&&(!available||!ready)&&typeof reason==='string'&&reason.trim()?{reason}:{}),
       ...(status==='network-unavailable'?{reason:session.reason}:{}),
       ...(status==='awaiting-consent'?{fundingConsent:{sessionId:session.id,network:session.network,playerId:session.playerId,
         gameId:session.gameId,gameSource:session.gameSource,validationMode:session.validationMode,amountSats:1000,startedAt:session.startedAt,expiresAt:session.expiresAt}}:{}) };
@@ -99,13 +100,13 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
     },
     start() {
       end(); const startedAt = now();
-      const {player,game,network,available}=wallets(),id=newId();
+      const {player,game,network,available,ready}=wallets(),id=newId();
       const expectedSource=network==='mutinynet'?'manual':'server';
       const expiresAt=(Math.floor(startedAt/1000)+90)*1000;
       session = {id,reference:`treasure:${id}`,playerId:player?.profileId,gameId:game?.profileId,gameSource:gameSource(),network,walletKey:walletKey(),startedAt,expiresAt,offered:false,fundingStarted:false,
         validationMode:'browser-policy-v1',
         reason:`${network==='mutinynet'?'Mutinynet':'Signet'} treasure needs a ${expectedSource==='manual'?'Local':'Server'} Game Wallet. Open Account to check your wallet.`,
-        status:!player?.profileId?'missing-player':!available||!game?.profileId||network!==(player.network??'signet')||network!==(game.network??'signet')||!['signet','mutinynet'].includes(network)?'no-offer':gameSource()!==expectedSource?'network-unavailable':'awaiting-consent'};
+        status:!player?.profileId?'missing-player':!available||!ready||!game?.profileId||network!==(player.network??'signet')||network!==(game.network??'signet')||!['signet','mutinynet'].includes(network)?'no-offer':gameSource()!==expectedSource?'network-unavailable':'awaiting-consent'};
       publish();
     },
     acceptFundingConsent(sessionId) {
@@ -114,7 +115,7 @@ export function createTreasureSession({ getSnapshot, offers, now = Date.now, new
       const original=session,current=generation;
       session.status='preparing';publish();
       void Promise.resolve().then(()=>{
-        if(current!==generation||session!==original||walletKey()!==original.walletKey||wallets().network!==original.network||gameSource()!==original.gameSource||!wallets().available||now()>=original.expiresAt){
+        if(current!==generation||session!==original||walletKey()!==original.walletKey||wallets().network!==original.network||gameSource()!==original.gameSource||!wallets().available||!wallets().ready||now()>=original.expiresAt){
           if(session===original){session.status='no-offer';publish();}return {status:'unavailable'};
         }
         original.fundingStarted=true;

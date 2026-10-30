@@ -139,6 +139,24 @@ test('missing login and temporary wallet readiness retain setup messages instead
   assert.match(f.session.getState().reason,/select or create a Game Wallet/);assert.deepEqual(f.calls,[]);f.session.dispose();
 });
 
+test('supported networks still require ready wallets before Start, consent and queued funding',async()=>{
+  for(const network of ['signet','mutinynet'])for(const patch of [{gameWalletStatus:'loading'},{gameWalletStatus:'unavailable'},{phase:'loading'},{phase:'logout-confirmation'}]){
+    for(const phase of ['before-start','before-approval','after-approval']){
+      const f=fixture(network),reason='This network supports Contracts. Wait for the selected wallets to be ready.';
+      f.snapshot.account.phase='active';f.snapshot.account.gameWalletStatus='ready';
+      if(phase!=='before-start')f.session.start();
+      if(phase==='after-approval')assert.equal(f.session.acceptFundingConsent(f.session.getState().sessionId).status,'accepted');
+      Object.assign(f.snapshot.account,patch);f.snapshot.capabilities.contracts.reason=reason;
+      if(phase==='before-start')f.session.start();
+      await tick();const state=f.session.getState();
+      assert.equal(state.status,'no-offer');assert.equal(state.fundingConsent,undefined);assert.equal(state.reason,reason);
+      assert.equal(f.snapshot.capabilities.contracts.available,true);
+      assert.equal(f.session.acceptFundingConsent(state.sessionId).status,'unavailable');
+      assert.deepEqual(f.calls,[]);f.session.dispose();
+    }
+  }
+});
+
 test('stale approval or close cannot approve or decline a replacement offer',async()=>{
   const f=fixture();f.session.start();const first=f.session.getState().sessionId;f.session.start();
   const second=f.session.getState().sessionId;assert.notEqual(first,second);
