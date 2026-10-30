@@ -2,7 +2,7 @@
 
 ## Current required tuples, 2026-10-29
 
-The user requires Mutinynet **Direct** and Signet **Server**, with all features and the upper-left shared mode label. Qualification here now gates the real Browser validation lifecycle on both tuples and the complete game feature regression. Hosted Mutinynet and stronger unqualified co-signer guarantees remain deferred and must not block independently qualified Direct Browser validation. Preserve their blocked evidence and the original B2 uncertainty; do not call them passed.
+The user requires Mutinynet **Local** and Signet **Server**, with all features and the upper-left shared mode label and no mode toggle. Qualification here gates the real Treasure lifecycle on both networks where possible and the complete game feature regression. If a demonstrated network limitation prevents support on one network, fully qualify the easiest network and use the existing Contracts `available` / `reason` signal to report the unsupported selected network; do not add another checkbox or capability field. Preserve stronger co-signer blocked evidence and original B2 uncertainty; do not call them passed or let them block independently qualified Treasure support.
 
 This change may qualify the two tuples concurrently with C094 integration; C094 final publication is not an input prerequisite. Both consume the same frozen verified local BIS candidate before public release. Current live tasks C096-T005/T008/T010 remain open until their actual requirements pass. Historical matrix/disposition checkmarks are not current financial proof. Sandbox step 9 is a required BIS-owned final release dependency.
 
@@ -16,7 +16,7 @@ The execution target ends at 15:28 UTC on 2026-10-29. This target does not waive
 
 ## Why
 
-The Signet release can ship with a clearly disclosed browser-policy contract, but it does not establish Mutinynet enforcement or resolve the original swept B2 output. This follow-up qualifies both advertised Mutinynet modes with real receipts and protects unresolved recovery until operator-specific evidence supports a safe action.
+Signet acceptance does not establish Mutinynet contract support or resolve the original swept B2 output. This follow-up qualifies the real Treasure lifecycle separately on each network, including any advertised contract-validation modes, and protects unresolved recovery until operator-specific evidence supports a safe action.
 
 ## What Changes
 

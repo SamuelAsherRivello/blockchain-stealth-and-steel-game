@@ -6,13 +6,19 @@ Define how Treasure earns per-network and per-mode qualification using real cont
 
 ## ADDED Requirements
 
-### Requirement: Network support is advertised only after mode qualification
-Each network and signing mode SHALL be enabled only when its exact contract behavior and lifecycle have passed the applicable live acceptance matrix.
+### Requirement: Treasure network support is advertised only after qualification
+Each network and contract-validation mode SHALL be enabled only when its exact contract behavior and lifecycle have passed the applicable live acceptance matrix. BIS wallet source remains fixed by network: Mutinynet Local and Signet Server, with no user-facing source toggle. The existing Contracts `available` / `reason` support signal SHALL represent a genuinely unsupported selected network; do not add a separate Treasure checkbox or capability field. Missing player/login/wallet readiness SHALL NOT be reported as network incompatibility.
 
-#### Scenario: Required Direct and Server tuples
+#### Scenario: Both target networks qualify
 - **WHEN** the current release is declared complete
-- **THEN** Mutinynet Direct and Signet Server each have current-artifact real Browser validation funding, Claim, Reject, expiry/refund and recovery evidence
+- **THEN** Mutinynet Local and Signet Server each have current-artifact real Treasure funding, Claim, Reject, expiry/refund and recovery evidence
 - **AND** neither hosted Mutinynet nor unqualified stronger-mode support is required or claimed
+
+#### Scenario: One network is genuinely unsupported
+- **WHEN** exact capability and live evidence establish a network limitation that prevents the Treasure lifecycle on one target network
+- **THEN** the easiest network is fully qualified and the existing Contracts support signal reports `available=false` with a clear reason on the unsupported network
+- **AND** new offers/funding are blocked there while existing contract inspection and recovery remain available
+- **AND** the unsupported network is not counted as passed
 
 #### Scenario: Mutinynet co-signer evidence is incomplete
 - **WHEN** operator admission or finalization evidence is missing for the co-signer mode
@@ -35,13 +41,13 @@ Admin SHALL expose only network modes that are explicitly selectable for testing
 - **WHEN** the Admin network is Signet for the Signet-only release
 - **THEN** Browser validation is the only available mode
 
-### Requirement: Game mode selection is automatic and immutable
-Game clients SHALL select the strongest currently supported mode through non-mutating preflight before funding and SHALL NOT ask the player to choose.
+### Requirement: Contract-validation mode selection is automatic and immutable
+Game clients SHALL select the strongest currently supported contract-validation mode through non-mutating preflight before funding and SHALL NOT ask the player to choose.
 
 #### Scenario: Stronger mode is unavailable before funding
 - **WHEN** preflight proves the co-signer mode is unsupported before any financial submission
 - **THEN** the game may select the approved browser-policy mode and disclose its limits
-- **AND** Direct Mutinynet does not contact the BIS signer while selecting or executing that real contract mode
+- **AND** Local Mutinynet does not contact the BIS signer while selecting or executing that real contract mode
 
 #### Scenario: Submission outcome is uncertain
 - **WHEN** funding or a spend may have reached the network

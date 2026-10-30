@@ -6,16 +6,16 @@ Provide a verifiable treasure reward lifecycle for user-owned wallets, preservin
 
 ## ADDED Requirements
 
-### Requirement: Qualified Treasure works in both required wallet modes
-The game SHALL support new real Browser validation offers on Mutinynet Direct and Signet Server after each tuple passes its live acceptance. It SHALL disclose browser-enforced expiry and retain original-contract inspection/recovery. Unsupported stronger modes SHALL NOT qualify a tuple or prevent independently qualified Browser validation.
+### Requirement: Qualified Treasure follows the selected network's wallet mode
+The game SHALL target new real Treasure offers on Mutinynet Local and Signet Server using the same canonical compiled contract. It SHALL disclose browser-enforced expiry and retain original-contract inspection/recovery. When both networks pass live acceptance, both SHALL be supported. If a demonstrated network limitation prevents qualification on one network, the game SHALL fully qualify the easiest supported network and use the existing BIS Contracts `available` / `reason` support signal for the unsupported selected network. It SHALL NOT add a second Treasure checkbox or capability field. Unsupported stronger contract modes SHALL NOT qualify a network or prevent independently qualified Treasure support.
 
 #### Scenario: Player uses Signet release
 - **WHEN** the player requests a new Treasure offer on Signet
 - **THEN** the real compiled contract path may fund and spend under Browser validation
 - **AND** the user is told expiry is enforced by the browser
 
-#### Scenario: Game player starts on Mutinynet Direct
-- **WHEN** a ready player explicitly starts on qualified Mutinynet Direct and accepts the funding consent
+#### Scenario: Game player starts on Mutinynet Local
+- **WHEN** a ready player explicitly starts on qualified Mutinynet Local and accepts the funding consent
 - **THEN** the real Browser validation contract may fund from the selected local Game Wallet without any BIS server request
 - **AND** Claim, Reject, expiry/refund and recovery retain their original terms and require exact receipts
 
@@ -24,13 +24,22 @@ The game SHALL support new real Browser validation offers on Mutinynet Direct an
 - **THEN** the same user-facing Treasure flow uses the server-assisted Game authority with a local Player Wallet
 - **AND** no server mnemonic or owner credential is exposed to the player
 
+#### Scenario: Selected network is not supported for new Treasure offers
+- **WHEN** the existing Contracts support signal reports `available=false` for the selected network with a network-specific reason
+- **THEN** the game prevents a new offer or funding and presents that reason
+- **AND** existing contract inspection and recovery remain available
+
+#### Scenario: Missing wallet readiness is not a network limitation
+- **WHEN** new offers are unavailable because a player or wallet is missing or not ready
+- **THEN** the game reports the wallet-readiness problem without marking the network unsupported
+
 #### Scenario: Admin documents Mutinynet test choices
 - **WHEN** an Admin tester selects Mutinynet
 - **THEN** Arkade co-signer is selected by default and Browser validation is an explicit option
 - **AND** the selector describes actual guarantees and does not silently downgrade
 
 ### Requirement: Wallet source and ownership are explicit
-Direct SHALL use separate user-owned Player and Game Wallets. Server SHALL keep Player signing local and Game authority on the BIS service. Setup SHALL identify the actual reward-funding wallet and selected source. Neither source SHALL imply authoritative gameplay verification, distributed browser exclusivity or cleanup while all clients are closed.
+Local SHALL use the browser-held Game Wallet. Server SHALL keep Player signing local and Game authority on the BIS service. Setup SHALL identify the actual reward-funding wallet and selected source. Neither source SHALL imply authoritative gameplay verification, distributed browser exclusivity or cleanup while all clients are closed.
 
 #### Scenario: Reward setup
 - **WHEN** a user configures treasure rewards
