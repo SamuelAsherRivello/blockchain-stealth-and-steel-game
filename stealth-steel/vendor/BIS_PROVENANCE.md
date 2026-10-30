@@ -1,3 +1,21 @@
+# Verified local 0.0.32 candidate (2026-10-30)
+
+- Package: `@bis/integration` 0.0.32; artifact: `bis-integration-0.0.32.tgz`.
+- SHA-256: `062f1f94f176be92f33098a0aacd02a6777e059cca793518c797fd8d4c3a49f1`.
+- BIS source commit: `f6e8f1e58e7fc0177e0889c44a00786813d29fcf`; sourceDirty: false. The exact archive was supplied by the BIS owner from a frozen committed-source build. Its seven-field manifest, archive hash, all 203 members and all 196 packed source files were independently verified.
+- Packed source bytes match the frozen source inventory. The 192 CRLF text files match the Git blobs after newline normalization; the supplied archive is retained byte for byte. Public JavaScript, source, types and stylesheet exports are present. React peers remain compatible with 19.3.0; no dependency override or source link is used.
+- BIS candidate gates passed on the frozen source: 1,883 root tests, 92 onboarding tests, 19 faucet tests, 223 Sandbox tests, five native hosted tests, all builds and staged Pages verification. Optional adjacent-game/live-faucet skips do not count as funded acceptance.
+- Game verification passed against this exact installed archive: all 203 installed files, 1,204/1,204 full tests with zero skips, 22 focused integration/UI tests, 11 publishing checks, BIS contract typecheck and configured production build. Built metadata is v0.0.32 with BIS 0.0.32. The existing large-chunk warning remains.
+- Managed Chromium guest checks passed eight desktop/mobile views, including Local Mutinynet, Server Signet outage, return to Local and reload persistence. Account displays v0.0.32; only same-origin GETs were forwarded, BIS attempts were intentionally blocked and page errors were zero. The native WebGPU adapter requires regular browser mode on this machine. The browser harness selectors were aligned with the current public option/version labels.
+- The exact locked install passed after the owned isolated 6282 preview released Vite's native binding. The shared 5176 record was preserved. Only the 0.0.32 archive remains vendored. No financial action, journal mutation or reservation release was part of this import. Game-funded and published acceptance remain separate open gates.
+
+### Game-consumable public API changes
+
+- `BisContractRequest.validationMode` can explicitly select the pre-funding validation mode while omitted values preserve automatic selection for existing callers. The game can bind Local Mutinynet offers to the browser policy.
+- Snapshots expose `workflowMode`, `gameWalletServerStatus` and `gameWalletStatus`, so the game can present the fixed Local/Server source and wallet readiness independently of contract support.
+- `IBis.restoreGameWalletAsync` and the exported `BisGameWalletRestoreResult` support restoring a distinct Game Wallet under the active Player account. The optional `manualGameWalletOnly` facade setting retains imported Local Game Wallet selection when a server signer is connected.
+- Server Treasure recovery retains exact original transactions and operation identity across interrupted acknowledgements and source checks. Existing recovery and unresolved reservations remain in place.
+
 # Verified local 0.0.30 candidate (2026-10-27)
 
 - Package: `@bis/integration` 0.0.30; artifact: `bis-integration-0.0.30.tgz`.

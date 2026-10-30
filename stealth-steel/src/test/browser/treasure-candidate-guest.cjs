@@ -20,7 +20,7 @@ async page => {
   const require = (condition, message) => { if (!condition) throw Error(message); };
   const results = [];
   for (const viewport of [{width:1280,height:844},{width:390,height:844}]) {
-    const context = await browser.newContext({viewport, serviceWorkers:'block'});
+    const context = await browser.newContext({viewport, serviceWorkers:'block', offline:false});
     const attempts = [];
     const forwardedMethods = new Set();
     let phase = 'startup';
@@ -52,7 +52,7 @@ async page => {
           const cards = [...document.querySelectorAll('.bis-card')].filter(element => element.getClientRects().length);
           return cards.some(element => element.querySelector('.bis-workflow-label')?.textContent === mode &&
             element.querySelector('.bis-network-text')?.textContent === `Network: ${network}` &&
-            element.querySelector('.bis-version-label')?.textContent === `BIS: v${version}`);
+            element.querySelector('.bis-version-label')?.textContent === `v${version}`);
         }, {network,mode,version:expectedVersion}, {timeout:10000});
         const row = card.locator('.bis-network-label'), label = row.locator('.bis-workflow-label');
         const [rowBox,modeBox,networkBox] = await Promise.all([row.boundingBox(),label.boundingBox(),row.locator('.bis-network-text').boundingBox()]);
@@ -75,7 +75,7 @@ async page => {
         phase = `${network.toLowerCase()}-${results.length}`;
         const before = attempts.length;
         await card.getByRole('button', {name:'Network',exact:true}).click();
-        await card.getByRole('option', {name:network,exact:true}).click();
+        await card.getByRole('option', {name:network === 'Mutinynet' ? 'Mutiny' : network,exact:true}).click();
         await observe(network,mode);
         if (network === 'Mutinynet') require(!attempts.slice(before).some(request => request.bis), 'Mutinynet must skip BIS probes.');
         else require(attempts.slice(before).some(request => request.bis), 'The Server outage check must observe a blocked BIS attempt.');
